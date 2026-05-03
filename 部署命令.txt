@@ -1,0 +1,60 @@
+========================================
+MC Connects 网站 - Vercel 部署命令
+========================================
+
+【在你的 Mac 本地终端执行以下命令】
+
+1. 进入项目目录
+cd /Users/sam/Desktop/导出预览/其他/web
+
+2. 部署到 Vercel
+npx vercel --prod
+
+========================================
+首次部署会提示以下问题，按以下方式回答：
+========================================
+
+? Set up and deploy "~/Desktop/.../web"? (Y/n) → 输入 Y
+? Which scope do you want to deploy to? → 选择你的账号（按回车）
+? Link to existing project? (y/N) → 输入 N
+? What's your project name? (web) → 输入 mc-connects-website
+? In which directory is your code located? (./) → 直接回车
+
+然后会打开浏览器让你登录 Vercel：
+- 点击 "Continue with GitHub"
+- 授权 Vercel 访问你的 GitHub 账号
+- 返回终端等待部署完成
+
+========================================
+部署完成后
+========================================
+
+你会看到类似输出：
+🔍  Inspect: https://vercel.com/你的用户名/mc-connects-website/xxx
+✅  Production: https://mc-connects-website-xxx.vercel.app
+
+访问 Production 链接即可查看你的网站！
+
+========================================
+后续更新网站
+========================================
+
+修改代码后，再次运行：
+npx vercel --prod
+
+========================================
+绑定自定义域名（可选）
+========================================
+
+1. 登录 https://vercel.com/dashboard
+2. 点击你的项目
+3. 点击 Settings → Domains
+4. 输入你的域名（如 www.mcconnects.com）
+5. 按提示配置 DNS 解析
+
+推荐域名注册商：
+- 阿里云：https://wanwang.aliyun.com
+- 腾讯云：https://dnspod.cloud.tencent.com
+- Cloudflare：https://www.cloudflare.com
+
+========================================
