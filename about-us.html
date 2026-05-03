@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>About Us - MC Connects</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Onest', sans-serif;
+            background-color: #0E0F10;
+            color: #ffffff;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ==================== 滚动动画 ==================== */
+        /* 标题由下向上缓入 */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 内容区域由下向上缓入 */
+        .scroll-animate-content {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s,
+                        transform 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+        }
+
+        .scroll-animate-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 页面容器 */
+        .page-container {
+            width: 100%;
+            min-height: 100vh;
+            padding: 100px 120px 60px;
+        }
+
+        /* Footer 样式 */
+        .footer {
+            width: 100%;
+            background: #0E0F10;
+            padding: 60px 120px 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .footer-logo {
+            width: 200px;
+        }
+
+        .footer-logo img {
+            width: 100%;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 60px;
+        }
+
+        .footer-link-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .footer-link-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-link-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-link-list li {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link-list li:hover {
+            color: #FFFFFF;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom-left {
+            font-family: 'Onest', 'Noto Sans JP', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .footer-bottom-right {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Banner 区域 - Parallax Cosmic Background */
+        .banner {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            margin-top: 64px;
+            overflow: hidden;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+
+        /* 星星容器 */
+        .stars-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* 星星层 - 使用 box-shadow 创建大量星星 */
+        #stars, #stars2, #stars3 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+        }
+
+        #stars {
+            width: 1px;
+            height: 1px;
+            background: transparent;
+            box-shadow: 
+                50px 100px #FFF, 100px 50px #FFF, 150px 150px #FFF, 200px 80px #FFF,
+                250px 120px #FFF, 300px 40px #FFF, 350px 180px #FFF, 400px 60px #FFF,
+                450px 140px #FFF, 500px 30px #FFF, 550px 170px #FFF, 600px 90px #FFF,
+                650px 20px #FFF, 700px 160px #FFF, 750px 70px #FFF, 800px 130px #FFF,
+                850px 50px #FFF, 900px 190px #FFF, 950px 110px #FFF, 1000px 40px #FFF,
+                1050px 150px #FFF, 1100px 80px #FFF, 1150px 170px #FFF, 1200px 60px #FFF,
+                1250px 140px #FFF, 1300px 30px #FFF, 1350px 180px #FFF, 1400px 100px #FFF,
+                1450px 50px #FFF, 1500px 160px #FFF, 1550px 90px #FFF, 1600px 20px #FFF,
+                1650px 170px #FFF, 1700px 70px #FFF, 1750px 130px #FFF, 1800px 40px #FFF,
+                1850px 150px #FFF, 1900px 110px #FFF, 1950px 60px #FFF, 2000px 180px #FFF,
+                80px 200px #FFF, 180px 220px #FFF, 280px 190px #FFF, 380px 240px #FFF,
+                480px 210px #FFF, 580px 250px #FFF, 680px 200px #FFF, 780px 230px #FFF,
+                880px 180px #FFF, 980px 260px #FFF, 1080px 220px #FFF, 1180px 240px #FFF,
+                1280px 190px #FFF, 1380px 270px #FFF, 1480px 210px #FFF, 1580px 250px #FFF,
+                1680px 200px #FFF, 1780px 280px #FFF, 1880px 230px #FFF, 1980px 260px #FFF,
+                30px 300px #FFF, 130px 320px #FFF, 230px 290px #FFF, 330px 340px #FFF,
+                430px 310px #FFF, 530px 350px #FFF, 630px 300px #FFF, 730px 330px #FFF,
+                830px 280px #FFF, 930px 360px #FFF, 1030px 320px #FFF, 1130px 340px #FFF,
+                1230px 290px #FFF, 1330px 370px #FFF, 1430px 310px #FFF, 1530px 350px #FFF,
+                1630px 300px #FFF, 1730px 380px #FFF, 1830px 330px #FFF, 1930px 360px #FFF;
+            animation: animStar 25s linear infinite;
+        }
+
+        #stars:after {
+            content: " ";
+            position: absolute;
+            top: 400px;
+            left: 0;
+            width: 1px;
+            height: 1px;
+            background: transparent;
+            box-shadow: 
+                50px 100px #FFF, 100px 50px #FFF, 150px 150px #FFF, 200px 80px #FFF,
+                250px 120px #FFF, 300px 40px #FFF, 350px 180px #FFF, 400px 60px #FFF,
+                450px 140px #FFF, 500px 30px #FFF, 550px 170px #FFF, 600px 90px #FFF,
+                650px 20px #FFF, 700px 160px #FFF, 750px 70px #FFF, 800px 130px #FFF,
+                850px 50px #FFF, 900px 190px #FFF, 950px 110px #FFF, 1000px 40px #FFF,
+                1050px 150px #FFF, 1100px 80px #FFF, 1150px 170px #FFF, 1200px 60px #FFF,
+                1250px 140px #FFF, 1300px 30px #FFF, 1350px 180px #FFF, 1400px 100px #FFF,
+                1450px 50px #FFF, 1500px 160px #FFF, 1550px 90px #FFF, 1600px 20px #FFF,
+                1650px 170px #FFF, 1700px 70px #FFF, 1750px 130px #FFF, 1800px 40px #FFF,
+                1850px 150px #FFF, 1900px 110px #FFF, 1950px 60px #FFF, 2000px 180px #FFF,
+                80px 200px #FFF, 180px 220px #FFF, 280px 190px #FFF, 380px 240px #FFF,
+                480px 210px #FFF, 580px 250px #FFF, 680px 200px #FFF, 780px 230px #FFF,
+                880px 180px #FFF, 980px 260px #FFF, 1080px 220px #FFF, 1180px 240px #FFF,
+                1280px 190px #FFF, 1380px 270px #FFF, 1480px 210px #FFF, 1580px 250px #FFF,
+                1680px 200px #FFF, 1780px 280px #FFF, 1880px 230px #FFF, 1980px 260px #FFF,
+                30px 300px #FFF, 130px 320px #FFF, 230px 290px #FFF, 330px 340px #FFF,
+                430px 310px #FFF, 530px 350px #FFF, 630px 300px #FFF, 730px 330px #FFF,
+                830px 280px #FFF, 930px 360px #FFF, 1030px 320px #FFF, 1130px 340px #FFF,
+                1230px 290px #FFF, 1330px 370px #FFF, 1430px 310px #FFF, 1530px 350px #FFF,
+                1630px 300px #FFF, 1730px 380px #FFF, 1830px 330px #FFF, 1930px 360px #FFF;
+        }
+
+        #stars2 {
+            width: 2px;
+            height: 2px;
+            background: transparent;
+            box-shadow: 
+                100px 80px #FFF, 300px 120px #FFF, 500px 60px #FFF, 700px 140px #FFF,
+                900px 40px #FFF, 1100px 100px #FFF, 1300px 160px #FFF, 1500px 80px #FFF,
+                1700px 20px #FFF, 1900px 130px #FFF, 200px 180px #FFF, 400px 220px #FFF,
+                600px 200px #FFF, 800px 240px #FFF, 1000px 190px #FFF, 1200px 260px #FFF,
+                1400px 210px #FFF, 1600px 250px #FFF, 1800px 170px #FFF, 2000px 230px #FFF,
+                150px 300px #FFF, 350px 340px #FFF, 550px 320px #FFF, 750px 360px #FFF,
+                950px 310px #FFF, 1150px 350px #FFF, 1350px 290px #FFF, 1550px 330px #FFF,
+                1750px 280px #FFF, 1950px 370px #FFF;
+            animation: animStar 35s linear infinite;
+        }
+
+        #stars2:after {
+            content: " ";
+            position: absolute;
+            top: 400px;
+            left: 0;
+            width: 2px;
+            height: 2px;
+            background: transparent;
+            box-shadow: 
+                100px 80px #FFF, 300px 120px #FFF, 500px 60px #FFF, 700px 140px #FFF,
+                900px 40px #FFF, 1100px 100px #FFF, 1300px 160px #FFF, 1500px 80px #FFF,
+                1700px 20px #FFF, 1900px 130px #FFF, 200px 180px #FFF, 400px 220px #FFF,
+                600px 200px #FFF, 800px 240px #FFF, 1000px 190px #FFF, 1200px 260px #FFF,
+                1400px 210px #FFF, 1600px 250px #FFF, 1800px 170px #FFF, 2000px 230px #FFF,
+                150px 300px #FFF, 350px 340px #FFF, 550px 320px #FFF, 750px 360px #FFF,
+                950px 310px #FFF, 1150px 350px #FFF, 1350px 290px #FFF, 1550px 330px #FFF,
+                1750px 280px #FFF, 1950px 370px #FFF;
+        }
+
+        #stars3 {
+            width: 3px;
+            height: 3px;
+            background: transparent;
+            box-shadow: 
+                200px 100px #FFF, 600px 80px #FFF, 1000px 120px #FFF, 1400px 60px #FFF,
+                1800px 140px #FFF, 400px 200px #FFF, 800px 240px #FFF, 1200px 180px #FFF,
+                1600px 220px #FFF, 2000px 160px #FFF, 300px 320px #FFF, 700px 300px #FFF,
+                1100px 340px #FFF, 1500px 280px #FFF, 1900px 360px #FFF;
+            animation: animStar 50s linear infinite;
+        }
+
+        #stars3:after {
+            content: " ";
+            position: absolute;
+            top: 400px;
+            left: 0;
+            width: 3px;
+            height: 3px;
+            background: transparent;
+            box-shadow: 
+                200px 100px #FFF, 600px 80px #FFF, 1000px 120px #FFF, 1400px 60px #FFF,
+                1800px 140px #FFF, 400px 200px #FFF, 800px 240px #FFF, 1200px 180px #FFF,
+                1600px 220px #FFF, 2000px 160px #FFF, 300px 320px #FFF, 700px 300px #FFF,
+                1100px 340px #FFF, 1500px 280px #FFF, 1900px 360px #FFF;
+        }
+
+        @keyframes animStar {
+            from {
+                transform: translateY(0px);
+            }
+            to {
+                transform: translateY(-400px);
+            }
+        }
+
+        /* 星球/地球弧形底部 */
+        .planet {
+            position: absolute;
+            bottom: -280px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120%;
+            height: 500px;
+            background: radial-gradient(ellipse at center, #0E0F10 0%, #0E0F10 60%, #1a2332 100%);
+            border-radius: 50% 50% 0 0;
+            box-shadow: 
+                0 -10px 60px rgba(100, 180, 255, 0.4),
+                0 -30px 100px rgba(80, 160, 255, 0.25),
+                0 -50px 150px rgba(60, 140, 255, 0.15),
+                inset 0 30px 60px rgba(100, 180, 255, 0.15);
+        }
+
+        /* 蓝色光晕 */
+        .planet-glow {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110%;
+            height: 120px;
+            background: linear-gradient(to top, 
+                rgba(100, 180, 255, 0.6) 0%, 
+                rgba(80, 160, 255, 0.35) 25%,
+                rgba(60, 140, 255, 0.2) 50%,
+                transparent 100%);
+            filter: blur(25px);
+            pointer-events: none;
+        }
+
+        /* Banner 内容 */
+        .banner-content {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .banner-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            background: linear-gradient(to right, #0096ff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .banner-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(to right, #0096ff, #00d4ff);
+            color: white;
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            border-radius: 8px;
+            text-transform: capitalize;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .banner-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 150, 255, 0.4);
+        }
+
+        /* About Intro 区域 */
+        .about-intro {
+            position: relative;
+            max-width: 1200px;
+            margin: -200px auto 0;
+            padding: 0 20px 80px;
+            text-align: center;
+            z-index: 5;
+        }
+
+        .about-intro-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 36px;
+            line-height: 48px;
+            background: linear-gradient(to right, #0096ff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* About Features 区域 */
+        .about-features {
+            max-width: 1200px;
+            margin: -60px auto 0;
+            padding: 0 20px 80px;
+            text-align: center;
+        }
+
+        .about-features-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0 0 8px;
+        }
+
+        .about-features-text:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Cybernetic Bento Grid - From 21st.dev */
+        .bento-main-container {
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            background: #0E0F10;
+            position: relative;
+            overflow: hidden;
+            margin-left: calc(-50vw + 50%);
+        }
+
+        /* Aurora Waves Background */
+        .aurora-bg {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .aurora-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .bento-wrapper {
+            width: 100%;
+            max-width: 1152px;
+            z-index: 10;
+        }
+
+        .bento-title {
+            font-family: 'Onest', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 640px) {
+            .bento-title {
+                font-size: 36px;
+            }
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: 200px;
+            gap: 16px;
+            position: relative;
+            z-index: 10;
+        }
+
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .bento-item {
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            padding: 24px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
+        }
+
+        .bento-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 16px;
+            padding: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .bento-item:hover {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+        }
+
+        .bento-item:hover::before {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+        }
+
+        .bento-item:hover .bento-item-title {
+            color: #0096FF;
+        }
+
+        .col-span-2 {
+            grid-column: span 2;
+        }
+
+        .row-span-2 {
+            grid-row: span 2;
+        }
+
+        @media (max-width: 480px) {
+            .col-span-2 {
+                grid-column: span 1;
+            }
+            .row-span-2 {
+                grid-row: span 1;
+            }
+        }
+
+        .bento-item-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 8px;
+        }
+
+        .bento-item-text-large {
+            font-size: 24px;
+            line-height: 1.3;
+        }
+
+        .bento-item-text-medium {
+            font-size: 20px;
+            line-height: 1.3;
+        }
+
+        .bento-item-desc {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            color: #9ca3af;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .bento-item-desc-large {
+            font-size: 16px;
+        }
+
+        .bento-item-desc-small {
+            font-size: 14px;
+        }
+
+        .bento-chart-placeholder {
+            margin-top: 16px;
+            height: 280px;
+            background: #262626;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-family: 'Onest', sans-serif;
+            font-size: 14px;
+            overflow: hidden;
+        }
+
+        .bento-chart-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* Why Work With Us Section */
+        .why-work-section {
+            width: 100%;
+            background: #0E0F10;
+            padding: 60px 20px 60px;
+        }
+
+        .why-work-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .why-work-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .why-work-title {
+            font-family: 'Onest', sans-serif;
+            font-size: 48px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #0096FF 0%, #00D4FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+
+        .why-work-underline {
+            width: 136px;
+            height: 31px;
+        }
+
+        .why-work-stats {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            overflow: hidden;
+        }
+
+        .stats-row-wrapper {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stats-row-wrapper::before,
+        .stats-row-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 120px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .stats-row-wrapper::before {
+            left: 0;
+            background: linear-gradient(to right, #0E0F10 0%, transparent 100%);
+        }
+
+        .stats-row-wrapper::after {
+            right: 0;
+            background: linear-gradient(to left, #0E0F10 0%, transparent 100%);
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 24px;
+            width: max-content;
+            animation: scroll-left 30s linear infinite;
+        }
+
+        .stats-row:nth-child(2) {
+            animation: scroll-right 30s linear infinite;
+        }
+
+        .stats-row:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes scroll-right {
+            0% {
+                transform: translateX(-50%);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 8px 8px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .stat-dot {
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .stat-number {
+            font-family: 'Onest', sans-serif;
+            font-size: 38px;
+            font-weight: 600;
+            color: #ffffff;
+            white-space: nowrap;
+        }
+
+        .stat-label {
+            font-family: 'Onest', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.5);
+            white-space: nowrap;
+        }
+
+        @media (max-width: 1024px) {
+            .stats-row {
+                gap: 16px;
+            }
+            .stat-card {
+                padding: 10px 24px;
+            }
+            .stat-number {
+                font-size: 32px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .why-work-title {
+                font-size: 36px;
+            }
+            .stats-row {
+                flex-direction: column;
+                align-items: center;
+            }
+            .stat-card {
+                width: 100%;
+                max-width: 400px;
+                justify-content: center;
+            }
+        }
+
+        .flex-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .mt-2 {
+            margin-top: 8px;
+        }
+
+        .mt-4 {
+            margin-top: 16px;
+        }
+
+        /* ==================== Contact Us Section ==================== */
+        .module5-section {
+            position: relative;
+            width: 100%;
+            padding: 60px 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            background-color: #0E0F10;
+            min-height: 806px;
+        }
+
+        .module5-bg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .module5-bg-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .module5-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1440px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .module5-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            position: relative;
+        }
+
+        .module5-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .module5-title-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            line-height: normal;
+            background: linear-gradient(90deg, #0096ff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .module5-title-icon {
+            width: 136px;
+            height: 31px;
+            position: relative;
+        }
+
+        .module5-title-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .module5-subtitle {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .module5-content {
+            display: flex;
+            gap: 48px;
+            align-items: flex-start;
+            width: 100%;
+            position: relative;
+        }
+
+        .module5-contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            flex: 1;
+            min-width: 0;
+            padding-top: 72px;
+        }
+
+        .module5-contact-item {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .module5-icon-container {
+            flex-shrink: 0;
+        }
+
+        .module5-icon {
+            width: 68px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .module5-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .module5-contact-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .module5-contact-label {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 36px;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .module5-contact-value {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+        }
+
+        .module5-form {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            width: 690px;
+            flex-shrink: 0;
+        }
+
+        .module5-form-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 36px;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .module5-form-row {
+            display: flex;
+            gap: 24px;
+            width: 100%;
+        }
+
+        .module5-form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .module5-form-field-full {
+            width: 100%;
+        }
+
+        .module5-field-label {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: normal;
+            color: #ffffff;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .module5-input {
+            position: relative;
+            width: 100%;
+        }
+
+        .module5-input-field {
+            width: 100%;
+            height: 48px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: normal;
+            color: #ffffff;
+            outline: none;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .module5-input-field:hover,
+        .module5-input-field:focus {
+            border-color: #0096ff;
+        }
+
+        .module5-input-field::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module5-textarea-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .module5-textarea {
+            width: 100%;
+            height: 98px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: normal;
+            color: #ffffff;
+            outline: none;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .module5-textarea:hover,
+        .module5-textarea:focus {
+            border-color: #0096ff;
+        }
+
+        .module5-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module5-textarea-footer {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .module5-char-count {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 26px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module5-submit-btn {
+            width: 200px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid #58baff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            align-self: center;
+            margin-top: 10px;
+            padding: 12px 16px;
+        }
+
+        .module5-submit-btn span {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: normal;
+            color: #0096ff;
+            text-transform: capitalize;
+        }
+
+        .module5-submit-btn svg {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .module5-submit-btn:hover {
+            background: rgba(0, 150, 255, 0.1);
+            border-color: #0096ff;
+        }
+
+        .module5-submit-btn:hover svg {
+            transform: translateX(4px);
+        }
+
+        .module5-submit-btn:active {
+            background: rgba(0, 150, 255, 0.2);
+            transform: scale(0.98);
+        }
+
+        /* 响应式 */
+        @media (max-width: 1200px) {
+            .page-container {
+                padding: 100px 60px 60px;
+            }
+            .footer {
+                padding: 60px 60px 40px;
+            }
+            .banner {
+                height: 450px;
+                margin-top: 60px;
+            }
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: 200px;
+            }
+            .col-span-2 {
+                grid-column: span 2;
+            }
+            .row-span-2 {
+                grid-row: span 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                padding: 100px 20px 60px;
+            }
+            .footer {
+                padding: 40px 20px 30px;
+            }
+            .footer-content {
+                flex-direction: column;
+                gap: 40px;
+            }
+            .footer-links {
+                flex-wrap: wrap;
+                gap: 30px;
+            }
+            .banner {
+                height: 400px;
+                margin-top: 56px;
+            }
+            .bento-grid {
+                grid-template-columns: 1fr;
+                grid-auto-rows: auto;
+            }
+            .col-span-2,
+            .row-span-2 {
+                grid-column: span 1;
+                grid-row: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar 占位符 - 由 navbar.js 动态生成 -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- Banner 区域 -->
+    <section class="banner">
+        <div class="stars-container">
+            <div id="stars"></div>
+            <div id="stars2"></div>
+            <div id="stars3"></div>
+        </div>
+        <div class="banner-content">
+            <h1 class="banner-title">About Us</h1>
+            <a href="#" class="banner-btn">learn more</a>
+        </div>
+        <div class="planet-glow"></div>
+        <div class="planet"></div>
+    </section>
+
+    <div class="page-container">
+        <!-- 页面内容区域 -->
+        <div class="about-intro scroll-animate">
+            <p class="about-intro-text">Full-service full-service organizations build and innovate leading-edge platform capabilities with MC Connects' seamlessly integrated transaction infrastructure.</p>
+        </div>
+        <div class="about-features scroll-animate-content">
+            <p class="about-features-text">Customized solutions based on cutting-edge technology for each customer's needs</p>
+            <p class="about-features-text">Trusted by more than 300 clients in 50 countries and territories</p>
+            <p class="about-features-text">Easy-to-use, systematic and intelligent trading solutions</p>
+            <p class="about-features-text">Laying the foundations for your success - your trusted partner in financial infrastructure.</p>
+        </div>
+
+        <!-- Cybernetic Bento Grid -->
+        <div class="bento-main-container scroll-animate-content">
+            <div class="aurora-bg">
+                <canvas class="aurora-canvas" id="auroraCanvas"></canvas>
+            </div>
+            <div class="bento-wrapper">
+                <div class="bento-grid">
+                    <div class="bento-item col-span-2 row-span-2 flex-col justify-between">
+                        <div>
+                            <h2 class="bento-item-title bento-item-text-large">Client Service</h2>
+                            <p class="bento-item-desc bento-item-desc-large mt-2">Professional client support team providing 24/7 assistance and customized solutions for your business needs.</p>
+                        </div>
+                        <div class="bento-chart-placeholder">
+                            <img src="./情报/模块1/关于我们（改）.png" alt="Client Service Chart" class="bento-chart-img">
+                        </div>
+                    </div>
+                    <div class="bento-item">
+                        <h2 class="bento-item-title bento-item-text-medium">Payment Settlement</h2>
+                        <p class="bento-item-desc bento-item-desc-small mt-2">Efficient and secure clearing and settlement services for seamless fund transfers.</p>
+                    </div>
+                    <div class="bento-item">
+                        <h2 class="bento-item-title bento-item-text-medium">Transaction Execution</h2>
+                        <p class="bento-item-desc bento-item-desc-small mt-2">Ultra-low latency order execution ensuring optimal price and rapid trade completion.</p>
+                    </div>
+                    <div class="bento-item row-span-2">
+                        <h2 class="bento-item-title bento-item-text-medium">Shifting</h2>
+                        <p class="bento-item-desc bento-item-desc-small mt-2">Intelligent position transfer and liquidity optimization across multiple markets and accounts.</p>
+                    </div>
+                    <div class="bento-item col-span-2">
+                        <h2 class="bento-item-title bento-item-text-medium">Risk Management</h2>
+                        <p class="bento-item-desc bento-item-desc-small mt-2">Advanced risk control systems monitoring exposure, volatility, and compliance in real-time.</p>
+                    </div>
+                    <div class="bento-item">
+                        <h2 class="bento-item-title bento-item-text-medium">Data Service</h2>
+                        <p class="bento-item-desc bento-item-desc-small mt-2">Comprehensive market data delivery including live quotes, depth, and historical analysis.</p>
+                    </div>
+                    <div class="bento-item">
+                        <h2 class="bento-item-title bento-item-text-medium">Asset Management</h2>
+                        <p class="bento-item-desc bento-item-desc-small mt-2">Integrated portfolio management tools for tracking, analyzing, and optimizing your investments.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Why Work With Us Section -->
+    <section class="why-work-section">
+        <div class="why-work-container">
+            <div class="why-work-header scroll-animate">
+                <h2 class="why-work-title">Why work with us</h2>
+                <div class="why-work-underline">
+                    <svg width="136" height="31" viewBox="0 0 136 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M82.2435 1.00658C86.593 0.36959 92.3598 -0.148521 97.4593 0.0388107C100.003 0.13227 102.465 0.40381 104.533 0.962639C106.526 1.50157 108.529 2.40536 109.68 4.05053H109.679C111.088 6.03945 111.206 8.12064 110.348 9.85326C109.564 11.4375 108.085 12.4895 106.703 12.9372C100.856 14.8325 95.2806 16.1896 89.7142 17.4958C84.132 18.8058 78.5744 20.0613 72.6507 21.7673C72.5636 21.7924 72.476 21.8156 72.389 21.8406C92.8117 19.2092 113.899 19.1001 134.104 20.1423C135.207 20.1995 136.054 21.14 135.997 22.2429C135.94 23.3458 135.001 24.1941 133.898 24.1374C109.004 22.8533 82.9481 23.3398 58.5726 28.1179C55.3133 28.7568 52.1295 29.7367 48.8158 30.7361C48.5479 30.8169 48.3127 30.8881 48.1703 30.9246C48.1356 30.9334 48.0519 30.955 47.9535 30.9714C47.9128 30.9782 47.7935 30.9974 47.6419 30.9997C47.569 31.0009 47.4143 30.9997 47.224 30.9626C47.0829 30.9352 46.6194 30.8343 46.2025 30.4246C45.6413 29.8729 45.5171 29.1288 45.6576 28.5359C45.7637 28.0877 45.9961 27.8009 46.0716 27.7107C46.2461 27.5023 46.4252 27.3779 46.4544 27.3572C46.5617 27.281 46.6601 27.2276 46.682 27.2156C47.0237 27.0273 47.1107 27.014 47.5208 26.7683C55.1025 22.2272 63.5596 20.2231 71.5443 17.9236C77.5871 16.1833 83.2611 14.9011 88.8001 13.6013C94.3551 12.2977 99.7917 10.9719 105.47 9.13158C106.012 8.95573 106.537 8.5344 106.763 8.07885C106.863 7.87785 106.906 7.67138 106.883 7.44018C106.86 7.20473 106.756 6.84205 106.41 6.35619L108.008 5.21947L107.995 5.22826L106.41 6.35619L106.403 6.34447L106.334 6.25561C105.964 5.80438 105.11 5.26242 103.489 4.82397C101.832 4.37626 99.706 4.12383 97.3119 4.03588C92.5351 3.86045 87.0261 4.34898 82.8226 4.96459C69.3659 6.93544 56.6639 11.6429 43.5121 16.3298C30.4258 20.9934 16.933 25.6194 2.20932 27.1658C1.11079 27.2811 0.126453 26.484 0.0110773 25.3855C-0.104167 24.2871 0.692911 23.3026 1.79135 23.1872C15.9836 21.6967 29.0647 17.2324 42.1693 12.5622C55.2081 7.91559 68.3145 3.04654 82.2435 1.00658Z" fill="url(#paint0_linear_whywork)"/>
+                        <defs>
+                            <linearGradient id="paint0_linear_whywork" x1="2.00034" y1="17.0331" x2="134" y2="17.0331" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#0096FF"/>
+                                <stop offset="1" stop-color="#AE67FF"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+            <div class="why-work-stats scroll-animate-content">
+                <div class="stats-row-wrapper">
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">500+</span>
+                            <span class="stat-label">Clients</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">98%</span>
+                            <span class="stat-label">Client Satisfaction</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">99%</span>
+                            <span class="stat-label">System Availability</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Coverage Areas</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">10000+</span>
+                            <span class="stat-label">Transactions/Second</span>
+                        </div>
+                        <!-- Duplicate for seamless loop -->
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">500+</span>
+                            <span class="stat-label">Clients</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">98%</span>
+                            <span class="stat-label">Client Satisfaction</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">99%</span>
+                            <span class="stat-label">System Availability</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Coverage Areas</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">10000+</span>
+                            <span class="stat-label">Transactions/Second</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-row-wrapper">
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">Support</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">&lt;1ms</span>
+                            <span class="stat-label">Latency</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">ISO</span>
+                            <span class="stat-label">Certified</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">256-bit</span>
+                            <span class="stat-label">Encryption</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">99.99%</span>
+                            <span class="stat-label">Uptime SLA</span>
+                        </div>
+                        <!-- Duplicate for seamless loop -->
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">Support</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">&lt;1ms</span>
+                            <span class="stat-label">Latency</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">ISO</span>
+                            <span class="stat-label">Certified</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">256-bit</span>
+                            <span class="stat-label">Encryption</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-dot"></div>
+                            <span class="stat-number">99.99%</span>
+                            <span class="stat-label">Uptime SLA</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Contact Us Section ==================== -->
+    <section class="module5-section" id="contact">
+        <!-- 背景 -->
+        <div class="module5-bg">
+            <img src="web-home/模块5/BG2.png" alt="Background" class="module5-bg-img">
+        </div>
+
+        <div class="module5-container">
+            <!-- 标题区域 -->
+            <div class="module5-title scroll-animate">
+                <div class="module5-title-wrapper">
+                    <h2 class="module5-title-text">Contact Us</h2>
+                    <div class="module5-title-icon">
+                        <img src="web-home/模块5/Vector 524 (Stroke).svg" alt="Link">
+                    </div>
+                </div>
+                <p class="module5-subtitle">If you would like to set up your own business and learn more about what each solution offers, please feel free to contact us!</p>
+            </div>
+            
+            <!-- 内容区域 -->
+            <div class="module5-content scroll-animate-content">
+                <!-- 左侧联系信息 -->
+                <div class="module5-contact-info">
+                    <!-- 地址 -->
+                    <div class="module5-contact-item">
+                        <div class="module5-icon-container">
+                            <div class="module5-icon">
+                                <img src="web-home/模块5/Icon Container1.svg" alt="Location">
+                            </div>
+                        </div>
+                        <div class="module5-contact-text">
+                            <h3 class="module5-contact-label">Address</h3>
+                            <p class="module5-contact-value">Room 905, 9/F, Central Plaza, 18 Harbour Road, Wanchai, Hong Kong.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 电话 -->
+                    <div class="module5-contact-item">
+                        <div class="module5-icon-container">
+                            <div class="module5-icon">
+                                <img src="web-home/模块5/Icon Container2.svg" alt="Phone">
+                            </div>
+                        </div>
+                        <div class="module5-contact-text">
+                            <h3 class="module5-contact-label">Phone Number</h3>
+                            <p class="module5-contact-value">+852 3575-8870</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 邮箱 -->
+                    <div class="module5-contact-item">
+                        <div class="module5-icon-container">
+                            <div class="module5-icon">
+                                <img src="web-home/模块5/Icon Container3.svg" alt="Email">
+                            </div>
+                        </div>
+                        <div class="module5-contact-text">
+                            <h3 class="module5-contact-label">Email</h3>
+                            <p class="module5-contact-value">mcpayment@mcgrp.com</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧表单 -->
+                <div class="module5-form">
+                    <h3 class="module5-form-title">Please fill in the contact form</h3>
+                    
+                    <div class="module5-form-row">
+                        <div class="module5-form-field">
+                            <label class="module5-field-label">*Username</label>
+                            <div class="module5-input">
+                                <input type="text" placeholder="Please enter your name" class="module5-input-field">
+                            </div>
+                        </div>
+                        <div class="module5-form-field">
+                            <label class="module5-field-label">*Mailbox</label>
+                            <div class="module5-input">
+                                <input type="email" placeholder="Please enter your email" class="module5-input-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module5-form-row">
+                        <div class="module5-form-field">
+                            <label class="module5-field-label">*Phone number</label>
+                            <div class="module5-input">
+                                <input type="tel" placeholder="Please enter your phone number" class="module5-input-field">
+                            </div>
+                        </div>
+                        <div class="module5-form-field">
+                            <label class="module5-field-label">Address</label>
+                            <div class="module5-input">
+                                <input type="text" placeholder="Please enter your address" class="module5-input-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module5-form-field module5-form-field-full">
+                        <label class="module5-field-label">*Inquiry content</label>
+                        <div class="module5-textarea-wrapper">
+                            <textarea class="module5-textarea" placeholder="Please enter your inquiry content"></textarea>
+                            <div class="module5-textarea-footer">
+                                <span class="module5-char-count">0 / 100</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="module5-submit-btn">
+                        <span>submit</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.0254 4.94141L17.0837 9.99974L12.0254 15.0581" stroke="#0096ff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2.91602 10H16.941" stroke="#0096ff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="./web-home/head/logo/logo.svg" alt="MC Connects">
+            </div>
+            <div class="footer-links">
+                <div class="footer-link-group">
+                    <h4 class="footer-link-title">Services</h4>
+                    <ul class="footer-link-list">
+                        <li>Trading System</li>
+                        <li>CRM</li>
+                        <li>Payment Solutions</li>
+                        <li>Risk Control</li>
+                        <li>Asset Management</li>
+                    </ul>
+                </div>
+                <div class="footer-link-group">
+                    <h4 class="footer-link-title">Solutions</h4>
+                    <ul class="footer-link-list">
+                        <li>Market Maker Turnkey</li>
+                        <li>Brokerage</li>
+                        <li>Exchanges</li>
+                        <li>Financial Institutions</li>
+                        <li>Hedge Funds</li>
+                        <li>Quant Teams</li>
+                    </ul>
+                </div>
+                <div class="footer-link-group">
+                    <h4 class="footer-link-title">Liquidity</h4>
+                    <ul class="footer-link-list">
+                        <li>MC LP</li>
+                        <li>MC Data</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-left">Guide | API | Privacy Policy | Terms of Service | Disclaimer</div>
+            <div class="footer-bottom-right">MC Connects @ 2024 Cookie Preferences</div>
+        </div>
+    </footer>
+
+    <!-- 组件脚本 -->
+    <script src="./components/navbar.js?v=25"></script>
+
+    <!-- Aurora Waves Animation -->
+    <script>
+        (function() {
+            const canvas = document.getElementById('auroraCanvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            let animationId;
+            let time = 0;
+            
+            function resize() {
+                const parent = canvas.parentElement;
+                canvas.width = parent.clientWidth;
+                canvas.height = parent.clientHeight;
+            }
+            
+            function palette(t) {
+                // Deep blue to magenta gradient
+                const r = 0.1 + 0.7 * (0.5 + 0.5 * Math.sin(t));
+                const g = 0.2 + 0.2 * (0.5 + 0.5 * Math.sin(t + 1));
+                const b = 0.5 + 0.4 * (0.5 + 0.5 * Math.sin(t + 2));
+                return {
+                    r: Math.floor(r * 255),
+                    g: Math.floor(g * 255),
+                    b: Math.floor(b * 255)
+                };
+            }
+            
+            function wave(x, freq, phase, time) {
+                return 0.4 * Math.sin(x * freq + time + phase);
+            }
+            
+            function glow(d, strength) {
+                return Math.exp(-d * d * strength);
+            }
+            
+            function draw() {
+                const w = canvas.width;
+                const h = canvas.height;
+                const speed = 0.5;
+                const glowStrength = 15;
+                
+                // Clear with dark background
+                ctx.fillStyle = '#0E0F10';
+                ctx.fillRect(0, 0, w, h);
+                
+                const imageData = ctx.getImageData(0, 0, w, h);
+                const data = imageData.data;
+                
+                // Scale Y to reduce wave height (0.6 = 60% height)
+                const yScale = 0.5;
+                
+                for (let y = 0; y < h; y += 2) {
+                    for (let x = 0; x < w; x += 2) {
+                        const uvX = (x / w) * 2 - 1;
+                        // Scale Y coordinate to compress wave height
+                        const uvY = ((y / h) * 2 - 1) / yScale;
+                        
+                        // Combine multiple waves
+                        const w1 = wave(uvX, 3.0, 0.0, time * speed);
+                        const w2 = wave(uvX, 5.0, 1.0, time * speed);
+                        const w3 = wave(uvX, 7.0, 2.5, time * speed);
+                        const waveLine = w1 + w2 * 0.6 + w3 * 0.4;
+                        
+                        const dist = Math.abs(uvY - waveLine);
+                        const g = glow(dist, glowStrength);
+                        
+                        const col = palette(waveLine + uvY * yScale);
+                        
+                        // Background color (dark)
+                        const bgR = 14;
+                        const bgG = 15;
+                        const bgB = 16;
+                        
+                        // Blend
+                        const finalR = bgR + (col.r - bgR) * g * 1.5;
+                        const finalG = bgG + (col.g - bgG) * g * 1.5;
+                        const finalB = bgB + (col.b - bgB) * g * 1.5;
+                        
+                        const idx = (y * w + x) * 4;
+                        data[idx] = Math.min(255, finalR);
+                        data[idx + 1] = Math.min(255, finalG);
+                        data[idx + 2] = Math.min(255, finalB);
+                        data[idx + 3] = 255;
+                        
+                        // Fill 2x2 block for performance
+                        if (x + 1 < w) {
+                            data[idx + 4] = Math.min(255, finalR);
+                            data[idx + 5] = Math.min(255, finalG);
+                            data[idx + 6] = Math.min(255, finalB);
+                            data[idx + 7] = 255;
+                        }
+                        if (y + 1 < h) {
+                            const idx2 = ((y + 1) * w + x) * 4;
+                            data[idx2] = Math.min(255, finalR);
+                            data[idx2 + 1] = Math.min(255, finalG);
+                            data[idx2 + 2] = Math.min(255, finalB);
+                            data[idx2 + 3] = 255;
+                            if (x + 1 < w) {
+                                data[idx2 + 4] = Math.min(255, finalR);
+                                data[idx2 + 5] = Math.min(255, finalG);
+                                data[idx2 + 6] = Math.min(255, finalB);
+                                data[idx2 + 7] = 255;
+                            }
+                        }
+                    }
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+                
+                time += 0.016;
+                animationId = requestAnimationFrame(draw);
+            }
+            
+            window.addEventListener('resize', resize);
+            resize();
+            draw();
+            
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', () => {
+                cancelAnimationFrame(animationId);
+            });
+        })();
+
+        // 滚动动画观察器
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            // 观察所有需要动画的元素
+            document.querySelectorAll('.scroll-animate, .scroll-animate-content').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+
+</body>
+</html>

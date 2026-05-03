@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar 样式预览</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Onest', 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+        }
+        
+        /* 预览页面样式 */
+        .preview-container {
+            padding-top: 100px;
+            text-align: center;
+            color: white;
+        }
+        
+        .preview-title {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        
+        .preview-subtitle {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+        
+        /* 测试按钮区域 */
+        .test-section {
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .test-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .test-btn {
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .test-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar 占位符 -->
+    <div id="navbar-placeholder"></div>
+    
+    <!-- 预览内容 -->
+    <div class="preview-container">
+        <h1 class="preview-title">Navbar 样式预览</h1>
+        <p class="preview-subtitle">这是 navbar-footer.js 生成的导航栏组件预览</p>
+        
+        <div class="test-section">
+            <h2 class="test-title">页面切换测试</h2>
+            <div class="test-buttons">
+                <button class="test-btn" onclick="window.location.href='./index.html'">首页</button>
+                <button class="test-btn" onclick="window.location.href='./trading-system.html'">Trading System</button>
+                <button class="test-btn" onclick="window.location.href='./crm.html'">CRM</button>
+                <button class="test-btn" onclick="window.location.href='./payment-solutions.html'">Payment Solutions</button>
+                <button class="test-btn" onclick="window.location.href='./risk-control.html'">Risk Control</button>
+                <button class="test-btn" onclick="window.location.href='./asset-management.html'">Asset Management</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 引入 Navbar 组件 -->
+    <script src="./components/navbar-footer.js?v=25"></script>
+</body>
+</html>

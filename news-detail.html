@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>News Detail - MC Connects</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Onest', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* ==================== News Detail Section ==================== */
+        .news-detail-section {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            padding: 120px 120px 80px;
+            background-color: #0a0a0a;
+        }
+
+        .news-detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 面包屑导航 */
+        .breadcrumb {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 48px;
+        }
+
+        .breadcrumb-item {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #999;
+            text-transform: capitalize;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item:hover {
+            color: #0096ff;
+        }
+
+        .breadcrumb-item.active {
+            color: #0096ff;
+        }
+
+        .breadcrumb-separator {
+            width: 7.5px;
+            height: 9.7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .breadcrumb-separator svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 主内容区域 */
+        .news-detail-main {
+            display: flex;
+            gap: 48px;
+            align-items: flex-start;
+        }
+
+        /* 左侧内容 */
+        .news-detail-left {
+            flex: 1;
+            max-width: 847px;
+        }
+
+        /* 新闻图片 */
+        .news-detail-image {
+            width: 100%;
+            height: 476px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+
+        .news-detail-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 日期 */
+        .news-detail-date {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 16px;
+        }
+
+        /* 新闻标题 */
+        .news-detail-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 36px;
+            line-height: 48px;
+            color: #ffffff;
+            margin-bottom: 24px;
+        }
+
+        /* 标签 */
+        .news-detail-tags {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .news-detail-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #ffffff;
+            text-transform: capitalize;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .news-detail-tag:hover {
+            color: #0096ff;
+        }
+
+        .news-detail-tag:hover .news-detail-tag-dot {
+            background-color: #0096ff;
+        }
+
+        .news-detail-tag.highlight {
+            color: #0096ff;
+        }
+
+        .news-detail-tag-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .news-detail-tag-dot.default {
+            background-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .news-detail-tag-dot.highlight {
+            background-color: #0096ff;
+        }
+
+        /* 内容区块 */
+        .news-detail-content {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .content-block {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content-block-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            line-height: 36px;
+            color: #ffffff;
+        }
+
+        .content-block-body {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .content-block-body p {
+            margin-bottom: 16px;
+        }
+
+        .content-block-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .content-block-body a {
+            color: #0096ff;
+            text-decoration: none;
+        }
+
+        .content-block-body a:hover {
+            text-decoration: underline;
+        }
+
+        /* 右侧边栏 */
+        .news-detail-sidebar {
+            width: 305px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 100px;
+            align-self: flex-start;
+        }
+
+        /* 文章目录 */
+        .article-toc {
+            margin-bottom: 24px;
+        }
+
+        .toc-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            color: #ffffff;
+            margin-bottom: 24px;
+        }
+
+        .toc-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .toc-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0 12px 24px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .toc-item:hover {
+            color: #0096ff;
+        }
+
+        .toc-item.active {
+            border-left-color: #0096ff;
+            color: #0096ff;
+            font-weight: 600;
+        }
+
+        /* 分享卡片 */
+        .share-card {
+            background: #0a1c8f;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .share-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0.4;
+        }
+
+        .share-card-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #ffffff;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .share-button {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .share-button:hover {
+            opacity: 0.8;
+        }
+
+        .share-button svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 响应式样式 */
+        @media (max-width: 1200px) {
+            .news-detail-section {
+                padding: 100px 60px 60px;
+            }
+
+            .news-detail-main {
+                flex-direction: column;
+            }
+
+            .news-detail-sidebar {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .news-detail-section {
+                padding: 80px 20px 40px;
+            }
+
+            .news-detail-image {
+                height: 250px;
+            }
+
+            .news-detail-title {
+                font-size: 24px;
+                line-height: 32px;
+            }
+
+            .content-block-title {
+                font-size: 20px;
+                line-height: 28px;
+            }
+
+            .breadcrumb {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Related Articles Section */
+        .related-articles-section {
+            width: 100%;
+            padding: 60px 120px;
+            background: #0E0F10;
+        }
+
+        .related-articles-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .related-articles-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 36px;
+            color: #FFFFFF;
+            margin-bottom: 48px;
+        }
+
+        .related-articles-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        /* News Card Styles */
+        .news-card {
+            width: 100%;
+            height: 317px;
+            background: #1c1d1e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-card:hover {
+            background: #2d2f32;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .news-card:hover .news-card-title {
+            color: #0096ff;
+            white-space: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            height: 64px;
+        }
+
+        .news-card:hover .news-card-tags {
+            display: flex;
+        }
+
+        .news-card:hover .news-card-image {
+            height: 120px;
+            background: #1c1d1e;
+        }
+
+        .news-card-image {
+            width: 100%;
+            height: 203px;
+            background: rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+            transition: height 0.3s ease;
+        }
+
+        .news-card-image img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        .news-card-content {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .news-card-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            color: #FFFFFF;
+            line-height: 32px;
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            transition: color 0.3s ease;
+        }
+
+        .news-card-tags {
+            display: none;
+            flex-wrap: nowrap;
+            gap: 8px;
+            overflow: visible;
+            position: relative;
+            margin-left: -16px;
+            margin-right: -16px;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .news-card-tags-inner {
+            display: flex;
+            gap: 8px;
+            animation: scrollTags 8s linear infinite;
+        }
+
+        .news-card:hover .news-card-tags-inner {
+            animation-play-state: running;
+        }
+
+        @keyframes scrollTags {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .news-card-tag {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #999;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .news-card-divider {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .news-card-date {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #999;
+            text-transform: capitalize;
+        }
+
+        .news-card-date-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 1200px) {
+            .related-articles-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .related-articles-section {
+                padding: 40px 20px;
+            }
+
+            .related-articles-title {
+                font-size: 28px;
+                margin-bottom: 32px;
+            }
+
+            .related-articles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .news-card {
+                height: auto;
+                min-height: 317px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar 占位符 - 由 navbar.js 动态生成 -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- News Detail Section -->
+    <section class="news-detail-section">
+        <div class="news-detail-container">
+            <!-- 面包屑导航 -->
+            <nav class="breadcrumb">
+                <a href="index.html" class="breadcrumb-item">Home</a>
+                <div class="breadcrumb-separator">
+                    <svg viewBox="0 0 8 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L6 5L1 9" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <a href="news-insights.html" class="breadcrumb-item">information-gathering</a>
+                <div class="breadcrumb-separator">
+                    <svg viewBox="0 0 8 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L6 5L1 9" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="breadcrumb-item active">You are here</span>
+            </nav>
+
+            <!-- 主内容区域 -->
+            <div class="news-detail-main">
+                <!-- 左侧内容 -->
+                <div class="news-detail-left">
+                    <!-- 新闻图片 -->
+                    <div class="news-detail-image">
+                        <img id="news-image" src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=847&h=476&fit=crop" alt="News Detail">
+                    </div>
+
+                    <!-- 日期 -->
+                    <div class="news-detail-date" id="news-date">25 June 2024</div>
+
+                    <!-- 新闻标题 -->
+                    <h1 class="news-detail-title" id="news-title">2024 Business Technology Scenarios for Multiple Mobility Aggregation Use Cases.</h1>
+
+                    <!-- 标签 -->
+                    <div class="news-detail-tags" id="news-tags">
+                        <div class="news-detail-tag" onclick="window.location.href='news-tag.html?tag=Formula1'">
+                            <span>Formula1</span>
+                            <div class="news-detail-tag-dot default"></div>
+                        </div>
+                        <div class="news-detail-tag" onclick="window.location.href='news-tag.html?tag=Events'">
+                            <span>Events</span>
+                            <div class="news-detail-tag-dot default"></div>
+                        </div>
+                        <div class="news-detail-tag" onclick="window.location.href='news-tag.html?tag=Connects'">
+                            <span>Connects</span>
+                            <div class="news-detail-tag-dot default"></div>
+                        </div>
+                    </div>
+
+                    <!-- 内容区块 -->
+                    <div class="news-detail-content" id="news-content">
+                        <div class="content-block" id="section1">
+                            <h2 class="content-block-title">Exploring Generative AI in Content Creation</h2>
+                            <div class="content-block-body">
+                                <p>Hello there! As a marketing manager in the SaaS industry, you might be looking for innovative ways to engage your audience. I bet generative AI has crossed your mind as an option for creating content. Well, let me share from my firsthand experience.</p>
+                                <p>Google encourages high-quality blogs regardless of whether they're written by humans or created using artificial intelligence like ChatGPT. Here's what matters: producing original material with expertise and trustworthiness based on Google <a href="#">E-E-A-T principles</a>.</p>
+                                <p>This means focusing more on people-first writing rather than primarily employing AI tools to manipulate search rankings. There comes a time when many experienced professionals want to communicate their insights but get stuck due to limited writing skills – that's where Generative AI can step in.</p>
+                                <p>So, together, we're going explore how this technology could help us deliver valuable content without sounding robotic or defaulting into mere regurgitations of existing materials (spoiler alert – common pitfalls!). Hang tight - it'll be a fun learning journey!</p>
+                            </div>
+                        </div>
+
+                        <div class="content-block" id="section2">
+                            <h2 class="content-block-title">Steering Clear of Common AI Writing Pitfalls</h2>
+                            <div class="content-block-body">
+                                <p>Jumping headfirst into using AI, like <a href="#">ChatGPT</a>, without a content strategy can lead to some unfortunate results. One common pitfall I've seen is people opting for quantity over quality - they churn out blogs, but each one feels robotic and soulless, reading just like countless others on the internet.</p>
+                                <p>Another fault line lies in creating reproductions rather than delivering unique perspectives that offer value to readers; it often happens if you let an AI tool write your full blog unrestrained! Trust me on this – Ask any experienced marketer or writer about their takeaways from using generative AI tools. They'll all agree that adding a human touch and following specific guidelines are key when implementing these tech pieces.</p>
+                                <p>Remember, our goal here isn't merely satisfying search engines but, more importantly, knowledge-hungry humans seeking reliable information online. So keep your audience's needs at heart while leveraging technology's assistance!</p>
+                            </div>
+                        </div>
+
+                        <div class="content-block" id="section3">
+                            <h2 class="content-block-title">Understanding ChatGPT Capabilities - Define Your Style</h2>
+                            <div class="content-block-body">
+                                <p>Welcome to the intriguing world of ChatGPT! Its ability and potential can truly be mind-boggling. I have learned from experience how capable it is in dealing with diverse content generation tasks, only that its text sounded slightly "unnatural" <a href="#">in accordance with TechTarget</a>. However, fear not – there are ways around this!</p>
+                                <p>One strategic move I've seen work wonders is defining your unique writing style first before handing over the reins to AI; you treat it like a canvas whereupon our vision opens up. If we clearly instruct who we're targeting or what tone resonates more effectively, generative AI tools such as ChatGPT will comply remarkably well.</p>
+                                <p>In framing guidelines, remember to keep audience interests at heart while adopting technology's benefits for efficient output – trust me on this because neglecting these aspects could backfire by generating unappealing robotic-like reads.</p>
+                                <p>Ultimately, aiming towards reader-focused driven creativity illuminated under authentically humanized narratives holds priority above all else when crafting blogs using auto-generation toolkits!</p>
+                            </div>
+                        </div>
+
+                        <div class="content-block" id="section4">
+                            <h2 class="content-block-title">Understand Your Readers</h2>
+                            <div class="content-block-body">
+                                <p>Understanding your readers is vital when producing blog posts. It's not about filling blanks with popular search terms, no matter how much keyword research you do. Real readability goes beyond that! Your content has to 'speak' directly to your target audience.</p>
+                                <p>Building an Ideal Customer Profile (ICP) can help immensely in this respect (<a href="#">Dan Martell</a>). This tool identifies specific firmographics or psychographic drivers behind customer success - a valuable guide for creating targeted outputs catering to arrayed reader types.</p>
+                                <p>Simultaneously, SEO aspects also need attention: identifying suitable keywords & phrases people commonly use enhances reach (SEO.COM reference). Yet remember – human appeal doesn't mean packing text up finely into presentable semblances bearing little value substance and stuffing it full with only 'keywords.'</p>
+                            </div>
+                        </div>
+
+                        <div class="content-block" id="section5">
+                            <h2 class="content-block-title">Creating Quality AI-powered Blogs that Stand Out</h2>
+                            <div class="content-block-body">
+                                <p>Creating brilliant AI-powered blogs is a fun blending of logic with just the right dose of creativity. From defining your target audience to tuning in ChatGPT's language style, every step counts towards creating content that's not only SEO-friendly but also enjoyable and valuable for readers.</p>
+                                <p>One tactic I've found useful is maintaining originality in message essence, with unique perspectives infusing life beyond words onto pages!</p>
+                                <p>Incorporating trusted references while optimizing blog posts intelligently (rather than keyword stuffing) can significantly aid quality enhancements. Remember, it isn't about writing for Google here, so avoid tunnel vision focusing solely on algorithm-driven success rate, aiming at heart-touching human connections, building loyal reader bases, and sharing knowledge benefiting others!</p>
+                            </div>
+                        </div>
+
+                        <div class="content-block" id="section6">
+                            <h2 class="content-block-title">Conclusion: Embracing AI in Blog Creation</h2>
+                            <div class="content-block-body">
+                                <p>As we wrap up, let's remember the heart of blog creation is serving our readers. Whether a post was drafted by experts or AI like ChatGPT doesn't matter to Google algorithms as long it's meaningful and high-quality.</p>
+                                <p>We've explored how to avoid common pitfalls such as producing robotic content or prioritizing quantity over quality. By defining your unique style and understanding your audience deeply, you can leverage AI tools effectively.</p>
+                                <p>The key lies in blending technology with human creativity – using AI as an assistant rather than a replacement. Keep experimenting, keep learning, and most importantly, keep your readers' needs at the forefront of every piece you create!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧边栏 -->
+                <aside class="news-detail-sidebar">
+                    <!-- 文章目录 -->
+                    <div class="article-toc">
+                        <h3 class="toc-title">In this article</h3>
+                        <div class="toc-list">
+                            <div class="toc-item active" onclick="scrollToSection('section1')">Exploring Generative AI in Content Creation</div>
+                            <div class="toc-item" onclick="scrollToSection('section2')">Steering Clear of Common AI Writing Pitfalls</div>
+                            <div class="toc-item" onclick="scrollToSection('section3')">Understanding ChatGPT Capabilities - Define Your Style</div>
+                            <div class="toc-item" onclick="scrollToSection('section4')">Understand Your Readers</div>
+                            <div class="toc-item" onclick="scrollToSection('section5')">Creating Quality AI-powered Blogs that Stand Out</div>
+                            <div class="toc-item" onclick="scrollToSection('section6')">Conclusion: Embracing AI in Blog Creation</div>
+                        </div>
+                    </div>
+
+                    <!-- 分享卡片 -->
+                    <div class="share-card">
+                        <h3 class="share-card-title">Share with your community!</h3>
+                        <div class="share-buttons">
+                            <div class="share-button" onclick="shareToFacebook()">
+                                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                </svg>
+                            </div>
+                            <div class="share-button" onclick="shareToTwitter()">
+                                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                            </div>
+                            <div class="share-button" onclick="shareToLinkedIn()">
+                                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Articles Section -->
+    <section class="related-articles-section">
+        <div class="related-articles-container">
+            <h2 class="related-articles-title">Related Articles</h2>
+            <div class="related-articles-grid">
+                <div class="news-card" onclick="window.location.href='news-detail.html?id=1&image=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1642790106117-e829e14a795f%3Fw%3D400%26h%3D300%26fit%3Dcrop'">
+                    <div class="news-card-image">
+                        <img src="https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=400&h=300&fit=crop" alt="Related Article 1">
+                    </div>
+                    <div class="news-card-content">
+                        <div class="news-card-title">Magic Compass Group Sponsors the Hong Kong 2024 World Taekwondo Poomsae Championships</div>
+                        <div class="news-card-tags"><div class="news-card-tags-inner">
+                            <span class="news-card-tag">Sponsorship</span>
+                            <span class="news-card-tag">Sports</span>
+                            <span class="news-card-tag">Sponsorship</span>
+                            <span class="news-card-tag">Sports</span>
+                        </div></div>
+                        <div class="news-card-divider"></div>
+                        <div class="news-card-date">
+                            <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M15.6947 13.7H15.7037M15.6947 16.7H15.7037M11.9955 13.7H12.0045M11.9955 16.7H12.0045M8.29431 13.7H8.30329M8.29431 16.7H8.30329" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>25 June 2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="news-card" onclick="window.location.href='news-detail.html?id=2&image=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1568605117036-5fe5e7bab0b7%3Fw%3D400%26h%3D300%26fit%3Dcrop'">
+                    <div class="news-card-image">
+                        <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=400&h=300&fit=crop" alt="Related Article 2">
+                    </div>
+                    <div class="news-card-content">
+                        <div class="news-card-title">MC Markets Hosts F1 Singapore Grand Prix Viewing Event for Clients and Partners in Singapore Office</div>
+                        <div class="news-card-tags"><div class="news-card-tags-inner">
+                            <span class="news-card-tag">Formula1</span>
+                            <span class="news-card-tag">Singapore Grand Prix</span>
+                            <span class="news-card-tag">Formula1</span>
+                            <span class="news-card-tag">Singapore Grand Prix</span>
+                        </div></div>
+                        <div class="news-card-divider"></div>
+                        <div class="news-card-date">
+                            <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M15.6947 13.7H15.7037M15.6947 16.7H15.7037M11.9955 13.7H12.0045M11.9955 16.7H12.0045M8.29431 13.7H8.30329M8.29431 16.7H8.30329" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>25 June 2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="news-card" onclick="window.location.href='news-detail.html?id=3&image=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1556761175-5973dc0f32e7%3Fw%3D400%26h%3D300%26fit%3Dcrop'">
+                    <div class="news-card-image">
+                        <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=300&fit=crop" alt="Related Article 3">
+                    </div>
+                    <div class="news-card-content">
+                        <div class="news-card-title">Celebrating the Grand Opening of MC Markets' Singapore Office</div>
+                        <div class="news-card-tags"><div class="news-card-tags-inner">
+                            <span class="news-card-tag">Expansion</span>
+                            <span class="news-card-tag">Office Opening</span>
+                            <span class="news-card-tag">Expansion</span>
+                            <span class="news-card-tag">Office Opening</span>
+                        </div></div>
+                        <div class="news-card-divider"></div>
+                        <div class="news-card-date">
+                            <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M15.6947 13.7H15.7037M15.6947 16.7H15.7037M11.9955 13.7H12.0045M11.9955 16.7H12.0045M8.29431 13.7H8.30329M8.29431 16.7H8.30329" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>25 June 2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="news-card" onclick="window.location.href='news-detail.html?id=4&image=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1460925895917-afdab827c52f%3Fw%3D400%26h%3D300%26fit%3Dcrop'">
+                    <div class="news-card-image">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop" alt="Related Article 4">
+                    </div>
+                    <div class="news-card-content">
+                        <div class="news-card-title">Taekwondo Poomsae Championships</div>
+                        <div class="news-card-tags"><div class="news-card-tags-inner">
+                            <span class="news-card-tag">Sports</span>
+                            <span class="news-card-tag">Championship</span>
+                            <span class="news-card-tag">Sports</span>
+                            <span class="news-card-tag">Championship</span>
+                        </div></div>
+                        <div class="news-card-divider"></div>
+                        <div class="news-card-date">
+                            <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M15.6947 13.7H15.7037M15.6947 16.7H15.7037M11.9955 13.7H12.0045M11.9955 16.7H12.0045M8.29431 13.7H8.30329M8.29431 16.7H8.30329" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>25 June 2024</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer 占位符 - 由 navbar-footer.js 动态生成 -->
+    <div id="footer-placeholder"></div>
+
+    <!-- 组件脚本 -->
+    <script src="./components/navbar.js?v=20"></script>
+    <script src="./components/navbar-footer.js?v=49"></script>
+
+    <!-- 页面脚本 -->
+    <script>
+        // 新闻数据
+        const newsData = [
+            {
+                id: 1,
+                title: "2024 Business Technology Scenarios for Multiple Mobility Aggregation Use Cases.",
+                date: "25 June 2024",
+                image: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=847&h=476&fit=crop",
+                tags: [
+                    { name: "Formula1", highlight: false },
+                    { name: "Events", highlight: false },
+                    { name: "Connects", highlight: false }
+                ]
+            },
+            {
+                id: 2,
+                title: "MC Markets Hosts F1 Singapore Grand Prix Viewing Event for Clients and Partners",
+                date: "25 June 2024",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=847&h=476&fit=crop",
+                tags: [
+                    { name: "Formula1", highlight: false },
+                    { name: "Events", highlight: false },
+                    { name: "Connects", highlight: false }
+                ]
+            },
+            {
+                id: 3,
+                title: "Celebrating the Grand Opening of MC Markets' Singapore Office",
+                date: "25 June 2024",
+                image: "https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=847&h=476&fit=crop",
+                tags: [
+                    { name: "Expansion", highlight: false },
+                    { name: "Office", highlight: false },
+                    { name: "Connects", highlight: false }
+                ]
+            }
+        ];
+
+        // 获取 URL 参数
+        function getUrlParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // 加载新闻详情
+        function loadNewsDetail() {
+            const newsId = getUrlParam('id');
+            const imageUrl = getUrlParam('image');
+            const news = newsData.find(n => n.id == newsId) || newsData[0];
+
+            document.getElementById('news-title').textContent = news.title;
+            document.getElementById('news-date').textContent = news.date;
+            // 优先使用URL传递的图片，否则使用默认数据中的图片
+            document.getElementById('news-image').src = imageUrl || news.image;
+
+            // 加载标签
+            const tagsContainer = document.getElementById('news-tags');
+            tagsContainer.innerHTML = news.tags.map(tag => 
+                `<div class="news-detail-tag ${tag.highlight ? 'highlight' : ''}" onclick="window.location.href='news-tag.html?tag=${encodeURIComponent(tag.name)}'">
+                    <span>${tag.name}</span>
+                    <div class="news-detail-tag-dot ${tag.highlight ? 'highlight' : 'default'}"></div>
+                </div>`
+            ).join('');
+        }
+
+        // 分享功能
+        function shareToTwitter() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent(document.getElementById('news-title').textContent);
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+        }
+
+        function shareToLinkedIn() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+        }
+
+        function shareToFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link copied to clipboard!');
+            });
+        }
+
+        // 锚点滚动功能
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                const offsetTop = element.offsetTop - 150;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // 更新目录激活状态
+        function updateTocActiveState() {
+            const sections = ['section1', 'section2', 'section3', 'section4', 'section5', 'section6'];
+            const tocItems = document.querySelectorAll('.toc-item');
+            
+            let currentSection = '';
+            const scrollPos = window.scrollY + 200;
+            
+            sections.forEach((sectionId, index) => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    const sectionTop = section.offsetTop;
+                    const sectionBottom = sectionTop + section.offsetHeight;
+                    
+                    if (scrollPos >= sectionTop && scrollPos < sectionBottom) {
+                        currentSection = index;
+                    }
+                }
+            });
+            
+            tocItems.forEach((item, index) => {
+                if (index === currentSection) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // 监听滚动事件
+        window.addEventListener('scroll', updateTocActiveState);
+
+        // 页面加载时执行
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNewsDetail();
+            updateTocActiveState();
+        });
+    </script>
+</body>
+</html>

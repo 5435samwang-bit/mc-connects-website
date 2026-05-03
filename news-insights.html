@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News & Insights - MC Connects</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #0E0F10;
+            font-family: 'Onest', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* 滚动动画 - 各模块title由下向上缓入 */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 滚动动画 - 各模块内容区域由下向上缓入 */
+        .scroll-animate-content {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s,
+                        transform 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+        }
+
+        .scroll-animate-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 页面容器 */
+        .page-container {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Banner 区域样式 - 基于 Data Provider 页面 */
+        .banner-section {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+            margin-top: 80px;
+        }
+
+        .banner-bg {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1920px;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .banner-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding-left: 120px;
+            gap: 64px;
+        }
+
+        .banner-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .banner-title-row {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .banner-accent-line {
+            width: 6px;
+            height: 60px;
+            background-color: #FFFFFF;
+            flex-shrink: 0;
+        }
+
+        .banner-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            color: #FFFFFF;
+            line-height: 60px;
+            white-space: nowrap;
+        }
+
+        .banner-cta-wrapper {
+            padding-left: 30px;
+        }
+
+        .banner-cta-button {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px;
+            background: linear-gradient(90deg, #0096ff, #00d4ff);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .banner-cta-button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .banner-cta-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #FFFFFF;
+            text-transform: capitalize;
+            white-space: nowrap;
+        }
+
+        .banner-cta-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .banner-cta-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 新闻卡片网格区域 */
+        .news-section {
+            width: 100%;
+            padding: 120px 120px 0 120px;
+            background: #0E0F10;
+            display: flex;
+            justify-content: center;
+        }
+
+        .news-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 48px 24px;
+            justify-content: flex-start;
+            max-width: 1200px;
+        }
+
+        .news-card {
+            width: 282px;
+            height: 317px;
+            background: #1c1d1e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-card:hover {
+            background: #2d2f32;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+            outline: none;
+        }
+
+        .news-card:hover .news-card-title {
+            color: #0096ff;
+            white-space: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            height: 64px;
+        }
+
+        .news-card:hover .news-card-tags {
+            display: flex;
+        }
+
+        .news-card:hover .news-card-image {
+            height: 120px;
+            background: #1c1d1e;
+        }
+
+        .news-card-image {
+            width: 100%;
+            height: 203px;
+            background: rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+            transition: height 0.3s ease;
+        }
+
+        .news-card-image img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        .news-card-content {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .news-card-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            color: #FFFFFF;
+            line-height: 32px;
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            transition: color 0.3s ease;
+        }
+
+        .news-card-tags {
+            display: none;
+            flex-wrap: nowrap;
+            gap: 8px;
+            overflow: visible;
+            position: relative;
+            margin-left: -16px;
+            margin-right: -16px;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .news-card-tags-inner {
+            display: flex;
+            gap: 8px;
+            animation: scrollTags 8s linear infinite;
+        }
+
+        .news-card:hover .news-card-tags-inner {
+            animation-play-state: running;
+        }
+
+        @keyframes scrollTags {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .news-card-tag {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #999;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .news-card-divider {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .news-card-date {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #999;
+            text-transform: capitalize;
+        }
+
+        .news-card-date-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* 分页 */
+        .pagination-section {
+            width: 100%;
+            background: #0E0F10;
+            padding-top: 48px;
+            padding-bottom: 48px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pagination-arrow {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-arrow:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .pagination-arrow svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .pagination-info {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ==================== Contact Us (from index.html) ==================== */
+        .module5-section {
+            position: relative;
+            width: 100%;
+            padding: 60px 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            background-color: #0E0F10;
+            min-height: 806px;
+        }
+
+        /* 背景 */
+        .module5-bg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .module5-bg-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 容器 */
+        .module5-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1440px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            align-items: center;
+        }
+
+        /* 标题区域 */
+        .module5-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            position: relative;
+        }
+
+        .module5-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .module5-title-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            line-height: normal;
+            background: linear-gradient(90deg, #0096ff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .module5-title-icon {
+            width: 136px;
+            height: 31px;
+            position: relative;
+        }
+
+        .module5-title-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .module5-subtitle {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* 内容区域 */
+        .module5-content {
+            display: flex;
+            gap: 48px;
+            align-items: flex-start;
+            width: 100%;
+            position: relative;
+        }
+
+        /* 左侧联系信息 */
+        .module5-contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            flex: 1;
+            min-width: 0;
+            padding-top: 72px;
+        }
+
+        .module5-contact-item {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .module5-icon-container {
+            flex-shrink: 0;
+        }
+
+        .module5-icon {
+            width: 68px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .module5-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .module5-contact-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .module5-contact-label {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 36px;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .module5-contact-value {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+        }
+
+        /* 右侧表单 */
+        .module5-form {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            width: 690px;
+            flex-shrink: 0;
+        }
+
+        .module5-form-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 36px;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .module5-form-row {
+            display: flex;
+            gap: 24px;
+            width: 100%;
+        }
+
+        .module5-form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .module5-form-field-full {
+            width: 100%;
+        }
+
+        .module5-field-label {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: normal;
+            color: #ffffff;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .module5-input {
+            position: relative;
+            width: 100%;
+        }
+
+        .module5-input-field {
+            width: 100%;
+            height: 48px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: normal;
+            color: #ffffff;
+            outline: none;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .module5-input-field:hover,
+        .module5-input-field:focus {
+            border-color: #0096ff;
+        }
+
+        .module5-input-field::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module5-textarea-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .module5-textarea {
+            width: 100%;
+            height: 98px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: normal;
+            color: #ffffff;
+            outline: none;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .module5-textarea:hover,
+        .module5-textarea:focus {
+            border-color: #0096ff;
+        }
+
+        .module5-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module5-textarea-footer {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .module5-char-count {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 26px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module5-submit-btn {
+            width: 200px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid #58baff;
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            align-self: center;
+            margin-top: 10px;
+            padding: 12px 16px;
+        }
+
+        .module5-submit-btn span {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: normal;
+            color: #0096ff;
+            text-transform: capitalize;
+        }
+
+        .module5-submit-btn svg {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .module5-submit-btn:hover {
+            background: rgba(0, 150, 255, 0.1);
+            border-color: #0096ff;
+        }
+
+        .module5-submit-btn:hover svg {
+            transform: translateX(4px);
+        }
+
+        .module5-submit-btn:active {
+            background: rgba(0, 150, 255, 0.2);
+            transform: scale(0.98);
+        }
+
+        /* Footer 样式 */
+        .footer {
+            width: 100%;
+            background: #0E0F10;
+            padding: 60px 120px 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .footer-logo {
+            width: 200px;
+        }
+
+        .footer-logo img {
+            width: 100%;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 60px;
+        }
+
+        .footer-link-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .footer-link-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-link-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-link-list li {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link-list li:hover {
+            color: #FFFFFF;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom-left {
+            font-family: 'Onest', 'Noto Sans JP', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .footer-bottom-right {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .banner-title {
+                font-size: 40px;
+            }
+
+            .news-section {
+                padding: 80px 60px 0 60px;
+            }
+
+            .module5-section {
+                padding: 60px;
+                min-height: auto;
+            }
+
+            .module5-content {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .module5-contact-info {
+                padding-top: 0;
+                width: 100%;
+            }
+
+            .module5-form {
+                width: 100%;
+            }
+
+            .news-grid {
+                gap: 20px;
+            }
+
+            .footer {
+                padding: 40px 60px 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .banner-section {
+                height: 500px;
+            }
+
+            .banner-bg {
+                width: 100%;
+                height: 100%;
+            }
+
+            .banner-title {
+                font-size: 32px;
+                line-height: 40px;
+            }
+
+            .news-section {
+                padding: 60px 20px 0 20px;
+            }
+
+            .module5-section {
+                padding: 40px 20px;
+            }
+
+            .module5-title-text {
+                font-size: 32px;
+            }
+
+            .module5-form-row {
+                flex-direction: column;
+            }
+
+            .news-grid {
+                gap: 16px;
+            }
+
+            .news-card {
+                width: calc(50% - 8px);
+            }
+
+            .contact-form-row {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .footer {
+                padding: 40px 20px 20px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar 占位符 - 由 navbar.js 动态生成 -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- Banner Section -->
+    <section class="banner-section">
+        <!-- 背景图片 -->
+        <div class="banner-bg">
+            <img src="情报/head/情报/image.png" alt="News & Insights Background">
+        </div>
+
+        <!-- 内容区域 -->
+        <div class="banner-content">
+            <div class="banner-title-wrapper">
+                <!-- 标题行 -->
+                <div class="banner-title-row">
+                    <div class="banner-accent-line"></div>
+                    <h1 class="banner-title">News & Insights</h1>
+                </div>
+            </div>
+
+            <!-- CTA 按钮 -->
+            <div class="banner-cta-wrapper">
+                <button class="banner-cta-button" onclick="scrollToNews()">
+                    <span class="banner-cta-text">learn more</span>
+                    <div class="banner-cta-icon">
+                        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Grid Section -->
+    <section class="news-section" id="news-section">
+        <div class="news-grid">
+            <!-- News Card 1 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">Magic Compass Group Sponsors the Hong Kong 2024 World Taekwondo Poomsae Championships</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Sponsorship</span>
+                        <span class="news-card-tag">Sports</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>25 June / 2024</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 2 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">MC Markets Hosts F1 Singapore Grand Prix Viewing Event for Clients and Partners in Singapore Office</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Formula1</span>
+                        <span class="news-card-tag">Singapore Grand Prix</span>
+                        <span class="news-card-tag">Connection</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>25 June / 2024</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 3 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">Celebrating the Grand Opening of MC Markets' Singapore Office</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Expansion</span>
+                        <span class="news-card-tag">Office Opening</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>25 June / 2024</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 4 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">Taekwondo Poomsae Championships</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Sports</span>
+                        <span class="news-card-tag">Championship</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>25 June / 2024</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 5 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1535320903710-d993d3d77d29?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">Sponsors the Hong Kong 2024 World Taekwondo Poomsae Championships</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Sponsorship</span>
+                        <span class="news-card-tag">Hong Kong</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>25 June / 2024</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 6 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">2024 World Taekwondo Poomsae Championships</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Taekwondo</span>
+                        <span class="news-card-tag">World Championship</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>25 June / 2024</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 7 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">Poomsae Championships</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Martial Arts</span>
+                        <span class="news-card-tag">Competition</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>25 June / 2024</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 8 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">MC Connects Trading Platform 2.0 Officially Launched</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Platform</span>
+                        <span class="news-card-tag">Technology</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>25 June / 2024</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 9 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">Q3 Global Financial Market Analysis Report Released</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Market Analysis</span>
+                        <span class="news-card-tag">Research</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>25 June / 2024</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 10 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">Strategic Partnership with Leading Quantitative Trading Firm</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Success Story</span>
+                        <span class="news-card-tag">Quantitative</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>10 December / 2023</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 11 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">New Cross-Border Payment Solution for Enterprise Clients</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Payments</span>
+                        <span class="news-card-tag">Global</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>05 December / 2023</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 12 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">AI-Powered Trading Assistant Now Available in Beta</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">AI</span>
+                        <span class="news-card-tag">Trading</span>
+                        <span class="news-card-tag">Beta</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>01 December / 2023</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 13 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">MC Connects to Showcase at Singapore Fintech Festival 2024</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Conference</span>
+                        <span class="news-card-tag">Fintech</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>25 November / 2023</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 14 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1605792657660-596af9009e82?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">Enhanced Security Infrastructure for Institutional Clients</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Security</span>
+                        <span class="news-card-tag">Infrastructure</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>20 November / 2023</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 15 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">Deep Liquidity Partnership with Tier-1 Banks Announced</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Liquidity</span>
+                        <span class="news-card-tag">Partnership</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>15 November / 2023</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 16 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">Mobile Trading App Reaches 1 Million Downloads Milestone</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Mobile</span>
+                        <span class="news-card-tag">App</span>
+                        <span class="news-card-tag">iOS</span>
+                        <span class="news-card-tag">Android</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>10 November / 2023</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 17 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">ESG Investment Framework Now Available for Asset Managers</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">ESG</span>
+                        <span class="news-card-tag">Sustainable</span>
+                        <span class="news-card-tag">Investing</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>05 November / 2023</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 18 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">FIX Protocol 5.0 Support Added for Institutional Connectivity</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">FIX</span>
+                        <span class="news-card-tag">Protocol</span>
+                        <span class="news-card-tag">Institutional</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>01 November / 2023</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 19 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">24/7 FX Trading Services Expanded to 50+ Currency Pairs</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Cross-Border</span>
+                        <span class="news-card-tag">FX</span>
+                        <span class="news-card-tag">Payments</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>25 October / 2023</span>
+                    </div>
+                </div>
+            </div>
+            <!-- News Card 20 -->
+            <div class="news-card">
+                <div class="news-card-image">
+                    <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop" alt="News">
+                </div>
+                <div class="news-card-content">
+                    <div class="news-card-title">Private Wealth Management Platform Enters Beta Testing</div>
+                    <div class="news-card-tags"><div class="news-card-tags-inner">
+                        <span class="news-card-tag">Wealth</span>
+                        <span class="news-card-tag">Management</span>
+                        <span class="news-card-tag">Beta</span>
+                    </div></div>
+                    <div class="news-card-divider"></div>
+                    <div class="news-card-date">
+                        <svg class="news-card-date-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#999" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>20 October / 2023</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pagination -->
+    <div class="pagination-section">
+        <div class="pagination">
+            <div class="pagination-arrow" onclick="prevPage()">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="pagination-info">2/352</div>
+            <div class="pagination-arrow" onclick="nextPage()">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18L15 12L9 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== Contact Us (from index.html) ==================== -->
+    <section class="module5-section" id="contact">
+        <!-- 背景 -->
+        <div class="module5-bg scroll-animate-bg">
+            <img src="web-home/模块5/BG2.png" alt="Background" class="module5-bg-img">
+        </div>
+
+        <div class="module5-container scroll-animate-content">
+            <!-- 标题区域 -->
+            <div class="module5-title scroll-animate">
+                <div class="module5-title-wrapper">
+                    <h2 class="module5-title-text">Contact Us</h2>
+                    <div class="module5-title-icon">
+                        <img src="web-home/模块5/Vector 524 (Stroke).svg" alt="Link">
+                    </div>
+                </div>
+                <p class="module5-subtitle" data-i18n="module5_subtitle">If you would like to set up your own business and learn more about what each solution offers, please feel free to contact us!</p>
+            </div>
+            
+            <!-- 内容区域 -->
+            <div class="module5-content">
+                <!-- 左侧联系信息 -->
+                <div class="module5-contact-info">
+                    <!-- 地址 -->
+                    <div class="module5-contact-item">
+                        <div class="module5-icon-container">
+                            <div class="module5-icon">
+                                <img src="web-home/模块5/Icon Container1.svg" alt="Location">
+                            </div>
+                        </div>
+                        <div class="module5-contact-text">
+                            <h3 class="module5-contact-label" data-i18n="module5_address_label">Address</h3>
+                            <p class="module5-contact-value" data-i18n="module5_address_value">Room 905, 9/F, Central Plaza, 18 Harbour Road, Wanchai, Hong Kong.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 电话 -->
+                    <div class="module5-contact-item">
+                        <div class="module5-icon-container">
+                            <div class="module5-icon">
+                                <img src="web-home/模块5/Icon Container2.svg" alt="Phone">
+                            </div>
+                        </div>
+                        <div class="module5-contact-text">
+                            <h3 class="module5-contact-label" data-i18n="module5_phone_label">Phone Number</h3>
+                            <p class="module5-contact-value">+852 3575-8870</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 邮箱 -->
+                    <div class="module5-contact-item">
+                        <div class="module5-icon-container">
+                            <div class="module5-icon">
+                                <img src="web-home/模块5/Icon Container3.svg" alt="Email">
+                            </div>
+                        </div>
+                        <div class="module5-contact-text">
+                            <h3 class="module5-contact-label" data-i18n="module5_email_label">Email</h3>
+                            <p class="module5-contact-value">mcpayment@mcgrp.com</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧表单 -->
+                <div class="module5-form">
+                    <h3 class="module5-form-title" data-i18n="module5_form_title">Please fill in the contact form</h3>
+                    
+                    <div class="module5-form-row">
+                        <div class="module5-form-field">
+                            <label class="module5-field-label" data-i18n="module5_username_label">*Username</label>
+                            <div class="module5-input">
+                                <input type="text" data-i18n-placeholder="module5_username_placeholder" placeholder="Please enter your name" class="module5-input-field">
+                            </div>
+                        </div>
+                        <div class="module5-form-field">
+                            <label class="module5-field-label" data-i18n-placeholder="module5_email_label2">*Mailbox</label>
+                            <div class="module5-input">
+                                <input type="email" data-i18n-placeholder="module5_email_placeholder" placeholder="Please enter your email" class="module5-input-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module5-form-row">
+                        <div class="module5-form-field">
+                            <label class="module5-field-label" data-i18n="module5_phone_label2">*Phone number</label>
+                            <div class="module5-input">
+                                <input type="tel" data-i18n-placeholder="module5_phone_placeholder" placeholder="Please enter your phone number" class="module5-input-field">
+                            </div>
+                        </div>
+                        <div class="module5-form-field">
+                            <label class="module5-field-label" data-i18n="module5_address_label2">Address</label>
+                            <div class="module5-input">
+                                <input type="text" data-i18n-placeholder="module5_address_placeholder" placeholder="Please enter your address" class="module5-input-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module5-form-field module5-form-field-full">
+                        <label class="module5-field-label" data-i18n="module5_inquiry_label">*Inquiry content</label>
+                        <div class="module5-textarea-wrapper">
+                            <textarea class="module5-textarea" data-i18n-placeholder="module5_inquiry_placeholder" placeholder="Please enter your inquiry content"></textarea>
+                            <div class="module5-textarea-footer">
+                                <span class="module5-char-count">0 / 100</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="module5-submit-btn">
+                        <span data-i18n="module5_submit">submit</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.0254 4.94141L17.0837 9.99974L12.0254 15.0581" stroke="#0096ff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2.91602 10H16.941" stroke="#0096ff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="./web-home/head/logo/logo.svg" alt="MC Connects">
+            </div>
+            <div class="footer-links">
+                <div class="footer-link-group">
+                    <h4 class="footer-link-title">Services</h4>
+                    <ul class="footer-link-list">
+                        <li>Trading System</li>
+                        <li>CRM</li>
+                        <li>Payment Solutions</li>
+                        <li>Risk Control</li>
+                        <li>Asset Management</li>
+                    </ul>
+                </div>
+                <div class="footer-link-group">
+                    <h4 class="footer-link-title">Solutions</h4>
+                    <ul class="footer-link-list">
+                        <li>Market Maker Turnkey</li>
+                        <li>Brokerage</li>
+                        <li>Exchanges</li>
+                        <li>Financial Institutions</li>
+                        <li>Hedge Funds</li>
+                        <li>Quant Teams</li>
+                    </ul>
+                </div>
+                <div class="footer-link-group">
+                    <h4 class="footer-link-title">Liquidity</h4>
+                    <ul class="footer-link-list">
+                        <li>MC LP</li>
+                        <li>MC Data</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-left">Guide | API | Privacy Policy | Terms of Service | Disclaimer</div>
+            <div class="footer-bottom-right">MC Connects @ 2024 Cookie Preferences</div>
+        </div>
+    </footer>
+
+    <!-- 统一 Navbar 和 Footer 组件 -->
+    <script src="./components/navbar.js?v=19"></script>
+    <script src="./components/navbar-footer.js?v=49"></script>
+
+    <!-- 页面脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 滚动动画观察器
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            // 观察所有需要动画的元素
+            document.querySelectorAll('.scroll-animate, .scroll-animate-content').forEach(el => {
+                observer.observe(el);
+            });
+
+            // 为所有 news-card 添加点击事件
+            document.querySelectorAll('.news-card').forEach((card, index) => {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', function() {
+                    const imgSrc = card.querySelector('.news-card-image img').src;
+                    window.location.href = `news-detail.html?id=${index + 1}&image=${encodeURIComponent(imgSrc)}`;
+                });
+            });
+        });
+
+        // 滚动到新闻区域
+        function scrollToNews() {
+            const newsSection = document.getElementById('news-section');
+            if (newsSection) {
+                newsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // 分页功能
+        function prevPage() {
+            console.log('Previous page');
+        }
+
+        function nextPage() {
+            console.log('Next page');
+        }
+    </script>
+</body>
+</html>

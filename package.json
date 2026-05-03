@@ -1,0 +1,12 @@
+{
+  "name": "mc-connects-website",
+  "version": "1.0.0",
+  "description": "MC Connects 官方网站",
+  "scripts": {
+    "deploy": "npx vercel --prod",
+    "deploy:preview": "npx vercel"
+  },
+  "devDependencies": {
+    "vercel": "^37.0.0"
+  }
+}

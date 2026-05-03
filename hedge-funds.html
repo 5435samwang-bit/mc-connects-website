@@ -1,0 +1,2265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hedge Funds Turnkey - MC Connects</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #0E0F10;
+            font-family: 'Onest', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* 滚动动画 - 各模块title由下向上缓入 */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 滚动动画 - 各模块内容区域由下向上缓入 */
+        .scroll-animate-content {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s,
+                        transform 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+        }
+
+        .scroll-animate-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 滚动动画 - 各模块背景图片透明度渐变 */
+        .scroll-animate-bg {
+            opacity: 0;
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scroll-animate-bg.visible {
+            opacity: 1;
+        }
+
+        /* Banner 区域样式 */
+        .banner-section {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+            margin-top: 80px;
+        }
+
+        .banner-bg {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1920px;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .banner-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 2;
+            width: 700px;
+            margin: 0;
+            padding: 100px 0 0 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 64px;
+        }
+
+        .banner-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .banner-subtitle {
+            font-family: 'Onest', 'Noto Sans JP', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            color: #FFFFFF;
+            line-height: 32px;
+        }
+
+        .banner-title-row {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .banner-accent-line {
+            width: 6px;
+            height: 60px;
+            background-color: #FFFFFF;
+            flex-shrink: 0;
+        }
+
+        .banner-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            color: #FFFFFF;
+            line-height: 60px;
+            white-space: nowrap;
+        }
+
+        .banner-description {
+            padding-left: 30px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 32px;
+        }
+
+        .banner-cta-wrapper {
+            padding-left: 30px;
+        }
+
+        .banner-cta-button {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px;
+            background: linear-gradient(to right, #0096FF, #00D4FF);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .banner-cta-button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .banner-cta-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #FFFFFF;
+            text-transform: capitalize;
+        }
+
+        .banner-cta-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .banner-cta-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 模块1 - Business Components */
+        .module1-section {
+            position: relative;
+            width: 100%;
+            padding: 120px 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #0B0D0D;
+        }
+
+        .module1-content {
+            width: 1440px;
+            padding: 0 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .module1-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .module1-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .module1-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            background: linear-gradient(to right, #0096FF, #00D4FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .module1-link-icon {
+            width: 136px;
+            height: 31px;
+        }
+
+        .module1-description {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 28px;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        /* Video 区域 */
+        .module1-video-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            margin-top: 40px;
+        }
+
+        .module1-video {
+            position: absolute;
+            left: 50%;
+            top: 4px;
+            transform: translateX(-50%);
+            width: 1440px;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        /* 径向渐变蒙版 - 中心100%透明度，边缘0%透明度 */
+        .module1-video::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse 50% 40% at center,
+                rgba(11, 13, 13, 0) 0%,
+                rgba(11, 13, 13, 0) 10%,
+                rgba(11, 13, 13, 0.2) 35%,
+                rgba(11, 13, 13, 0.6) 65%,
+                rgba(11, 13, 13, 0.9) 90%,
+                rgba(11, 13, 13, 1) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .module1-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.05);
+        }
+
+        /* 中央标签 */
+        .module1-center-tag {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            z-index: 5;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .module1-tag-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            background: linear-gradient(to right, #0096FF, #AE67FF);
+            border-radius: 24px;
+        }
+
+        .module1-tag-icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        .module1-tag-divider {
+            width: 1px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .module1-tag-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            color: #FFFFFF;
+            text-transform: capitalize;
+        }
+
+        /* 浮动标签 */
+        .module1-float-tag {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .module1-float-tag-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module1-float-tag-bg {
+            width: 240px;
+            height: 75px;
+        }
+
+        .module1-float-tag-text {
+            position: absolute;
+            left: 50%;
+            top: calc(50% - 15.5px);
+            transform: translateX(-50%);
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #FFFFFF;
+            text-align: center;
+            text-transform: capitalize;
+            width: 240px;
+        }
+
+        /* 浮动标签位置 - 根据设计稿精确定位 */
+        .float-tag-1 { left: calc(50% - 239px); top: 63px; transform: translateX(-50%); }
+        .float-tag-2 { left: calc(50% + 405px); top: 163px; transform: translateX(-50%); }
+        .float-tag-3 { left: calc(50% + 464px); top: 292px; transform: translateX(-50%); }
+        .float-tag-3 .module1-float-tag-text { top: calc(50% - 23.5px); }
+        .float-tag-4 { left: calc(50% + 306px); top: 415px; transform: translateX(-50%); }
+        .float-tag-5 { left: calc(50% + 212px); top: 63px; transform: translateX(-50%); }
+        .float-tag-5 .module1-float-tag-text { top: calc(50% - 15.5px); }
+        .float-tag-6 { left: calc(50% - 404px); top: 163px; transform: translateX(-50%); }
+        .float-tag-6 .module1-float-tag-text { top: calc(50% - 23.5px); }
+        .float-tag-7 { left: calc(50% - 461px); top: 292px; transform: translateX(-50%); }
+        .float-tag-7 .module1-float-tag-text { top: calc(50% - 15.5px); }
+        .float-tag-8 { left: calc(50% - 344px); top: 415px; transform: translateX(-50%); }
+        .float-tag-8 .module1-float-tag-text { top: calc(50% - 23.5px); }
+
+        /* 统计数据区域 */
+        .module1-stats {
+            width: 1440px;
+            padding: 0 120px;
+            margin-top: 60px;
+            display: flex;
+            gap: 24px;
+        }
+
+        .module1-stat-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 12px;
+            gap: 12px;
+            background: linear-gradient(180deg, #18191B 0%, rgba(24, 25, 27, 0) 100%);
+            backdrop-filter: blur(50px);
+            border-radius: 24px;
+            position: relative;
+        }
+
+        .module1-stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .module1-stat-card:hover .module1-stat-number,
+        .module1-stat-card--highlight .module1-stat-number {
+            color: #0096FF;
+        }
+
+        .module1-stat-card:hover .module1-stat-label,
+        .module1-stat-card--highlight .module1-stat-label {
+            color: #0096FF;
+        }
+
+        .module1-stat-number {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            color: #FFFFFF;
+            line-height: normal;
+            white-space: nowrap;
+            transition: color 0.3s ease;
+        }
+
+        .module1-stat-label {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 28px;
+            text-align: center;
+            min-width: 100%;
+            transition: color 0.3s ease;
+        }
+
+        /* 模块2 - Market Maker Technology Module */
+        .module2-section {
+            position: relative;
+            width: 100%;
+            padding: 60px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #1c1d1e;
+            overflow: hidden;
+        }
+
+        .module2-bg {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1440px;
+            height: 627px;
+            z-index: 0;
+        }
+
+        .module2-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .module2-content {
+            position: relative;
+            z-index: 1;
+            width: 1440px;
+            padding: 0 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .module2-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .module2-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .module2-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            background: linear-gradient(to right, #0096FF, #00D4FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        .module2-link-icon {
+            width: 136px;
+            height: 31px;
+        }
+
+        .module2-description {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 28px;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        /* 模块2 - 功能标签区域 */
+        .module2-diagram {
+            position: relative;
+            width: 1200px;
+            height: 400px;
+        }
+
+        .module2-vector {
+            position: absolute;
+            left: 181.5px;
+            top: 59.83px;
+            width: 834px;
+            height: 279.834px;
+        }
+
+        .module2-vector img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .module2-tag {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            height: 80px;
+            backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.2);
+            border: 0.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+        }
+
+        .module2-tag-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #FFFFFF;
+            text-align: center;
+            text-transform: capitalize;
+            width: 100%;
+        }
+
+        /* 标签位置 - 根据设计稿 */
+        .module2-tag-risk {
+            left: 475px;
+            top: 24px;
+            width: 250px;
+        }
+
+        .module2-tag-liquidity {
+            left: 60px;
+            top: 90px;
+            width: 250px;
+        }
+
+        .module2-tag-data {
+            left: 60px;
+            top: 230px;
+            width: 250px;
+        }
+
+        .module2-tag-currency {
+            left: 890px;
+            top: 90px;
+            width: 250px;
+        }
+
+        .module2-tag-business {
+            left: 475px;
+            top: 296px;
+            width: 250px;
+        }
+
+        .module2-tag-trading {
+            left: 890px;
+            top: 230px;
+            width: 250px;
+        }
+
+        .module2-highlight-card {
+            position: absolute;
+            left: 475px;
+            top: 160px;
+            width: 250px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            background: linear-gradient(to right, #0096ff, #ae67ff);
+            border-radius: 24px;
+        }
+
+        .module2-highlight-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            color: #FFFFFF;
+            text-align: center;
+            text-transform: capitalize;
+            white-space: nowrap;
+        }
+
+        /* 模块3 - Turnkey Package Technology Advantages */
+        .module3-section {
+            position: relative;
+            width: 100%;
+            padding: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+            overflow: hidden;
+        }
+
+        .module3-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+        }
+
+        .module3-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 星空 Canvas 背景 */
+        .module3-starfield {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .module3-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .module3-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .module3-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .module3-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            background: linear-gradient(to right, #0096FF, #00D4FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        .module3-link-icon {
+            width: 136px;
+            height: 31px;
+        }
+
+        .module3-description {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 28px;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        /* 模块3 - Cards */
+        .module3-cards-row {
+            display: flex;
+            gap: 60px;
+            width: 100%;
+        }
+
+        .module3-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 40px 36px;
+            gap: 24px;
+            height: 350px;
+            background: linear-gradient(180deg, #121212 0%, #121212 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: transform 0.1s ease-out;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        /* 悬停状态 */
+        .module3-card:hover {
+            background: linear-gradient(180deg, #222 0%, #111 100%);
+        }
+
+        /* 3D Tilt 效果 */
+        .module3-card.tilting {
+            transition: transform 0.1s ease-out;
+        }
+
+        .module3-card-header {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .module3-card-number {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: capitalize;
+        }
+
+        .module3-card-line {
+            width: 100px;
+            height: 0;
+            position: relative;
+        }
+
+        .module3-card-line::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .module3-card-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 36px;
+            color: #FFFFFF;
+            text-transform: capitalize;
+            width: 100%;
+        }
+
+        .module3-card-description {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 28px;
+            width: 100%;
+        }
+
+        /* 模块4 - FAQ */
+        .module4-section {
+            position: relative;
+            width: 100%;
+            padding: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+            overflow: hidden;
+        }
+
+        .module4-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background: #0B0D0D;
+            overflow: hidden;
+        }
+
+        .module4-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Dotted Surface Canvas */
+        .module4-dotted-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, transparent 50%, black 80%);
+            mask-image: linear-gradient(to bottom, transparent 0%, transparent 50%, black 80%);
+        }
+
+        .module4-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .module4-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .module4-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .module4-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            background: linear-gradient(to right, #0096FF, #00D4FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        .module4-link-icon {
+            width: 136px;
+            height: 31px;
+        }
+
+        .module4-description {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 28px;
+            text-align: center;
+        }
+
+        /* FAQ Accordion - avanishverma4/accordion-2 style */
+        .module4-accordion {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        .faq-item {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px 28px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .faq-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .faq-item.expanded {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .faq-question-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .faq-question-header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .faq-question {
+            font-family: 'Onest', sans-serif;
+            font-weight: 500;
+            font-size: 18px;
+            color: #FFFFFF;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .faq-item.expanded .faq-question {
+            color: #0096FF;
+        }
+
+        .faq-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .faq-icon img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .faq-answer {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+            width: 100%;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+            padding-top: 0;
+        }
+
+        .faq-item.expanded .faq-answer {
+            max-height: 200px;
+            opacity: 1;
+            padding-top: 16px;
+        }
+
+        /* 模块5 - Contact Us */
+        .module5-section {
+            position: relative;
+            width: 100%;
+            padding: 60px 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            background-color: #0E0F10;
+            min-height: 806px;
+        }
+
+        /* 背景 */
+        .module5-bg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .module5-bg-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 容器 */
+        .module5-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1440px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            align-items: center;
+        }
+
+        /* 标题区域 */
+        .module5-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            position: relative;
+        }
+
+        .module5-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .module5-title-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            line-height: normal;
+            background: linear-gradient(90deg, #0096ff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .module5-title-icon {
+            width: 136px;
+            height: 31px;
+            position: relative;
+        }
+
+        .module5-title-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .module5-subtitle {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* 内容区域 */
+        .module5-content {
+            display: flex;
+            gap: 48px;
+            align-items: flex-start;
+            width: 100%;
+            position: relative;
+        }
+
+        /* 左侧联系信息 */
+        .module5-contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            flex: 1;
+            min-width: 0;
+            padding-top: 72px;
+        }
+
+        .module5-contact-item {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .module5-icon-container {
+            flex-shrink: 0;
+        }
+
+        .module5-icon {
+            width: 68px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .module5-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .module5-contact-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .module5-contact-label {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 36px;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .module5-contact-value {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+        }
+
+        /* 右侧表单 */
+        .module5-form {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            width: 690px;
+            flex-shrink: 0;
+        }
+
+        .module5-form-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 36px;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .module5-form-row {
+            display: flex;
+            gap: 24px;
+            width: 100%;
+        }
+
+        .module5-form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .module5-form-field-full {
+            width: 100%;
+        }
+
+        .module5-field-label {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: normal;
+            color: #ffffff;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .module5-input {
+            position: relative;
+            width: 100%;
+        }
+
+        .module5-input-field {
+            width: 100%;
+            height: 48px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: normal;
+            color: #ffffff;
+            outline: none;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .module5-input-field:hover,
+        .module5-input-field:focus {
+            border-color: #0096ff;
+        }
+
+        .module5-input-field::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module5-textarea-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .module5-textarea {
+            width: 100%;
+            height: 98px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: normal;
+            color: #ffffff;
+            outline: none;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .module5-textarea:hover,
+        .module5-textarea:focus {
+            border-color: #0096ff;
+        }
+
+        .module5-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module5-textarea-footer {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .module5-char-count {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 26px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module5-submit-btn {
+            width: 200px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid #58baff;
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            align-self: center;
+            margin-top: 10px;
+            padding: 12px 16px;
+        }
+
+        .module5-submit-btn span {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: normal;
+            color: #0096ff;
+            text-transform: capitalize;
+        }
+
+        .module5-submit-btn svg {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .module5-submit-btn:hover {
+            background: rgba(0, 150, 255, 0.1);
+            border-color: #0096ff;
+        }
+
+        .module5-submit-btn:hover svg {
+            transform: translateX(4px);
+        }
+
+        .module5-submit-btn:active {
+            background: rgba(0, 150, 255, 0.2);
+            transform: scale(0.98);
+        }
+
+        /* Footer 样式 */
+        .footer {
+            width: 100%;
+            background: #0E0F10;
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 60px 120px 0;
+            box-sizing: border-box;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 60px;
+        }
+
+        .footer-logo {
+            width: 200px;
+        }
+
+        .footer-logo img {
+            width: 100%;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 60px;
+        }
+
+        .footer-link-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .footer-link-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #FFFFFF;
+        }
+
+        .footer-link-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-link-list li {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link-list li:hover {
+            color: #FFFFFF;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-bottom-left {
+            font-family: 'Onest', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-bottom-right {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar 占位符 - 由 navbar-footer.js 动态生成 -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- Banner 区域 -->
+    <section class="banner-section">
+        <div class="banner-bg">
+            <img src="turnkey解决方案/Hedge Funds/head/hedge funds.png" alt="Hedge Funds Banner">
+        </div>
+        <div class="banner-content">
+            <div class="banner-title-wrapper">
+                <p class="banner-subtitle">「 Turnkey Solutions 」</p>
+                <div class="banner-title-row">
+                    <div class="banner-accent-line"></div>
+                    <h1 class="banner-title">Hedge Funds Turnkey</h1>
+                </div>
+                <p class="banner-description">
+                    A solution designed specifically for hedge funds<br>
+                    Covers all the core functions and services required to set up and operate a hedge fund enabling clients to quickly launch and manage their hedge funds.
+                </p>
+            </div>
+            <div class="banner-cta-wrapper">
+                <div class="banner-cta-button" onclick="scrollToModule1()">
+                    <span class="banner-cta-text">learn more</span>
+                    <div class="banner-cta-icon">
+                        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块1 - Business Components -->
+    <section class="module1-section" id="module1">
+        <div class="module1-content">
+            <div class="module1-header scroll-animate-content">
+                <div class="module1-title-wrapper scroll-animate">
+                    <h2 class="module1-title">Business Components</h2>
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/link.svg" alt="Link" class="module1-link-icon">
+                </div>
+                <p class="module1-description scroll-animate">
+                    Helps hedge funds develop and optimise quantitative trading strategies, provide real-time market data and analytical tools to effectively manage risk and maximise returns. Provides hedge funds with all the core functionality and services they need to quickly launch and manage their hedge funds.
+                </p>
+            </div>
+        </div>
+        <div class="module1-video-container">
+            <div class="module1-video">
+                <video autoplay muted playsinline>
+                    <source src="turnkey解决方案/Market Maker Turnkey/模块1/video.mp4?v=3" type="video/mp4">
+                </video>
+            </div>
+            
+            <!-- 中央标签 -->
+            <div class="module1-center-tag">
+                <div class="module1-tag-container">
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/presention-chart.svg" alt="Chart" class="module1-tag-icon">
+                    <div class="module1-tag-divider"></div>
+                    <span class="module1-tag-text">Hedge Funds</span>
+                </div>
+            </div>
+
+            <!-- 浮动标签 -->
+            <div class="module1-float-tag float-tag-1">
+                <div class="module1-float-tag-content">
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/tips.svg" alt="Bg" class="module1-float-tag-bg">
+                    <span class="module1-float-tag-text">Fund Setup and Compliance</span>
+                </div>
+            </div>
+            <div class="module1-float-tag float-tag-2">
+                <div class="module1-float-tag-content">
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/tips.svg" alt="Bg" class="module1-float-tag-bg">
+                    <span class="module1-float-tag-text">Reporting and compliance</span>
+                </div>
+            </div>
+            <div class="module1-float-tag float-tag-3">
+                <div class="module1-float-tag-content">
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/tips.svg" alt="Bg" class="module1-float-tag-bg">
+                    <span class="module1-float-tag-text">Client Relationship Management</span>
+                </div>
+            </div>
+            <div class="module1-float-tag float-tag-4">
+                <div class="module1-float-tag-content">
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/tips.svg" alt="Bg" class="module1-float-tag-bg">
+                    <span class="module1-float-tag-text">Marketing</span>
+                </div>
+            </div>
+            <div class="module1-float-tag float-tag-5">
+                <div class="module1-float-tag-content">
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/tips.svg" alt="Bg" class="module1-float-tag-bg">
+                    <span class="module1-float-tag-text">Data and Analytics</span>
+                </div>
+            </div>
+            <div class="module1-float-tag float-tag-6">
+                <div class="module1-float-tag-content">
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/tips.svg" alt="Bg" class="module1-float-tag-bg">
+                    <span class="module1-float-tag-text">Investment Management Platform</span>
+                </div>
+            </div>
+            <div class="module1-float-tag float-tag-7">
+                <div class="module1-float-tag-content">
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/tips.svg" alt="Bg" class="module1-float-tag-bg">
+                    <span class="module1-float-tag-text">Risk Management</span>
+                </div>
+            </div>
+            <div class="module1-float-tag float-tag-8">
+                <div class="module1-float-tag-content">
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/tips.svg" alt="Bg" class="module1-float-tag-bg">
+                    <span class="module1-float-tag-text">Back and middle office services</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统计数据区域 -->
+        <div class="module1-stats">
+            <div class="module1-stat-card">
+                <p class="module1-stat-number">500+</p>
+                <p class="module1-stat-label">Client Count</p>
+            </div>
+            <div class="module1-stat-card">
+                <p class="module1-stat-number">98%</p>
+                <p class="module1-stat-label">Customer Satisfaction</p>
+            </div>
+            <div class="module1-stat-card">
+                <p class="module1-stat-number">99%</p>
+                <p class="module1-stat-label">System Availability</p>
+            </div>
+            <div class="module1-stat-card">
+                <p class="module1-stat-number">50+</p>
+                <p class="module1-stat-label">Coverage Area</p>
+            </div>
+            <div class="module1-stat-card">
+                <p class="module1-stat-number">10000+</p>
+                <p class="module1-stat-label">Transactions Processed/ Second</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块2 - Hedge Funds Technology Module -->
+    <section class="module2-section">
+        <div class="module2-bg">
+            <img src="turnkey解决方案/Market Maker Turnkey/模块2/image.png" alt="Background">
+        </div>
+        <div class="module2-content">
+            <div class="module2-header scroll-animate-content">
+                <div class="module2-title-wrapper scroll-animate">
+                    <h2 class="module2-title">Hedge Fund Technology Module</h2>
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/link.svg" alt="Link" class="module2-link-icon">
+                </div>
+                <p class="module2-description scroll-animate">Fully integrated solution for easy start-up, empowering partners to quickly launch and manage their own hedge funds.</p>
+            </div>
+            <div class="module2-diagram">
+                <div class="module2-vector">
+                    <img src="turnkey解决方案/Hedge Funds/模块2/Vector.svg" alt="Connection">
+                </div>
+                <div class="module2-tag module2-tag-risk">
+                    <span class="module2-tag-text">Risk Control</span>
+                </div>
+                <div class="module2-tag module2-tag-liquidity">
+                    <span class="module2-tag-text">Liquidity Provider</span>
+                </div>
+                <div class="module2-tag module2-tag-data">
+                    <span class="module2-tag-text">Data Provider</span>
+                </div>
+                <div class="module2-tag module2-tag-currency">
+                    <span class="module2-tag-text">Asset Management</span>
+                </div>
+                <div class="module2-tag module2-tag-business">
+                    <span class="module2-tag-text">Support for multiple business models</span>
+                </div>
+                <div class="module2-tag module2-tag-trading">
+                    <span class="module2-tag-text">Multi-currency support</span>
+                </div>
+                <div class="module2-highlight-card">
+                    <span class="module2-highlight-text">Trading System</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块3 - Turnkey Package Technology Advantages -->
+    <section class="module3-section">
+        <div class="module3-bg">
+            <canvas class="module3-starfield" id="module3Starfield"></canvas>
+        </div>
+        <div class="module3-content">
+            <div class="module3-header scroll-animate-content">
+                <div class="module3-title-wrapper scroll-animate">
+                    <h2 class="module3-title">Turnkey Package Technology Advantages</h2>
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/link.svg" alt="Link" class="module3-link-icon">
+                </div>
+                <p class="module3-description scroll-animate">Turnkey packages are an excellent choice for getting started. Simplicity of maintenance and assistance as well as cost-effectiveness are just a few of the many advantages.</p>
+            </div>
+            <div class="module3-cards-row">
+                <div class="module3-card scroll-animate">
+                    <div class="module3-card-header">
+                        <span class="module3-card-number">01</span>
+                        <div class="module3-card-line"></div>
+                    </div>
+                    <h3 class="module3-card-title">One-stop solution</h3>
+                    <p class="module3-card-description">Services cover all areas of the financial industry, including payments, asset management, customer relationship management, trading systems, etc. Customers do not need to go to multiple vendors separately, simplifying the solution sourcing and integration process.</p>
+                </div>
+                <div class="module3-card scroll-animate">
+                    <div class="module3-card-header">
+                        <span class="module3-card-number">02</span>
+                        <div class="module3-card-line"></div>
+                    </div>
+                    <h3 class="module3-card-title">Customised Services</h3>
+                    <p class="module3-card-description">We provide customised solutions according to customers' needs to meet their specific business needs and requirements. From platform customisation to function customisation, customers can make personalised configurations according to their business model and development stage.</p>
+                </div>
+            </div>
+            <div class="module3-cards-row">
+                <div class="module3-card scroll-animate">
+                    <div class="module3-card-header">
+                        <span class="module3-card-number">03</span>
+                        <div class="module3-card-line"></div>
+                    </div>
+                    <h3 class="module3-card-title">Rapid Deployment</h3>
+                    <p class="module3-card-description">Our Turnkey solution has been integrated with all necessary financial services and tools, customers can quickly deploy and put into use, saving deployment time and cost.</p>
+                </div>
+                <div class="module3-card scroll-animate">
+                    <div class="module3-card-header">
+                        <span class="module3-card-number">04</span>
+                        <div class="module3-card-line"></div>
+                    </div>
+                    <h3 class="module3-card-title">Highly Integrated Systems</h3>
+                    <p class="module3-card-description">Our services and products can be easily integrated to ensure seamless connectivity between systems, improving stability and reliability.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块4 - FAQ -->
+    <section class="module4-section">
+        <div class="module4-bg">
+            <canvas class="module4-dotted-canvas" id="module4DottedCanvas"></canvas>
+        </div>
+        <div class="module4-content">
+            <div class="module4-header scroll-animate-content">
+                <div class="module4-title-wrapper scroll-animate">
+                    <h2 class="module4-title">Frequently Asked Questions</h2>
+                    <img src="turnkey解决方案/Market Maker Turnkey/模块1/link.svg" alt="Link" class="module4-link-icon">
+                </div>
+                <p class="module4-description scroll-animate">Frequently Asked Questions</p>
+            </div>
+            <div class="module4-accordion">
+                <div class="faq-item" data-faq="1" onclick="toggleFaq(1)">
+                    <div class="faq-question-header">
+                        <p class="faq-question">Is MC Connects' payment service secure?</p>
+                        <div class="faq-icon">
+                            <img src="saas解决方案/Trading System/模块2/add-circle.svg" alt="Add" class="icon-add">
+                            <img src="saas解决方案/Trading System/模块2/minus-cirlce.svg" alt="Minus" class="icon-minus" style="display: none;">
+                        </div>
+                    </div>
+                    <p class="faq-answer">Our payment service employs industry-leading security measures including encryption, multi-factor authentication, and compliance with international financial regulations to ensure the safety of all transactions.</p>
+                </div>
+                <div class="faq-item" data-faq="2" onclick="toggleFaq(2)">
+                    <div class="faq-question-header">
+                        <p class="faq-question">What depth of mobility does MC Connects' Mobility Aggregation System provide?</p>
+                        <div class="faq-icon">
+                            <img src="saas解决方案/Trading System/模块2/add-circle.svg" alt="Add" class="icon-add">
+                            <img src="saas解决方案/Trading System/模块2/minus-cirlce.svg" alt="Minus" class="icon-minus" style="display: none;">
+                        </div>
+                    </div>
+                    <p class="faq-answer">Our Liquidity Aggregation System provides high depth of liquidity across multiple price tiers to cater for different trade sizes.</p>
+                </div>
+                <div class="faq-item" data-faq="3" onclick="toggleFaq(3)">
+                    <div class="faq-question-header">
+                        <p class="faq-question">How does MC Connects' liquidity system manage and optimise liquidity?</p>
+                        <div class="faq-icon">
+                            <img src="saas解决方案/Trading System/模块2/add-circle.svg" alt="Add" class="icon-add">
+                            <img src="saas解决方案/Trading System/模块2/minus-cirlce.svg" alt="Minus" class="icon-minus" style="display: none;">
+                        </div>
+                    </div>
+                    <p class="faq-answer">Our liquidity system uses advanced algorithms and smart order routing to optimize liquidity across multiple exchanges and liquidity providers, ensuring best execution and minimal slippage.</p>
+                </div>
+                <div class="faq-item" data-faq="4" onclick="toggleFaq(4)">
+                    <div class="faq-question-header">
+                        <p class="faq-question">What data interfaces does MC Connects' system support?</p>
+                        <div class="faq-icon">
+                            <img src="saas解决方案/Trading System/模块2/add-circle.svg" alt="Add" class="icon-add">
+                            <img src="saas解决方案/Trading System/模块2/minus-cirlce.svg" alt="Minus" class="icon-minus" style="display: none;">
+                        </div>
+                    </div>
+                    <p class="faq-answer">Our system supports REST API, WebSocket, and FIX protocol interfaces, providing flexible integration options for various trading platforms and systems.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块5 - Contact Us -->
+    <section class="module5-section">
+        <!-- 背景 -->
+        <div class="module5-bg scroll-animate-bg">
+            <img src="web-home/模块5/BG2.png" alt="Background" class="module5-bg-img">
+        </div>
+
+        <div class="module5-container scroll-animate-content">
+            <!-- 标题区域 -->
+            <div class="module5-title scroll-animate">
+                <div class="module5-title-wrapper">
+                    <h2 class="module5-title-text">Contact Us</h2>
+                    <div class="module5-title-icon">
+                        <img src="web-home/模块5/Vector 524 (Stroke).svg" alt="Link">
+                    </div>
+                </div>
+                <p class="module5-subtitle" data-i18n="module5_subtitle">If you would like to set up your own business and learn more about what each solution offers, please feel free to contact us!</p>
+            </div>
+            
+            <!-- 内容区域 -->
+            <div class="module5-content">
+                <!-- 左侧联系信息 -->
+                <div class="module5-contact-info">
+                    <!-- 地址 -->
+                    <div class="module5-contact-item">
+                        <div class="module5-icon-container">
+                            <div class="module5-icon">
+                                <img src="web-home/模块5/Icon Container1.svg" alt="Location">
+                            </div>
+                        </div>
+                        <div class="module5-contact-text">
+                            <h3 class="module5-contact-label" data-i18n="module5_address_label">Address</h3>
+                            <p class="module5-contact-value" data-i18n="module5_address_value">Room 905, 9/F, Central Plaza, 18 Harbour Road, Wanchai, Hong Kong.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 电话 -->
+                    <div class="module5-contact-item">
+                        <div class="module5-icon-container">
+                            <div class="module5-icon">
+                                <img src="web-home/模块5/Icon Container2.svg" alt="Phone">
+                            </div>
+                        </div>
+                        <div class="module5-contact-text">
+                            <h3 class="module5-contact-label" data-i18n="module5_phone_label">Phone Number</h3>
+                            <p class="module5-contact-value">+852 3575-8870</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 邮箱 -->
+                    <div class="module5-contact-item">
+                        <div class="module5-icon-container">
+                            <div class="module5-icon">
+                                <img src="web-home/模块5/Icon Container3.svg" alt="Email">
+                            </div>
+                        </div>
+                        <div class="module5-contact-text">
+                            <h3 class="module5-contact-label" data-i18n="module5_email_label">Email</h3>
+                            <p class="module5-contact-value">mcpayment@mcgrp.com</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧表单 -->
+                <div class="module5-form">
+                    <h3 class="module5-form-title" data-i18n="module5_form_title">Please fill in the contact form</h3>
+                    
+                    <div class="module5-form-row">
+                        <div class="module5-form-field">
+                            <label class="module5-field-label" data-i18n="module5_username_label">*Username</label>
+                            <div class="module5-input">
+                                <input type="text" data-i18n-placeholder="module5_username_placeholder" placeholder="Please enter your name" class="module5-input-field">
+                            </div>
+                        </div>
+                        <div class="module5-form-field">
+                            <label class="module5-field-label" data-i18n="module5_email_label2">*Mailbox</label>
+                            <div class="module5-input">
+                                <input type="email" data-i18n-placeholder="module5_email_placeholder" placeholder="Please enter your email" class="module5-input-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module5-form-row">
+                        <div class="module5-form-field">
+                            <label class="module5-field-label" data-i18n="module5_phone_label2">*Phone number</label>
+                            <div class="module5-input">
+                                <input type="tel" data-i18n-placeholder="module5_phone_placeholder" placeholder="Please enter your phone number" class="module5-input-field">
+                            </div>
+                        </div>
+                        <div class="module5-form-field">
+                            <label class="module5-field-label" data-i18n="module5_address_label2">Address</label>
+                            <div class="module5-input">
+                                <input type="text" data-i18n-placeholder="module5_address_placeholder" placeholder="Please enter your address" class="module5-input-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module5-form-field module5-form-field-full">
+                        <label class="module5-field-label" data-i18n="module5_inquiry_label">*Inquiry content</label>
+                        <div class="module5-textarea-wrapper">
+                            <textarea class="module5-textarea" data-i18n-placeholder="module5_inquiry_placeholder" placeholder="Please enter your inquiry content"></textarea>
+                            <div class="module5-textarea-footer">
+                                <span class="module5-char-count">0 / 100</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="module5-submit-btn">
+                        <span data-i18n="module5_submit">submit</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.0254 4.94141L17.0837 9.99974L12.0254 15.0581" stroke="#0096ff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2.91602 10H16.941" stroke="#0096ff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="./web-home/footer/logo.svg" alt="MC Connects Logo">
+            </div>
+            <div class="footer-links">
+                <div class="footer-link-group">
+                    <h4 class="footer-link-title">SaaS Solutions</h4>
+                    <ul class="footer-link-list">
+                        <li>MC Trader</li>
+                        <li>MC CRM</li>
+                        <li>MC Payment</li>
+                        <li>MC Wallets</li>
+                        <li>MC Aggregator</li>
+                        <li>MC AM</li>
+                    </ul>
+                </div>
+                <div class="footer-link-group">
+                    <h4 class="footer-link-title">Turnkey Solutions</h4>
+                    <ul class="footer-link-list">
+                        <li>Market Makers</li>
+                        <li>Exchanges</li>
+                        <li>Hedge Funds</li>
+                        <li>Quant Teams</li>
+                        <li>Brokerage</li>
+                        <li>Financial Institutions</li>
+                    </ul>
+                </div>
+                <div class="footer-link-group">
+                    <h4 class="footer-link-title">Liquidity</h4>
+                    <ul class="footer-link-list">
+                        <li>MC LP</li>
+                        <li>MC Data</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-left">Guide | API | Privacy Policy | Terms of Service | Disclaimer</div>
+            <div class="footer-bottom-right">MC Connects @ 2024 Cookie Preferences</div>
+        </div>
+    </footer>
+
+    <script>
+        // 滚动到模块1
+        function scrollToModule1() {
+            document.getElementById('module1').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // FAQ 展开/收起功能 - accordion-2 style
+        function toggleFaq(index) {
+            const items = document.querySelectorAll('.faq-item');
+            const clickedItem = document.querySelector(`[data-faq="${index}"]`);
+            const isExpanded = clickedItem.classList.contains('expanded');
+
+            // 关闭所有项
+            items.forEach(item => {
+                item.classList.remove('expanded');
+                const addIcon = item.querySelector('.icon-add');
+                const minusIcon = item.querySelector('.icon-minus');
+                if (addIcon) addIcon.style.display = 'block';
+                if (minusIcon) minusIcon.style.display = 'none';
+            });
+
+            // 如果点击的项未展开，则展开它
+            if (!isExpanded) {
+                clickedItem.classList.add('expanded');
+                const addIcon = clickedItem.querySelector('.icon-add');
+                const minusIcon = clickedItem.querySelector('.icon-minus');
+                if (addIcon) addIcon.style.display = 'none';
+                if (minusIcon) minusIcon.style.display = 'block';
+            }
+        }
+
+        // Module4 Dotted Surface Animation - Three.js style with Canvas 2D
+        (function() {
+            const canvas = document.getElementById('module4DottedCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let animationId;
+            let count = 0;
+
+            // Configuration matching the original Three.js code
+            const config = {
+                separation: 35,
+                amountX: 80,
+                amountY: 80,
+                dotSize: 1,
+                waveSpeed: 0.02,
+                waveAmplitude1: 50,
+                waveAmplitude2: 40,
+                waveFreq1: 0.3,
+                waveFreq2: 0.5,
+                perspective: 1000,
+                cameraY: 355,
+                cameraZ: 1220
+            };
+
+            let particles = [];
+
+            function resize() {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                width = rect.width;
+                height = rect.height;
+                canvas.width = width;
+                canvas.height = height;
+                initParticles();
+            }
+
+            function initParticles() {
+                particles = [];
+
+                for (let ix = 0; ix < config.amountX; ix++) {
+                    for (let iy = 0; iy < config.amountY; iy++) {
+                        const x = ix * config.separation - (config.amountX * config.separation) / 2;
+                        const z = iy * config.separation - (config.amountY * config.separation) / 2;
+
+                        particles.push({
+                            x: x,
+                            y: 0,
+                            z: z,
+                            ix: ix,
+                            iy: iy
+                        });
+                    }
+                }
+            }
+
+            function project(x, y, z) {
+                // Perspective projection matching Three.js
+                // z goes from negative (far) to positive (near)
+                // Camera looks down the -Z axis
+                const distance = config.cameraZ + z;
+                const scale = config.perspective / distance;
+                const x2d = x * scale + width / 2;
+                const y2d = (config.cameraY - y) * scale + height / 2;
+                return { x: x2d, y: y2d, scale: scale };
+            }
+
+            function draw() {
+                ctx.fillStyle = '#0B0D0D';
+                ctx.fillRect(0, 0, width, height);
+
+                // Draw particles
+                for (const p of particles) {
+                    // Animate Y position with sine waves (matching original)
+                    p.y = Math.sin((p.ix + count) * config.waveFreq1) * config.waveAmplitude1 +
+                          Math.sin((p.iy + count) * config.waveFreq2) * config.waveAmplitude2;
+
+                    // Project to 2D
+                    const projected = project(p.x, p.y, p.z);
+
+                    // Calculate vertical gradient opacity based on projected Y position
+                    // Top of screen (low Y): 0% opacity, Bottom of screen (high Y): 100% opacity
+                    // Map projected.y from [0, height] to [0, 1]
+                    let verticalGradient = projected.y / height;
+                    // Clamp between 0 and 1
+                    verticalGradient = Math.max(0, Math.min(1, verticalGradient));
+                    // Apply easing for smoother transition
+                    const opacity = Math.pow(verticalGradient, 2);
+
+                    // Calculate size with attenuation
+                    const size = config.dotSize * projected.scale;
+
+                    // Draw dot
+                    if (size > 0.3) {
+                        ctx.beginPath();
+                        ctx.arc(projected.x, projected.y, size, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                        ctx.fill();
+                    }
+                }
+
+                count += config.waveSpeed;
+                animationId = requestAnimationFrame(draw);
+            }
+
+            // Initialize
+            resize();
+            window.addEventListener('resize', resize);
+            draw();
+
+            // Cleanup on page hide
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    cancelAnimationFrame(animationId);
+                } else {
+                    draw();
+                }
+            });
+        })();
+    </script>
+    <!-- 统一 Navbar 和 Footer 组件 -->
+    <script src="./components/navbar.js?v=17"></script>
+    <script src="./components/navbar-footer.js?v=46"></script>
+
+    <!-- 滚动动画 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 滚动动画 - Intersection Observer
+            const scrollAnimateElements = document.querySelectorAll('.scroll-animate, .scroll-animate-content');
+            const scrollAnimateBgElements = document.querySelectorAll('.scroll-animate-bg');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0
+            };
+
+            const observerOptionsBg = {
+                root: null,
+                rootMargin: '-50% 0px -50% 0px',
+                threshold: 0
+            };
+
+            const scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            const scrollObserverBg = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptionsBg);
+
+            scrollAnimateElements.forEach(el => {
+                scrollObserver.observe(el);
+                // 检查元素是否已经在视口中
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    el.classList.add('visible');
+                }
+            });
+
+            scrollAnimateBgElements.forEach(el => {
+                scrollObserverBg.observe(el);
+                // 检查元素是否已经在视口中
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    el.classList.add('visible');
+                }
+            });
+
+            // 星空背景动画 - 类似 21st.dev starfield-1 (3D 透视星空)
+            const starfieldCanvas = document.getElementById('module3Starfield');
+            if (starfieldCanvas) {
+                const ctx = starfieldCanvas.getContext('2d');
+                let stars = [];
+                let animationId = null;
+                let isVisible = false;
+                const centerX = () => starfieldCanvas.width / 2;
+                const centerY = () => starfieldCanvas.height / 2;
+
+                function resizeStarfield() {
+                    const section = starfieldCanvas.closest('.module3-section');
+                    if (section) {
+                        starfieldCanvas.width = section.offsetWidth;
+                        starfieldCanvas.height = section.offsetHeight;
+                    }
+                }
+
+                class Star {
+                    constructor() {
+                        this.reset();
+                    }
+
+                    reset() {
+                        this.x = (Math.random() - 0.5) * 2000;
+                        this.y = (Math.random() - 0.5) * 2000;
+                        this.z = Math.random() * 2000;
+                        this.pz = this.z;
+                    }
+
+                    update(speed) {
+                        this.z -= speed;
+                        if (this.z <= 1) {
+                            this.reset();
+                            this.z = 2000;
+                            this.pz = this.z;
+                        }
+                    }
+
+                    draw() {
+                        const focalLength = 300;
+                        const sx = (this.x / this.z) * focalLength + centerX();
+                        const sy = (this.y / this.z) * focalLength + centerY();
+                        const px = (this.x / this.pz) * focalLength + centerX();
+                        const py = (this.y / this.pz) * focalLength + centerY();
+                        this.pz = this.z;
+
+                        if (sx < 0 || sx > starfieldCanvas.width || sy < 0 || sy > starfieldCanvas.height) {
+                            return;
+                        }
+
+                        const size = Math.max(0.3, (1 - this.z / 2000) * 1.2);
+                        const brightness = Math.floor((1 - this.z / 2000) * 255);
+                        const alpha = Math.max(0.2, 1 - this.z / 2000);
+
+                        const trailLength = Math.min(8, Math.sqrt(Math.pow(sx - px, 2) + Math.pow(sy - py, 2)));
+                        if (trailLength > 1) {
+                            const gradient = ctx.createLinearGradient(px, py, sx, sy);
+                            gradient.addColorStop(0, `rgba(${brightness}, ${brightness}, ${brightness}, 0)`);
+                            gradient.addColorStop(1, `rgba(${brightness}, ${brightness}, ${brightness}, ${alpha})`);
+                            ctx.beginPath();
+                            ctx.moveTo(px, py);
+                            ctx.lineTo(sx, sy);
+                            ctx.strokeStyle = gradient;
+                            ctx.lineWidth = size * 0.5;
+                            ctx.stroke();
+                        }
+
+                        ctx.beginPath();
+                        ctx.arc(sx, sy, size, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${brightness}, ${brightness}, ${brightness}, ${alpha})`;
+                        ctx.fill();
+                    }
+                }
+
+                function initStars() {
+                    stars = [];
+                    const numStars = 600;
+                    for (let i = 0; i < numStars; i++) {
+                        stars.push(new Star());
+                    }
+                }
+
+                function drawStarfield() {
+                    ctx.fillStyle = '#0E0F10';
+                    ctx.fillRect(0, 0, starfieldCanvas.width, starfieldCanvas.height);
+                    stars.forEach(star => {
+                        star.update(0.8);
+                        star.draw();
+                    });
+                }
+
+                function animateStarfield() {
+                    if (!isVisible) return;
+                    drawStarfield();
+                    animationId = requestAnimationFrame(animateStarfield);
+                }
+
+                const starfieldObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        isVisible = entry.isIntersecting;
+                        if (isVisible && !animationId) {
+                            animateStarfield();
+                        } else if (!isVisible && animationId) {
+                            cancelAnimationFrame(animationId);
+                            animationId = null;
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                starfieldObserver.observe(starfieldCanvas);
+                resizeStarfield();
+                initStars();
+                ctx.fillStyle = '#0E0F10';
+                ctx.fillRect(0, 0, starfieldCanvas.width, starfieldCanvas.height);
+                stars.forEach(star => star.draw());
+                window.addEventListener('resize', () => {
+                    resizeStarfield();
+                    initStars();
+                });
+            }
+
+            // 3D Tilt Card 效果
+            const tiltCards = document.querySelectorAll('.module3-card');
+            
+            tiltCards.forEach(card => {
+                let rafId = null;
+                let currentRotateX = 0;
+                let currentRotateY = 0;
+                let targetRotateX = 0;
+                let targetRotateY = 0;
+                
+                const maxTilt = 10;
+                
+                function animate() {
+                    currentRotateX += (targetRotateX - currentRotateX) * 0.1;
+                    currentRotateY += (targetRotateY - currentRotateY) * 0.1;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                    
+                    if (Math.abs(targetRotateX - currentRotateX) > 0.01 || Math.abs(targetRotateY - currentRotateY) > 0.01) {
+                        rafId = requestAnimationFrame(animate);
+                    } else {
+                        rafId = null;
+                    }
+                }
+                
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    targetRotateX = ((y - centerY) / centerY) * -maxTilt;
+                    targetRotateY = ((x - centerX) / centerX) * maxTilt;
+                    
+                    card.classList.add('tilting');
+                    
+                    if (!rafId) {
+                        animate();
+                    }
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    targetRotateX = 0;
+                    targetRotateY = 0;
+                    card.classList.remove('tilting');
+                    
+                    if (!rafId) {
+                        animate();
+                    }
+                });
+                
+                card.addEventListener('mouseenter', () => {
+                    card.style.transition = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

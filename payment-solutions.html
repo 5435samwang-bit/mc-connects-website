@@ -1,0 +1,2478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Solutions - MC Connects</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #0E0F10;
+            font-family: 'Onest', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Banner 区域样式 - 基于 Figma 设计稿 */
+        .banner-section {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+            margin-top: 80px;
+        }
+
+        .banner-bg {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1920px;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .banner-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 2;
+            width: 700px;
+            margin: 0;
+            padding: 100px 0 0 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 64px;
+        }
+
+        .banner-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .banner-title-row {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .banner-accent-line {
+            width: 6px;
+            height: 60px;
+            background-color: #FFFFFF;
+            flex-shrink: 0;
+        }
+
+        .banner-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            color: #FFFFFF;
+            line-height: 60px;
+            white-space: nowrap;
+        }
+
+        .banner-description {
+            padding-left: 30px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 32px;
+        }
+
+        .banner-cta-wrapper {
+            padding-left: 30px;
+        }
+
+        .banner-cta-button {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px;
+            background: linear-gradient(90deg, #0096ff, #00d4ff);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .banner-cta-button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .banner-cta-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #FFFFFF;
+            text-transform: capitalize;
+            white-space: nowrap;
+        }
+
+        .banner-cta-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .banner-cta-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Menu 模块样式 - 基于 Figma 设计稿 */
+        .menu-section {
+            position: relative;
+            width: 100%;
+            min-height: 449px;
+            padding: 120px 240px 60px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 1800px) {
+            .menu-section {
+                padding: 120px 120px 60px;
+            }
+        }
+
+        .menu-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 389px;
+            z-index: 0;
+        }
+
+        .menu-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .menu-cards-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: stretch;
+            gap: 28px;
+            width: 100%;
+        }
+
+        /* 默认状态的 Card (Card 2, 3, 4) - flex: 1 填充剩余空间 */
+        .menu-card {
+            flex: 1 1 0;
+            min-width: 200px;
+            min-height: 269px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .menu-card:hover {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+            transform: translateY(-4px);
+        }
+
+        /* 激活状态的 Card - 最小宽度 480px */
+        .menu-card.active {
+            flex: 0 0 480px;
+            min-width: 480px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card1-header {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .card1-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            box-shadow: inset 0px -4px 6px rgba(0, 150, 255, 0.25);
+            background: linear-gradient(#0E0F10, #0E0F10) padding-box,
+                        linear-gradient(180deg, #0096ff 0%, rgba(0, 150, 255, 0) 100%) border-box;
+        }
+
+        .card1-icon {
+            width: 28px;
+            height: 28px;
+            filter: brightness(0) saturate(100%) invert(47%) sepia(91%) saturate(3686%) hue-rotate(186deg) brightness(103%) contrast(101%);
+        }
+
+        .card1-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            background: linear-gradient(180deg, #0096ff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            flex: 1;
+        }
+
+        .card1-description {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 28px;
+        }
+
+        /* Card 1 背景装饰 */
+        .card1-bg {
+            position: absolute;
+            top: -1px;
+            right: -1px;
+            width: 480px;
+            height: 201px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .card1-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* 默认 Card 的图标容器 */
+        .card-icon-container {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+            border-radius: 999px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 999px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon {
+            width: 28px;
+            height: 28px;
+            filter: brightness(0) saturate(100%) invert(100%);
+        }
+
+        /* 分割线 */
+        .card-divider {
+            width: 100%;
+            height: 1px;
+            line-height: 0;
+            font-size: 0;
+        }
+
+        .card-divider img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 默认 Card 的标题 */
+        .card-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            color: #FFFFFF;
+            line-height: normal;
+        }
+
+        /* Card 默认状态内容 */
+        .card-default-content {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            width: 100%;
+        }
+
+        /* Card 点击状态内容 */
+        .card-active-content {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        /* 当 Card 被点击激活后的样式 */
+        .menu-card.active .card-default-content {
+            display: none;
+        }
+
+        .menu-card.active .card-active-content {
+            display: flex;
+        }
+
+        /* 装饰性背景默认隐藏，激活时显示 */
+        .card1-bg {
+            display: none;
+        }
+
+        .menu-card.active .card1-bg {
+            display: block;
+        }
+
+        /* 点击展开状态图标外层填充透明 */
+        .menu-card.active .card1-icon-wrapper {
+            background: transparent;
+            position: relative;
+            border: none;
+        }
+        
+        .menu-card.active .card1-icon-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 999px;
+            padding: 1px;
+            background: linear-gradient(180deg, #0096ff 0%, rgba(0, 150, 255, 0) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        /* 模块1样式 - Trading System */
+        .module1-section {
+            width: 100%;
+            padding: 60px 0 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            box-sizing: border-box;
+        }
+
+        /* 标题区域 */
+        .module1-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 0 120px;
+        }
+
+        .module1-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            background: linear-gradient(90deg, #0096ff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        .module1-title-decoration {
+            width: 136px;
+            height: 31px;
+        }
+
+        .module1-title-decoration img {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 业务架构图区域 */
+        .module1-diagram {
+            position: relative;
+            width: 1440px;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .module1-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .module1-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .module1-features-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .module1-features-grid img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Client 和 Integration 标签 */
+        .module1-label {
+            position: absolute;
+            z-index: 3;
+            padding: 12px 24px;
+            background: linear-gradient(180deg, #d2dce5 0%, #78838d 107.5%);
+            border-radius: 18px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: clamp(16px, 2vw, 24px);
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .client-label {
+            left: 28%;
+            top: 38%;
+            width: 15%;
+        }
+
+        .integration-label {
+            left: 53%;
+            top: 38%;
+            width: 15%;
+        }
+
+        /* 中心标签 */
+        .module1-center-label {
+            position: absolute;
+            left: 50%;
+            top: 62%;
+            transform: translateX(-50%);
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 16px 32px;
+            background: linear-gradient(90deg, #0096ff, #ae67ff);
+            border-radius: 16px;
+            min-width: 220px;
+        }
+
+        .center-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: clamp(16px, 2vw, 24px);
+            color: #ffffff;
+            text-transform: capitalize;
+        }
+
+        .center-subtitle {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: clamp(12px, 1.5vw, 16px);
+            color: #ffffff;
+        }
+
+        /* 设备图标 */
+        .module1-device {
+            position: absolute;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .device-name {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: clamp(12px, 1.5vw, 16px);
+            color: #ffffff;
+            text-transform: capitalize;
+            order: -1;
+        }
+
+        .device-icon {
+            width: clamp(40px, 4vw, 52px);
+            height: clamp(40px, 4vw, 52px);
+            padding: clamp(10px, 1vw, 14px);
+            background: linear-gradient(180deg, #d2dce5 0%, #78838d 107.5%);
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .device-icon img {
+            width: clamp(20px, 2vw, 26px);
+            height: clamp(20px, 2vw, 26px);
+        }
+
+        .h5-device {
+            left: 34%;
+            top: 6%;
+        }
+
+        .pc-device {
+            left: 15%;
+            top: 25%;
+        }
+
+        .ipad-device {
+            left: 20%;
+            top: 56%;
+        }
+
+        /* 功能标签 */
+        .module1-feature {
+            position: absolute;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feature-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: clamp(12px, 1.5vw, 16px);
+            color: #ffffff;
+            text-transform: capitalize;
+            text-align: center;
+            order: -1;
+        }
+
+        .feature-icon {
+            width: clamp(40px, 4vw, 52px);
+            height: clamp(40px, 4vw, 52px);
+            padding: clamp(10px, 1vw, 14px);
+            background: linear-gradient(180deg, #d2dce5 0%, #78838d 107.5%);
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-icon img {
+            width: clamp(20px, 2vw, 26px);
+            height: clamp(20px, 2vw, 26px);
+        }
+
+        .multi-business {
+            left: 66%;
+            top: 16%;
+        }
+
+        .multi-symbol {
+            left: 76%;
+            top: 36%;
+        }
+
+        .multi-order {
+            left: 68%;
+            top: 58%;
+        }
+
+        /* 功能特性区域 */
+        .module1-features {
+            position: relative;
+            width: 100%;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.06) 100%);
+            overflow: hidden;
+        }
+
+        .features-row {
+            display: flex;
+            gap: 80px;
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+            z-index: 1;
+            margin: 0 auto;
+            box-sizing: border-box;
+            padding: 48px 0;
+            justify-content: center;
+        }
+
+        .feature-item {
+            width: 294px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            align-items: flex-start;
+        }
+
+        .feature-item-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            align-items: flex-start;
+        }
+
+        .feature-item-line {
+            width: 294px;
+            height: 24px;
+            line-height: 0;
+            font-size: 0;
+        }
+
+        .feature-item-line img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .feature-item-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .feature-item-icon img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .feature-item-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: normal;
+        }
+
+        /* 模块2: Open API */
+        .module2-section {
+            position: relative;
+            width: 100%;
+            padding: 60px 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            align-items: center;
+            justify-content: center;
+            background-color: #0E0F10;
+            overflow: hidden;
+        }
+
+        .module2-bg-grid {
+            position: absolute;
+            width: 686px;
+            height: 500px;
+            right: 0;
+            top: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .module2-bg-grid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: rotate(180deg) scaleY(-1);
+        }
+
+        .module2-header {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .module2-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            background: linear-gradient(90deg, #0096FF 0%, #00D4FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: normal;
+        }
+
+        .module2-title-decoration {
+            width: 136px;
+            height: 31px;
+        }
+
+        .module2-title-decoration img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .module2-content {
+            display: flex;
+            gap: 60px;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .module2-accordion {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .accordion-item {
+            backdrop-filter: blur(50px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+            padding: 32px 20px 32px 0;
+            position: relative;
+        }
+
+        .accordion-header {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .accordion-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            color: #FFFFFF;
+            line-height: normal;
+            flex: 1;
+        }
+
+        .accordion-title.active {
+            background: linear-gradient(180deg, #0096FF 0%, #00D4FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .accordion-title-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .accordion-desc {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 28px;
+        }
+
+        .accordion-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .accordion-icon img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .accordion-item.expanded .accordion-content {
+            max-height: 200px;
+            padding-top: 12px;
+        }
+
+        .accordion-item.expanded .accordion-title {
+            background: linear-gradient(180deg, #0096FF 0%, #00D4FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .accordion-header {
+            cursor: pointer;
+        }
+
+        .module2-image {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            flex-shrink: 0;
+        }
+
+        .phone-mockup {
+            width: 500px;
+            height: 500px;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .phone-mockup img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            object-fit: contain;
+        }
+
+        .floating-card {
+            position: absolute;
+            opacity: 0;
+            transform: translateY(40px) scale(0.9);
+            transition: none;
+        }
+
+        .floating-card.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .floating-card.card-2 {
+            width: 146px;
+            height: auto;
+            left: 317px;
+            top: 244px;
+        }
+
+        .floating-card.card-2.active {
+            transition-delay: 0s;
+        }
+
+        .floating-card.card {
+            width: 165px;
+            height: auto;
+            left: 211px;
+            top: 87px;
+        }
+
+        .floating-card.card.active {
+            transition-delay: 0.2s;
+        }
+
+        .floating-card.card-1 {
+            width: 223px;
+            height: auto;
+            left: 33px;
+            top: 213px;
+        }
+
+        .floating-card.card-1.active {
+            transition-delay: 0.4s;
+        }
+
+        .floating-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* 模块3: About Brand */
+        .module3-section {
+            position: relative;
+            width: 100%;
+            padding: 0 0 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            align-items: center;
+            background-color: #0E0F10;
+            overflow: hidden;
+        }
+
+        .module3-header {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: center;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .module3-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            background: linear-gradient(90deg, #0096FF 0%, #00D4FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: normal;
+        }
+
+        .module3-title-decoration {
+            width: 136px;
+            height: 31px;
+        }
+
+        .module3-title-decoration img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .module3-video-container {
+            width: 100%;
+            max-width: 960px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .module3-video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .module3-features {
+            display: flex;
+            gap: 80px;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .module3-feature-item {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+            width: 200px;
+        }
+
+        .module3-feature-icon {
+            width: 48px;
+            height: 48px;
+        }
+
+        .module3-feature-icon img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .module3-feature-line {
+            width: 100%;
+            height: 2px;
+        }
+
+        .module3-feature-line img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .module3-feature-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+        }
+
+        /* 模块3: Branding 内容区域 */
+        .module3-content {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            margin: 0 auto;
+            background: linear-gradient(90deg, #455A71 50%, #3A495D 51%);
+        }
+
+        .module3-video-bg {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto;
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        .module3-video {
+            width: auto;
+            height: 100%;
+            object-fit: cover;
+            background: transparent;
+        }
+
+        /* 连接线 - 使用单个SVG包含4条线 */
+        .module3-lines {
+            position: absolute;
+            top: 345px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 492px;
+            height: 168px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .module3-lines img {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 左侧卡片容器 - 距离中间线图片24px */
+        .module3-left-cards {
+            position: absolute;
+            left: calc(50% - 570px);
+            top: 345px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            z-index: 3;
+        }
+
+        /* 右侧卡片容器 - 距离中间线图片24px */
+        .module3-right-cards {
+            position: absolute;
+            left: calc(50% + 270px);
+            top: 345px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            z-index: 3;
+        }
+
+        .module3-card {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 300px;
+        }
+
+        .module3-card-icon {
+            width: 48px;
+            height: 48px;
+            border: 0.5px solid #0096ff;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url('data:image/svg+xml;utf8,<svg viewBox=\'0 0 48 48\' xmlns=\'http://www.w3.org/2000/svg\' preserveAspectRatio=\'none\'><rect x=\'0\' y=\'0\' height=\'100%\' width=\'100%\' fill=\'url(%23grad)\' opacity=\'1\'/><defs><radialGradient id=\'grad\' gradientUnits=\'userSpaceOnUse\' cx=\'0\' cy=\'0\' r=\'10\' gradientTransform=\'matrix(2.75 3.95 -3.673 2.5571 9.5 4.5)\'><stop stop-color=\'rgba(0,150,255,0.4)\' offset=\'0\'/><stop stop-color=\'rgba(0,150,255,0.2)\' offset=\'0.41778\'/><stop stop-color=\'rgba(0,150,255,0.05)\' offset=\'1\'/></radialGradient></defs></svg>');
+        }
+
+        .module3-card-icon img {
+            width: 28px;
+            height: 28px;
+        }
+
+        .module3-card-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            color: white;
+            text-transform: capitalize;
+            flex: 1;
+        }
+
+        /* 模块4: Component Features */
+        .module4-section {
+            position: relative;
+            width: 100%;
+            padding: 60px 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            align-items: center;
+            background-color: #0E0F10;
+        }
+
+        .module4-header {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .module4-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            background: linear-gradient(90deg, #0096FF 0%, #00D4FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: normal;
+            color: #0096FF;
+            position: relative;
+            z-index: 10;
+        }
+
+        .module4-title-decoration {
+            width: 136px;
+            height: 31px;
+        }
+
+        .module4-title-decoration img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .module4-content {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 顶部装饰条 */
+        .module4-top-decoration {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            margin-bottom: -10px;
+            z-index: 0;
+        }
+
+        .module4-deco-bar {
+            background-color: #0E0F10;
+            border-top: 1px solid #272829;
+            border-left: 1px solid #272829;
+            border-right: 1px solid #272829;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: none;
+        }
+
+        .module4-deco-bar.active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .module4-deco-bar-1 {
+            width: 1028px;
+            height: 45px;
+            border-radius: 28px 28px 0 0;
+            margin-top: 0;
+            z-index: 1;
+        }
+
+        .module4-deco-bar-1.active {
+            transition-delay: 0s;
+        }
+
+        .module4-deco-bar-2 {
+            width: 883px;
+            height: 25px;
+            border-radius: 40px 40px 0 0;
+            margin-top: 0;
+            border-color: #1A1B1C;
+            z-index: 0;
+        }
+
+        .module4-deco-bar-2.active {
+            transition-delay: 0.4s;
+        }
+
+        /* 滚动动画 - 各模块title由下向上缓入 */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 滚动动画 - 各模块内容区域由下向上缓入 */
+        .scroll-animate-content {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s,
+                        transform 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+        }
+
+        .scroll-animate-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 主卡片 */
+        .module4-card {
+            position: relative;
+            width: 100%;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            align-items: stretch;
+            justify-content: flex-start;
+            padding: 0;
+            gap: 0;
+            z-index: 2;
+        }
+
+        /* 左侧图片区域 */
+        .module4-image-area {
+            position: relative;
+            width: 500px;
+            flex-shrink: 0;
+            overflow: hidden;
+            align-self: stretch;
+        }
+
+        .module4-mac-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .module4-mac-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 浮动卡片 */
+        .module4-float-card {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(40px) scale(0.9);
+            transition: none;
+        }
+
+        .module4-float-card.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .module4-float-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .module4-float-card-1 {
+            width: 161px;
+            height: 68px;
+            top: 104px;
+            left: 255px;
+        }
+
+        .module4-float-card-1.active {
+            transition-delay: 0s;
+        }
+
+        .module4-float-card-2 {
+            width: 125px;
+            height: 67px;
+            top: 195px;
+            left: 75px;
+        }
+
+        .module4-float-card-2.active {
+            transition-delay: 0.2s;
+        }
+
+        .module4-float-card-3 {
+            width: 164px;
+            height: 107px;
+            top: 240px;
+            left: 244px;
+        }
+
+        .module4-float-card-3.active {
+            transition-delay: 0.4s;
+        }
+
+        /* 右侧功能列表 */
+        .module4-features {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            flex: 1;
+            padding: 60px;
+            justify-content: center;
+        }
+
+        .module4-feature-item {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .module4-feature-icon {
+            width: 60px;
+            height: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            padding: 16px;
+        }
+
+        .module4-feature-icon img {
+            width: 28px;
+            height: 28px;
+        }
+
+        .module4-feature-text {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .module4-feature-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            color: white;
+            line-height: normal;
+        }
+
+        .module4-feature-desc {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 28px;
+        }
+
+        /* 模块5: Globalised Proxy Servers */
+        .module5-section {
+            width: 100%;
+            background: #0B0C0D;
+            padding: 80px 120px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .module5-content {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .module5-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .module5-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            background: linear-gradient(to right, #0096ff, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: normal;
+        }
+
+        .module5-title-decoration {
+            width: 136px;
+            height: 31px;
+        }
+
+        .module5-title-decoration img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .module5-subtitle {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 28px;
+        }
+
+        .module5-map-area {
+            position: relative;
+            width: 100%;
+            max-width: 1383px;
+        }
+
+        .module5-map-image {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .module5-location {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .module5-location-name {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 20px;
+            color: white;
+            text-transform: capitalize;
+            text-align: center;
+        }
+
+        .module5-location-icon {
+            width: 23px;
+            height: 28.61px;
+        }
+
+        /* Footer */
+        .footer {
+            width: 100%;
+            background: #0E0F10;
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 60px 120px 0;
+            box-sizing: border-box;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 60px;
+        }
+
+        .footer-logo {
+            width: 207px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-logo img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 120px;
+        }
+
+        .footer-link-group {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .footer-link-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            line-height: 26px;
+            color: #FFFFFF;
+            margin: 0;
+        }
+
+        .footer-link-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-link-list li {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link-list li:hover {
+            color: #0096FF;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-bottom-left {
+            font-family: 'Onest', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-bottom-right {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar 占位符 - 由 navbar-footer.js 动态生成 -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- Banner 区域 - 基于 Figma 设计稿 -->
+    <section class="banner-section">
+        <!-- 背景图片 -->
+        <div class="banner-bg">
+            <img src="saas解决方案/Payment Solutions/head/Payment-1.png" alt="Payment Solutions Background">
+        </div>
+
+        <!-- 内容区域 -->
+        <div class="banner-content">
+            <div class="banner-title-wrapper">
+                <!-- 标题行 -->
+                <div class="banner-title-row">
+                    <div class="banner-accent-line"></div>
+                    <h1 class="banner-title">Payment Solutions</h1>
+                </div>
+                <!-- 描述文字 -->
+                <p class="banner-description">
+                    Secure, Efficient and Convenient. Integrated payment system to meet globalised encrypted payment.
+                </p>
+            </div>
+
+            <!-- CTA 按钮 -->
+            <div class="banner-cta-wrapper">
+                <button class="banner-cta-button" onclick="scrollToLearnMore()">
+                    <span class="banner-cta-text">learn more</span>
+                    <div class="banner-cta-icon">
+                        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu 模块 - 基于 Figma 设计稿 -->
+    <section class="menu-section">
+        <!-- 背景图片 - Payment Solutions没有menu背景图，使用Trading System的 -->
+        <div class="menu-bg">
+            <img src="saas解决方案/Trading System/menu/image.svg" alt="Menu Background">
+        </div>
+        
+        <!-- Card 容器 -->
+        <div class="menu-cards-container">
+            <!-- Card 1 - 默认点击状态 -->
+            <div class="menu-card active" data-card="1" onclick="selectCard(1)">
+                <!-- 默认状态显示的内容 -->
+                <div class="card-default-content">
+                    <div class="card-icon-container">
+                        <div class="card-icon-wrapper">
+                            <img src="saas解决方案/Payment Solutions/menu/bitcoin-refresh.svg" alt="Multi-currency" class="card-icon">
+                        </div>
+                    </div>
+                    <div class="card-divider">
+                        <img src="saas解决方案/Trading System/menu/Vector 484.svg" alt="">
+                    </div>
+                    <h3 class="card-title">Multi-currency Support</h3>
+                </div>
+                <!-- 点击状态显示的内容 -->
+                <div class="card-active-content">
+                    <div class="card1-header">
+                        <div class="card1-icon-wrapper">
+                            <img src="saas解决方案/Payment Solutions/menu/bitcoin-refresh.svg" alt="Multi-currency" class="card1-icon">
+                        </div>
+                        <h3 class="card1-title">Multi-currency Support</h3>
+                    </div>
+                    <div class="card-divider">
+                        <img src="saas解决方案/Trading System/menu/link1.svg" alt="">
+                    </div>
+                    <p class="card1-description">
+                        Holds multiple fiat and cryptocurrency receipts and payments, conversion and settlement to meet the needs of global customers. Achieve barrier-free cross-border transactions and improve competitiveness in the international market.
+                    </p>
+                </div>
+                <!-- 装饰性背景 -->
+                <div class="card1-bg">
+                    <img src="saas解决方案/Trading System/menu/Vector.svg" alt="">
+                </div>
+            </div>
+            
+            <!-- Card 2 - 默认状态 -->
+            <div class="menu-card" data-card="2" onclick="selectCard(2)">
+                <!-- 默认状态显示的内容 -->
+                <div class="card-default-content">
+                    <div class="card-icon-container">
+                        <div class="card-icon-wrapper">
+                            <img src="saas解决方案/Payment Solutions/menu/hierarchy.svg" alt="Payment Gateway" class="card-icon">
+                        </div>
+                    </div>
+                    <div class="card-divider">
+                        <img src="saas解决方案/Trading System/menu/Vector 484.svg" alt="">
+                    </div>
+                    <h3 class="card-title">Payment Gateway Integration</h3>
+                </div>
+                <!-- 点击状态显示的内容 -->
+                <div class="card-active-content">
+                    <div class="card1-header">
+                        <div class="card1-icon-wrapper">
+                            <img src="saas解决方案/Payment Solutions/menu/hierarchy.svg" alt="Payment Gateway" class="card1-icon">
+                        </div>
+                        <h3 class="card1-title">Payment Gateway Integration</h3>
+                    </div>
+                    <div class="card-divider">
+                        <img src="saas解决方案/Trading System/menu/link1.svg" alt="">
+                    </div>
+                    <p class="card1-description">
+                        Seamlessly integrate with multiple payment gateways worldwide, supporting various payment methods including credit cards, bank transfers, and digital wallets for maximum flexibility.
+                    </p>
+                </div>
+                <!-- 装饰性背景 -->
+                <div class="card1-bg">
+                    <img src="saas解决方案/Trading System/menu/Vector.svg" alt="">
+                </div>
+            </div>
+            
+            <!-- Card 3 - 默认状态 -->
+            <div class="menu-card" data-card="3" onclick="selectCard(3)">
+                <!-- 默认状态显示的内容 -->
+                <div class="card-default-content">
+                    <div class="card-icon-container">
+                        <div class="card-icon-wrapper">
+                            <img src="saas解决方案/Payment Solutions/menu/convertshape-2.svg" alt="Transaction Monitoring" class="card-icon">
+                        </div>
+                    </div>
+                    <div class="card-divider">
+                        <img src="saas解决方案/Trading System/menu/Vector 484.svg" alt="">
+                    </div>
+                    <h3 class="card-title">Real-time Transaction Monitoring</h3>
+                </div>
+                <!-- 点击状态显示的内容 -->
+                <div class="card-active-content">
+                    <div class="card1-header">
+                        <div class="card1-icon-wrapper">
+                            <img src="saas解决方案/Payment Solutions/menu/convertshape-2.svg" alt="Transaction Monitoring" class="card1-icon">
+                        </div>
+                        <h3 class="card1-title">Real-time Transaction Monitoring</h3>
+                    </div>
+                    <div class="card-divider">
+                        <img src="saas解决方案/Trading System/menu/link1.svg" alt="">
+                    </div>
+                    <p class="card1-description">
+                        Monitor all transactions in real-time with advanced analytics and reporting tools. Track payment flows, detect anomalies, and ensure compliance with regulatory requirements.
+                    </p>
+                </div>
+                <!-- 装饰性背景 -->
+                <div class="card1-bg">
+                    <img src="saas解决方案/Trading System/menu/Vector.svg" alt="">
+                </div>
+            </div>
+            
+            <!-- Card 4 - 默认状态 -->
+            <div class="menu-card" data-card="4" onclick="selectCard(4)">
+                <!-- 默认状态显示的内容 -->
+                <div class="card-default-content">
+                    <div class="card-icon-container">
+                        <div class="card-icon-wrapper">
+                            <img src="saas解决方案/Payment Solutions/menu/format-square.svg" alt="API Integration" class="card-icon">
+                        </div>
+                    </div>
+                    <div class="card-divider">
+                        <img src="saas解决方案/Trading System/menu/Vector 484.svg" alt="">
+                    </div>
+                    <h3 class="card-title">API Integration</h3>
+                </div>
+                <!-- 点击状态显示的内容 -->
+                <div class="card-active-content">
+                    <div class="card1-header">
+                        <div class="card1-icon-wrapper">
+                            <img src="saas解决方案/Payment Solutions/menu/format-square.svg" alt="API Integration" class="card1-icon">
+                        </div>
+                        <h3 class="card1-title">API Integration</h3>
+                    </div>
+                    <div class="card-divider">
+                        <img src="saas解决方案/Trading System/menu/link1.svg" alt="">
+                    </div>
+                    <p class="card1-description">
+                        Robust API infrastructure enables seamless integration with your existing systems. Automate payment processes, retrieve transaction data, and manage accounts programmatically.
+                    </p>
+                </div>
+                <!-- 装饰性背景 -->
+                <div class="card1-bg">
+                    <img src="saas解决方案/Trading System/menu/Vector.svg" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块1 - Payment Solutions -->
+    <section class="module1-section">
+        <!-- 标题区域 -->
+        <div class="module1-header scroll-animate">
+            <h2 class="module1-title">Payment Solutions Solutions</h2>
+            <div class="module1-title-decoration">
+                <img src="saas解决方案/Trading System/模块1/Vector 524 (Stroke).svg" alt="">
+            </div>
+        </div>
+
+        <!-- 业务架构图区域 -->
+        <div class="module1-diagram scroll-animate-content">
+            <!-- 背景图 -->
+            <div class="module1-bg">
+                <img src="saas解决方案/Payment Solutions/模块1/image.png" alt="Payment Solutions Background">
+            </div>
+            
+            <!-- Client 标签 -->
+            <div class="module1-label client-label">
+                <span>client</span>
+            </div>
+
+            <!-- Integration 标签 -->
+            <div class="module1-label integration-label">
+                <span>integration</span>
+            </div>
+
+            <!-- Payment Solutions 中心标签 -->
+            <div class="module1-center-label">
+                <span class="center-title">Payment Solutions</span>
+                <span class="center-subtitle">Business Area</span>
+            </div>
+
+            <!-- 设备图标 -->
+            <div class="module1-device h5-device">
+                <span class="device-name">h5</span>
+                <div class="device-icon">
+                    <img src="saas解决方案/Trading System/模块1/mobile.svg" alt="Mobile">
+                </div>
+            </div>
+
+            <div class="module1-device pc-device">
+                <span class="device-name">PC</span>
+                <div class="device-icon">
+                    <img src="saas解决方案/Trading System/模块1/monitor.svg" alt="Monitor">
+                </div>
+            </div>
+
+            <div class="module1-device ipad-device">
+                <span class="device-name">iPad</span>
+                <div class="device-icon">
+                    <img src="saas解决方案/Trading System/模块1/slider-horizontal.svg" alt="iPad">
+                </div>
+            </div>
+
+            <!-- 功能标签 -->
+            <div class="module1-feature multi-business">
+                <span class="feature-text">Payment Institutions</span>
+                <div class="feature-icon">
+                    <img src="saas解决方案/Payment Solutions/模块1/bank.svg" alt="Bank">
+                </div>
+            </div>
+
+            <div class="module1-feature multi-symbol">
+                <span class="feature-text">Payment Gateway</span>
+                <div class="feature-icon">
+                    <img src="saas解决方案/Payment Solutions/模块1/driver.svg" alt="Driver">
+                </div>
+            </div>
+
+            <div class="module1-feature multi-order">
+                <span class="feature-text">Payment Channel</span>
+                <div class="feature-icon">
+                    <img src="saas解决方案/Payment Solutions/模块1/hierarchy-2.svg" alt="Hierarchy">
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能特性区域 -->
+        <div class="module1-features">
+            <!-- 网格背景 -->
+            <div class="module1-features-grid">
+                <img src="saas解决方案/Trading System/模块1/网格.svg" alt="">
+            </div>
+            
+            <!-- 第一行 -->
+            <div class="features-row">
+                <div class="feature-item">
+                    <div class="feature-item-header">
+                        <div class="feature-item-line">
+                            <img src="saas解决方案/Trading System/模块1/Vector 569.svg" alt="">
+                        </div>
+                        <div class="feature-item-icon">
+                            <img src="saas解决方案/Payment Solutions/模块1/strongbox-2.svg" alt="Strongbox">
+                        </div>
+                    </div>
+                    <p class="feature-item-text">Multiple Payment Methods Support</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-item-header">
+                        <div class="feature-item-line">
+                            <img src="saas解决方案/Trading System/模块1/Vector 569.svg" alt="">
+                        </div>
+                        <div class="feature-item-icon">
+                            <img src="saas解决方案/Payment Solutions/模块1/money-change.svg" alt="Money Change">
+                        </div>
+                    </div>
+                    <p class="feature-item-text">Intelligent payment services</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-item-header">
+                        <div class="feature-item-line">
+                            <img src="saas解决方案/Trading System/模块1/Vector 569.svg" alt="">
+                        </div>
+                        <div class="feature-item-icon">
+                            <img src="saas解决方案/Payment Solutions/模块1/security-card.svg" alt="Security Card">
+                        </div>
+                    </div>
+                    <p class="feature-item-text">Safe and reliable payment environment</p>
+                </div>
+            </div>
+
+            <!-- 第二行 -->
+            <div class="features-row">
+                <div class="feature-item">
+                    <div class="feature-item-header">
+                        <div class="feature-item-line">
+                            <img src="saas解决方案/Trading System/模块1/Vector 569.svg" alt="">
+                        </div>
+                        <div class="feature-item-icon">
+                            <img src="saas解决方案/Payment Solutions/模块1/user-tag.svg" alt="User Tag">
+                        </div>
+                    </div>
+                    <p class="feature-item-text">Quality customer service support</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-item-header">
+                        <div class="feature-item-line">
+                            <img src="saas解决方案/Trading System/模块1/Vector 569.svg" alt="">
+                        </div>
+                        <div class="feature-item-icon">
+                            <img src="saas解决方案/Payment Solutions/模块1/archive.svg" alt="Archive">
+                        </div>
+                    </div>
+                    <p class="feature-item-text">Convenient payment function</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-item-header">
+                        <div class="feature-item-line">
+                            <img src="saas解决方案/Trading System/模块1/Vector 569.svg" alt="">
+                        </div>
+                        <div class="feature-item-icon">
+                            <img src="saas解决方案/Payment Solutions/模块1/grid-edit.svg" alt="Grid Edit">
+                        </div>
+                    </div>
+                    <p class="feature-item-text">Good scalability and customisation</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块2: Open API -->
+    <section class="module2-section">
+        <div class="module2-bg-grid">
+            <img src="saas解决方案/Trading System/模块2/网格.svg" alt="">
+        </div>
+        <div class="module2-header scroll-animate">
+            <h2 class="module2-title">Open API</h2>
+            <div class="module2-title-decoration">
+                <img src="saas解决方案/Trading System/模块2/Vector 524 (Stroke).svg" alt="">
+            </div>
+        </div>
+        <div class="module2-content scroll-animate-content">
+            <div class="module2-accordion">
+                <div class="accordion-item" data-accordion="1">
+                    <div class="accordion-header" onclick="toggleAccordion(1)">
+                        <p class="accordion-title">Integration of Payment Functions</p>
+                        <div class="accordion-icon">
+                            <img src="saas解决方案/Trading System/模块2/add-circle.svg" alt="Add" class="icon-add">
+                            <img src="saas解决方案/Trading System/模块2/minus-cirlce.svg" alt="Minus" class="icon-minus" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p class="accordion-desc">Seamlessly integrate comprehensive payment functions into your platform, enabling users to make payments, manage transactions, and access advanced payment tools with ease.</p>
+                    </div>
+                </div>
+                <div class="accordion-item" data-accordion="2">
+                    <div class="accordion-header" onclick="toggleAccordion(2)">
+                        <p class="accordion-title">Extended Payment Methods</p>
+                        <div class="accordion-icon">
+                            <img src="saas解决方案/Trading System/模块2/add-circle.svg" alt="Add" class="icon-add">
+                            <img src="saas解决方案/Trading System/模块2/minus-cirlce.svg" alt="Minus" class="icon-minus" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p class="accordion-desc">Support multiple payment methods (e.g. credit cards, e-wallets, cryptocurrencies, etc.) to meet the payment needs of different users and enhance user satisfaction.</p>
+                    </div>
+                </div>
+                <div class="accordion-item" data-accordion="3">
+                    <div class="accordion-header" onclick="toggleAccordion(3)">
+                        <p class="accordion-title">Automated Reconciliation and Settlement</p>
+                        <div class="accordion-icon">
+                            <img src="saas解决方案/Trading System/模块2/add-circle.svg" alt="Add" class="icon-add">
+                            <img src="saas解决方案/Trading System/模块2/minus-cirlce.svg" alt="Minus" class="icon-minus" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p class="accordion-desc">Automated reconciliation and settlement functions reduce manual operations, improve efficiency and accuracy, and ensure timely settlement of funds.</p>
+                    </div>
+                </div>
+                <div class="accordion-item" data-accordion="4">
+                    <div class="accordion-header" onclick="toggleAccordion(4)">
+                        <p class="accordion-title">Real-time Payment Data Access</p>
+                        <div class="accordion-icon">
+                            <img src="saas解决方案/Trading System/模块2/add-circle.svg" alt="Add" class="icon-add">
+                            <img src="saas解决方案/Trading System/模块2/minus-cirlce.svg" alt="Minus" class="icon-minus" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p class="accordion-desc">Support a variety of payment methods, including bank cards, Alipay, WeChat Pay and so on.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="module2-image">
+                <div class="phone-mockup">
+                    <img src="saas解决方案/Payment Solutions/模块2/image.png" alt="Payment Mockup">
+                </div>
+                <div class="floating-card card-2">
+                    <img src="saas解决方案/Payment Solutions/模块2/card2.png" alt="Card 2">
+                </div>
+                <div class="floating-card card">
+                    <img src="saas解决方案/Payment Solutions/模块2/card.png" alt="Card">
+                </div>
+                <div class="floating-card card-1">
+                    <img src="saas解决方案/Payment Solutions/模块2/card1.png" alt="Card 1">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块3: Branding -->
+    <section class="module3-section">
+        <!-- 标题层 - 相对于 section 居中 -->
+        <div class="module3-header scroll-animate">
+            <h2 class="module3-title">Branding</h2>
+            <div class="module3-title-decoration">
+                <img src="saas解决方案/Trading System/模块3/Vector 524 (Stroke).svg" alt="">
+            </div>
+        </div>
+        <!-- 内容层 -->
+        <div class="module3-content scroll-animate-content">
+            <div class="module3-video-bg">
+                <video class="module3-video" autoplay loop muted playsinline>
+                    <source src="saas解决方案/Trading System/模块3/关于品牌.mp4" type="video/mp4">
+                </video>
+            </div>
+            <!-- 连接线 -->
+            <div class="module3-lines">
+                <img src="saas解决方案/Trading System/模块3/线.svg" alt="">
+            </div>
+            <!-- 左侧卡片 -->
+            <div class="module3-left-cards">
+                <div class="module3-card">
+                    <div class="module3-card-icon">
+                        <img src="saas解决方案/Trading System/模块3/Icon1.svg" alt="Brand Identity">
+                    </div>
+                    <p class="module3-card-text">Brand Identity</p>
+                </div>
+                <div class="module3-card">
+                    <div class="module3-card-icon">
+                        <img src="saas解决方案/Trading System/模块3/Icon3.svg" alt="User Interface">
+                    </div>
+                    <p class="module3-card-text">User Interface</p>
+                </div>
+            </div>
+            <!-- 右侧卡片 -->
+            <div class="module3-right-cards">
+                <div class="module3-card">
+                    <div class="module3-card-icon">
+                        <img src="saas解决方案/Trading System/模块3/Icon2.svg" alt="Function Modules">
+                    </div>
+                    <p class="module3-card-text">Function Modules</p>
+                </div>
+                <div class="module3-card">
+                    <div class="module3-card-icon">
+                        <img src="saas解决方案/Trading System/模块3/Icon4.svg" alt="Permission Control">
+                    </div>
+                    <p class="module3-card-text">Permission Control</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块4: Component Features -->
+    <section class="module4-section">
+        <div class="module4-header scroll-animate">
+            <h2 class="module4-title">Component Features</h2>
+            <div class="module4-title-decoration">
+                <img src="saas解决方案/Trading System/模块4/Vector 524 (Stroke).svg" alt="">
+            </div>
+        </div>
+        <div class="module4-content scroll-animate-content">
+            <!-- 顶部装饰条 -->
+            <div class="module4-top-decoration">
+                <div class="module4-deco-bar module4-deco-bar-1"></div>
+                <div class="module4-deco-bar module4-deco-bar-2"></div>
+            </div>
+            <!-- 主卡片区域 -->
+            <div class="module4-card">
+                <!-- 左侧图片区域 -->
+                <div class="module4-image-area">
+                    <div class="module4-mac-container">
+                        <img src="saas解决方案/Payment Solutions/模块4/image.png" alt="Payment Interface" class="module4-mac-image">
+                    </div>
+                    <!-- 浮动卡片 -->
+                    <div class="module4-float-card module4-float-card-1">
+                        <img src="saas解决方案/Payment Solutions/模块4/card1.png" alt="Card 1">
+                    </div>
+                    <div class="module4-float-card module4-float-card-2">
+                        <img src="saas解决方案/Payment Solutions/模块4/Group 1707481202.png" alt="Card 2">
+                    </div>
+                    <div class="module4-float-card module4-float-card-3">
+                        <img src="saas解决方案/Payment Solutions/模块4/card3.png" alt="Card 3">
+                    </div>
+                </div>
+                <!-- 右侧功能列表 -->
+                <div class="module4-features">
+                    <div class="module4-feature-item">
+                        <div class="module4-feature-icon">
+                            <img src="saas解决方案/Payment Solutions/模块4/programming-arrow.svg" alt="Real-time Payment Data Access">
+                        </div>
+                        <div class="module4-feature-text">
+                            <h3 class="module4-feature-title">Real-time Payment Data Access</h3>
+                            <p class="module4-feature-desc">Support a variety of payment methods, including bank cards, Alipay, WeChat Pay and so on.</p>
+                        </div>
+                    </div>
+                    <div class="module4-feature-item">
+                        <div class="module4-feature-icon">
+                            <img src="saas解决方案/Payment Solutions/模块4/wallet-add.svg" alt="Wallet Integration">
+                        </div>
+                        <div class="module4-feature-text">
+                            <h3 class="module4-feature-title">Wallet Integration</h3>
+                            <p class="module4-feature-desc">Provides a safe and reliable payment interface to safeguard transaction security.</p>
+                        </div>
+                    </div>
+                    <div class="module4-feature-item">
+                        <div class="module4-feature-icon">
+                            <img src="saas解决方案/Payment Solutions/模块4/hierarchy-square-2.svg" alt="Payment Gateway">
+                        </div>
+                        <div class="module4-feature-text">
+                            <h3 class="module4-feature-title">Payment Gateway</h3>
+                            <p class="module4-feature-desc">Flexible wallet integration, supporting multiple platforms and devices.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块5: Globalised Proxy Servers -->
+    <section class="module5-section">
+        <div class="module5-content scroll-animate-content">
+            <!-- 标题区域 -->
+            <div class="module5-header scroll-animate">
+                <h2 class="module5-title">Globalised Proxy Servers</h2>
+                <div class="module5-title-decoration">
+                    <img src="saas解决方案/Trading System/模块5/Vector 524 (Stroke).svg" alt="">
+                </div>
+                <p class="module5-subtitle">Globalised Proxy Servers</p>
+            </div>
+            <!-- 地图区域 -->
+            <div class="module5-map-area">
+                <img src="saas解决方案/Trading System/模块5/map 1.png" alt="World Map" class="module5-map-image">
+                <!-- 国家标记 -->
+                <div class="module5-location" style="left: 10.5%; top: 2.7%;">
+                    <span class="module5-location-name">canada</span>
+                    <img src="saas解决方案/Trading System/模块5/Subtract.svg" alt="" class="module5-location-icon">
+                </div>
+                <div class="module5-location" style="left: 15.2%; top: 13.7%;">
+                    <span class="module5-location-name">USA</span>
+                    <img src="saas解决方案/Trading System/模块5/Subtract.svg" alt="" class="module5-location-icon">
+                </div>
+                <div class="module5-location" style="left: 8.6%; top: 38.8%;">
+                    <span class="module5-location-name">panama</span>
+                    <img src="saas解决方案/Trading System/模块5/Subtract.svg" alt="" class="module5-location-icon">
+                </div>
+                <div class="module5-location" style="left: 45.5%; top: 10.2%;">
+                    <img src="saas解决方案/Trading System/模块5/Subtract.svg" alt="" class="module5-location-icon">
+                    <span class="module5-location-name">germany</span>
+                </div>
+                <div class="module5-location" style="left: 71.5%; top: 28.8%;">
+                    <span class="module5-location-name">hong kong</span>
+                    <img src="saas解决方案/Trading System/模块5/Subtract.svg" alt="" class="module5-location-icon">
+                </div>
+                <div class="module5-location" style="left: 73.1%; top: 51.7%;">
+                    <span class="module5-location-name">singapore</span>
+                    <img src="saas解决方案/Trading System/模块5/Subtract.svg" alt="" class="module5-location-icon">
+                </div>
+                <div class="module5-location" style="left: 76.5%; top: 15.1%;">
+                    <span class="module5-location-name">japan</span>
+                    <img src="saas解决方案/Trading System/模块5/Subtract.svg" alt="" class="module5-location-icon">
+                </div>
+                <div class="module5-location" style="left: 21.3%; top: 57.4%;">
+                    <span class="module5-location-name">brazil</span>
+                    <img src="saas解决方案/Trading System/模块5/Subtract.svg" alt="" class="module5-location-icon">
+                </div>
+                <div class="module5-location" style="left: 41.9%; top: 17.5%;">
+                    <img src="saas解决方案/Trading System/模块5/Subtract.svg" alt="" class="module5-location-icon">
+                    <span class="module5-location-name">france</span>
+                </div>
+                <div class="module5-location" style="left: 32.4%; top: 13.1%;">
+                    <span class="module5-location-name">london</span>
+                    <img src="saas解决方案/Trading System/模块5/Subtract.svg" alt="" class="module5-location-icon" style="margin-left: 78.5px; margin-top: 2px;">
+                </div>
+                <div class="module5-location" style="left: 37.8%; top: 5.3%;">
+                    <span class="module5-location-name">netherlands</span>
+                    <img src="saas解决方案/Trading System/模块5/Subtract.svg" alt="" class="module5-location-icon">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content scroll-animate-content">
+            <div class="footer-logo">
+                <img src="./web-home/footer/logo.svg" alt="MC Connects Logo">
+            </div>
+            <div class="footer-links">
+                <div class="footer-link-group">
+                    <h4 class="footer-link-title">SaaS Solutions</h4>
+                    <ul class="footer-link-list">
+                        <li>MC Trader</li>
+                        <li>MC CRM</li>
+                        <li>MC Payment</li>
+                        <li>MC Wallets</li>
+                        <li>MC Aggregator</li>
+                        <li>MC AM</li>
+                    </ul>
+                </div>
+                <div class="footer-link-group">
+                    <h4 class="footer-link-title">Turnkey Solutions</h4>
+                    <ul class="footer-link-list">
+                        <li>Market Makers</li>
+                        <li>Exchanges</li>
+                        <li>Hedge Funds</li>
+                        <li>Quant Teams</li>
+                        <li>Brokerage</li>
+                        <li>Financial Institutions</li>
+                    </ul>
+                </div>
+                <div class="footer-link-group">
+                    <h4 class="footer-link-title">Liquidity</h4>
+                    <ul class="footer-link-list">
+                        <li>MC LP</li>
+                        <li>MC Data</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-left">Guide | API | Privacy Policy | Terms of Service | Disclaimer</div>
+            <div class="footer-bottom-right">MC Connects @ 2024 Cookie Preferences</div>
+        </div>
+    </footer>
+
+    <!-- 引入共享的 Navbar JS -->
+    <script>
+        // 滚动到 learn more 区域
+        function scrollToLearnMore() {
+            console.log('Scroll to learn more section');
+            // 这里可以添加滚动到页面下方内容的逻辑
+        }
+
+        // Menu Card 选择功能
+        function selectCard(cardNum) {
+            const cards = document.querySelectorAll('.menu-card');
+            const clickedCard = document.querySelector(`[data-card="${cardNum}"]`);
+            
+            // 如果点击的是当前已激活的card，不做任何操作
+            if (clickedCard.classList.contains('active')) {
+                return;
+            }
+            
+            // 移除所有card的active状态
+            cards.forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // 给点击的card添加active状态
+            clickedCard.classList.add('active');
+            
+            console.log('Selected card:', cardNum);
+        }
+
+        // 模块2 Accordion 折叠功能
+        function toggleAccordion(index) {
+            const items = document.querySelectorAll('.accordion-item');
+            const clickedItem = document.querySelector(`[data-accordion="${index}"]`);
+            const isExpanded = clickedItem.classList.contains('expanded');
+            
+            // 关闭所有项
+            items.forEach(item => {
+                item.classList.remove('expanded');
+                const addIcon = item.querySelector('.icon-add');
+                const minusIcon = item.querySelector('.icon-minus');
+                if (addIcon) addIcon.style.display = 'block';
+                if (minusIcon) minusIcon.style.display = 'none';
+            });
+            
+            // 如果点击的项未展开，则展开它
+            if (!isExpanded) {
+                clickedItem.classList.add('expanded');
+                const addIcon = clickedItem.querySelector('.icon-add');
+                const minusIcon = clickedItem.querySelector('.icon-minus');
+                if (addIcon) addIcon.style.display = 'none';
+                if (minusIcon) minusIcon.style.display = 'block';
+            }
+            
+            console.log('Toggled accordion:', index);
+        }
+        
+        // 播放浮动卡片动画
+        function playFloatingCardsAnimation() {
+            const floatCards = document.querySelectorAll('.floating-card');
+            
+            // 先移除active类
+            floatCards.forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // 强制重绘
+            void document.body.offsetHeight;
+            
+            // 添加active类触发动画
+            floatCards.forEach(card => {
+                card.classList.add('active');
+            });
+        }
+        
+        // 页面加载时自动播放一次浮动卡片动画
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(playFloatingCardsAnimation, 500);
+        });
+        
+        // 模块2浮动卡片动画 - 使用Intersection Observer
+        (function() {
+            const module2Section = document.querySelector('.module2-section');
+            const module2FloatCards = document.querySelectorAll('.floating-card');
+            let module2Animated = false;
+            
+            function playModule2FloatCardsAnimation() {
+                // 先移除active类
+                module2FloatCards.forEach(card => {
+                    card.classList.remove('active');
+                });
+                
+                // 强制重绘
+                void document.body.offsetHeight;
+                
+                // 添加active类触发动画
+                module2FloatCards.forEach(card => {
+                    card.classList.add('active');
+                });
+            }
+            
+            // 创建Intersection Observer
+            const module2Observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !module2Animated) {
+                        module2Animated = true;
+                        setTimeout(playModule2FloatCardsAnimation, 400);
+                    }
+                });
+            }, {
+                threshold: 0.2
+            });
+            
+            // 开始观察模块2
+            if (module2Section) {
+                module2Observer.observe(module2Section);
+            }
+        })();
+        
+        // 模块4浮动卡片动画 - 使用Intersection Observer
+        (function() {
+            const module4Section = document.querySelector('.module4-section');
+            const module4FloatCards = document.querySelectorAll('.module4-float-card');
+            let module4Animated = false;
+            
+            function playModule4FloatCardsAnimation() {
+                // 先移除active类
+                module4FloatCards.forEach(card => {
+                    card.classList.remove('active');
+                });
+                
+                // 强制重绘
+                void document.body.offsetHeight;
+                
+                // 添加active类触发动画
+                module4FloatCards.forEach(card => {
+                    card.classList.add('active');
+                });
+            }
+            
+            // 装饰条动画
+            function playDecoBarsAnimation() {
+                const decoBars = document.querySelectorAll('.module4-deco-bar');
+                
+                // 先移除active类
+                decoBars.forEach(bar => {
+                    bar.classList.remove('active');
+                });
+                
+                // 强制重绘
+                void document.body.offsetHeight;
+                
+                // 添加active类触发动画 - 长条先出现，短条后出现
+                decoBars.forEach((bar, index) => {
+                    setTimeout(() => {
+                        bar.classList.add('active');
+                    }, index * 300);
+                });
+            }
+            
+            // 创建Intersection Observer
+            const module4Observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !module4Animated) {
+                        module4Animated = true;
+                        // 先播放装饰条动画
+                        playDecoBarsAnimation();
+                        // 延迟播放浮动卡片动画
+                        setTimeout(playModule4FloatCardsAnimation, 600);
+                    }
+                });
+            }, {
+                threshold: 0.3
+            });
+            
+            // 开始观察模块4
+            if (module4Section) {
+                module4Observer.observe(module4Section);
+            }
+        })();
+        
+        // 全局滚动动画 - Intersection Observer
+        (function() {
+            const scrollAnimateElements = document.querySelectorAll('.scroll-animate, .scroll-animate-content');
+            
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            
+            const scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+            
+            scrollAnimateElements.forEach(el => {
+                scrollObserver.observe(el);
+            });
+        })();
+    </script>
+    <!-- 统一 Navbar 和 Footer 组件 -->
+    <!-- 统一 Navbar 和 Footer 组件 -->
+    <script src="./components/navbar.js?v=17"></script>
+    <script src="./components/navbar-footer.js?v=45"></script>
+</body>
+</html>

@@ -1,0 +1,4591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC Connects</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            background-color: #0E0F10;
+            font-family: 'Onest', 'Noto Sans JP', sans-serif;
+        }
+
+        /* iOS-style continuous corner radius */
+        .ios-corner {
+            border-radius: 16px 16px 16px 16px / 16px 16px 16px 16px;
+            --corner-radius: 16px;
+            --corner-smooth: 0.5;
+        }
+        
+        .ios-corner-sm {
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            --corner-radius: 8px;
+            --corner-smooth: 0.5;
+        }
+        
+        .ios-corner-lg {
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            --corner-radius: 24px;
+            --corner-smooth: 0.5;
+        }
+
+        /* Banner Section */
+        .banner {
+            width: 100%;
+            height: calc(100vh - 80px);
+            position: relative;
+            overflow: hidden;
+            margin-top: 80px;
+        }
+
+        .banner-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: all 2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Banner全屏动画状态 */
+        .banner-video.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            object-fit: cover;
+        }
+
+        /* 页面禁止滚动 */
+        body.no-scroll {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* 导航栏和menu初始隐藏 - 首页动画效果 */
+        body .navbar {
+            opacity: 0;
+            transform: translateY(-40px);
+            transition: all 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        body .navbar.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Banner Content Overlay */
+        .banner-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding-left: 120px;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+            opacity: 0;
+            transform: translateY(80px);
+            transition: opacity 2.2s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 2.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .banner-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 滚动动画 - 各模块title由下向上缓入 */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 滚动动画 - 各模块内容区域由下向上缓入 */
+        .scroll-animate-content {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s,
+                        transform 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+        }
+
+        .scroll-animate-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 滚动动画 - 各模块背景图片透明度渐变 */
+        .scroll-animate-bg {
+            opacity: 0;
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scroll-animate-bg.visible {
+            opacity: 1;
+        }
+
+        .banner-title-wrapper {
+            width: 700px;
+            display: flex;
+            flex-direction: column;
+            gap: 64px;
+        }
+
+        /* Title Section - 300px height total */
+        .banner-title-section {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            width: 700px;
+            height: 300px;
+        }
+
+        /* Title Row - 180px height */
+        .banner-title-left {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            width: 700px;
+            height: 180px;
+        }
+
+        /* Banner Accent Line - Two layer structure */
+        .banner-accent-line {
+            width: 6px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 0px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-accent-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 90px;
+            background: #FFFFFF;
+            border-radius: 0px;
+        }
+
+        .banner-main-title {
+            font-family: 'Onest', 'Noto Sans JP', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            line-height: 1.2;
+            color: white;
+            margin: 0;
+            width: 670px;
+            height: 180px;
+        }
+
+        /* Subtitle - 96px height, positioned at y: 204 */
+        .banner-subtitle {
+            font-family: 'Onest', 'Noto Sans JP', sans-serif;
+            font-weight: 400;
+            font-size: 18px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+            padding-left: 30px;
+            width: 670px;
+            height: 96px;
+        }
+
+        /* CTA Button Container - positioned at y: 364 */
+        .banner-cta-container {
+            width: 700px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* CTA Button - Default State */
+        .banner-cta-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: linear-gradient(90deg, #0096ff 0%, #00d4ff 100%);
+            border: none;
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 30px;
+            height: 44px;
+            box-sizing: border-box;
+        }
+
+        /* CTA Button - Hover State */
+        .banner-cta-button:hover {
+            background: linear-gradient(90deg, #0096ff 0%, #00d4ff 100%);
+            box-shadow: 0px 4px 12px rgba(0, 150, 255, 0.4);
+            transform: translateX(4px);
+        }
+
+        /* CTA Button - Active/Pressed State */
+        .banner-cta-button:active {
+            transform: scale(0.98);
+        }
+
+        /* CTA Button - Disabled State (Filled) */
+        .banner-cta-button:disabled {
+            background: linear-gradient(90deg, #666666 0%, #999999 100%);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* CTA Button - Outline Variant Default */
+        .banner-cta-button--outline {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border: 1px solid #58baff;
+        }
+
+        /* CTA Button - Outline Variant Hover */
+        .banner-cta-button--outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0px 4px 12px rgba(0, 150, 255, 0.4);
+        }
+
+        /* CTA Button - Outline Variant Disabled */
+        .banner-cta-button--outline:disabled {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .cta-text {
+            font-family: 'Onest', 'Noto Sans JP', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: normal;
+            color: #FFFFFF;
+            white-space: nowrap;
+            text-transform: capitalize;
+        }
+
+        .cta-icon-wrapper {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cta-arrow {
+            width: 16px;
+            height: 16px;
+            color: #FFFFFF;
+        }
+
+        /* Menu Section */
+        .menu-section {
+            width: 100%;
+            padding: 48px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0E0F10;
+        }
+
+        .menu-container {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1368px;
+            padding: 0 24px;
+        }
+
+        .menu-arrow {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .menu-arrow:hover {
+            opacity: 0.7;
+        }
+
+        .menu-arrow-left svg {
+            transform: rotate(0deg);
+        }
+
+        .menu-arrow-right svg {
+            transform: rotate(0deg);
+        }
+
+        .menu-bar {
+            display: flex;
+            gap: 24px;
+            height: 108px;
+            align-items: flex-end;
+            flex: 1;
+            max-width: 1200px;
+        }
+
+        .menu-tab {
+            width: 100%;
+            height: 108px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: center;
+            padding: 36px 12px;
+            background: rgba(14, 15, 16, 0.8);
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            box-sizing: border-box;
+            overflow: hidden;
+            transform: translateY(0);
+            flex-shrink: 0;
+        }
+
+        .menu-tab-wrapper:hover .menu-tab {
+            transform: translateY(-76px);
+            backdrop-filter: blur(100px);
+            -webkit-backdrop-filter: blur(100px);
+            background: rgba(14, 15, 16, 0.6);
+        }
+
+        .menu-tab-wrapper {
+            position: relative;
+            flex: 1 1 0;
+            min-width: 0;
+            height: 108px;
+        }
+
+        .menu-tab-shadow-outer {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            width: 160px;
+            height: 16px;
+            background: radial-gradient(ellipse 100% 100% at center, rgba(0, 150, 255, 0.25) 0%, transparent 60%);
+            filter: blur(12px);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .menu-tab-wrapper:hover .menu-tab-shadow-outer {
+            animation: shadow-appear 0.3s ease-out 0.1s forwards;
+        }
+
+        @keyframes shadow-appear {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) scale(0);
+            }
+            100% {
+                opacity: 0.6;
+                transform: translateX(-50%) scale(1);
+            }
+        }
+
+        /* 默认状态边框 */
+        .menu-tab::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            padding: 1px;
+            background: radial-gradient(ellipse 80% 80% at 30% 0%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.1) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 悬停状态背景层 */
+        .menu-tab::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            background: radial-gradient(ellipse 100% 100% at 0% 0%, rgba(31, 45, 78, 0.9) 0%, rgba(26, 26, 26, 0.2) 100%);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* 悬停状态边框层 */
+        .menu-tab-hover-border {
+            position: absolute;
+            inset: 0;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            padding: 1px;
+            background: radial-gradient(ellipse 80% 80% at 30% 0%, rgba(0, 150, 255, 1) 0%, rgba(0, 150, 255, 0.2) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .menu-tab-wrapper:hover .menu-tab::after {
+            opacity: 1;
+        }
+
+        .menu-tab-wrapper:hover .menu-tab .menu-tab-hover-border {
+            opacity: 0.6;
+        }
+
+        .menu-tab--active {
+            background: radial-gradient(ellipse at center, rgba(31, 45, 78, 1) 0%, rgba(26, 26, 26, 0.2) 100%);
+            border: 1px solid rgba(0, 150, 255, 0.5);
+        }
+
+        .menu-tab-icon {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            filter: brightness(0) invert(1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .menu-tab-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            line-height: normal;
+            color: #FFFFFF;
+            white-space: nowrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .menu-tab-text--active {
+            color: #0096ff;
+        }
+
+        /* 悬停状态tab内容颜色 */
+        .menu-tab-wrapper:hover .menu-tab img.menu-tab-icon {
+            filter: invert(48%) sepia(95%) saturate(3023%) hue-rotate(186deg) brightness(102%) contrast(101%) !important;
+        }
+
+        .menu-tab-wrapper:hover .menu-tab-text {
+            color: #0096FF;
+        }
+
+        /* 模块1样式 */
+        .section-module1 {
+            position: relative;
+            padding: 60px 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .module1-bg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 686px;
+            height: 500px;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .module1-bg-full {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .module1-header {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .module1-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .module1-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            background: linear-gradient(to right, #0096ff, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: normal;
+            white-space: nowrap;
+        }
+
+        .module1-link {
+            width: 136px;
+            height: 31px;
+            position: relative;
+        }
+
+        .module1-subtitle {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 28px;
+            text-align: justify;
+            white-space: nowrap;
+        }
+
+        .module1-card-group {
+            display: flex;
+            gap: 60px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 磨砂玻璃卡片 - 基础样式 */
+        .glass-card {
+            background: radial-gradient(70.61% 141.42% at 0% 0%, 
+                        rgba(255, 255, 255, 0.10) 0%, 
+                        rgba(255, 255, 255, 0.01) 69.34%);
+            backdrop-filter: blur(39.5px);
+            -webkit-backdrop-filter: blur(39.5px);
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+        }
+
+        /* 渐变边框 - 自动继承调用者的圆角 */
+        .glass-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 0.5px;
+            background: linear-gradient(135deg,
+                        rgba(255, 255, 255, 0.30) 0%,
+                        rgba(255, 255, 255, 0.078) 33%,
+                        rgba(255, 255, 255, 0.222) 70%,
+                        rgba(255, 255, 255, 0.021) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box,
+                          linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box,
+                  linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .module1-card1 {
+            flex: 0 0 384px;
+            padding: 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        box-shadow 0.4s ease;
+            cursor: pointer;
+        }
+
+        .module1-card1:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .module1-card2 {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 316px;
+            overflow: hidden;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        box-shadow 0.4s ease;
+            cursor: pointer;
+        }
+
+        .module1-card2:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .module1-card3 {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            min-height: 342px;
+            overflow: hidden;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        box-shadow 0.4s ease;
+            cursor: pointer;
+        }
+
+        .module1-card3:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .module1-card3-image {
+            align-self: stretch;
+            flex-shrink: 0;
+            width: 380px;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module1-card3-image img {
+            position: absolute;
+            left: 0.31px;
+            top: 0;
+            width: 380px;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .module1-card4 {
+            flex: 0 0 380px;
+            height: 380px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+        }
+
+        .module1-card-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 30px;
+            color: white;
+            line-height: normal;
+            white-space: nowrap;
+        }
+
+        .module1-card-desc {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 28px;
+        }
+
+        .module1-icon-group {
+            display: flex;
+            gap: 24px;
+            width: 100%;
+        }
+
+        .module1-icon-container {
+            padding: 12px;
+            border-radius: 70px 70px 70px 70px / 70px 70px 70px 70px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .module1-icon-inner {
+            padding: 20px;
+            border-radius: 50px 50px 50px 50px / 50px 50px 50px 50px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .module1-icon-inner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50px 50px 50px 50px / 50px 50px 50px 50px;
+            padding: 1px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 85%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .module1-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .module1-card2-content {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            gap: 36px;
+            padding-left: 36px;
+            padding-right: 36px;
+            min-width: 0;
+        }
+
+        .module1-card2-image {
+            width: 276px;
+            height: 240px;
+            background: transparent;
+            border-radius: 45px 45px 0 0 / 45px 45px 0 0;
+            box-shadow: -13px 3px 25px rgba(0, 0, 0, 0.25);
+            margin: 36px 36px auto 0;
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .phone-content {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            border-radius: 0;
+        }
+
+        .iphone-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            object-position: top center;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Card2 标题样式 - 最大2行 */
+        .module1-card2 .module1-card-title {
+            white-space: normal;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Card2 文本样式 - 最大5行 */
+        .module1-card2 .module1-card-desc {
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .module1-card3-content {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            gap: 36px;
+            padding-left: 36px;
+            padding-right: 36px;
+            min-width: 0;
+        }
+
+        /* Card3 标题样式 - 最大2行 */
+        .module1-card3 .module1-card-title {
+            white-space: normal;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Card3 文本样式 - 最大5行 */
+        .module1-card3 .module1-card-desc {
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .module1-card4-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 模块2样式 - 响应式 */
+        .section-module2 {
+            position: relative;
+            padding: 60px 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            align-items: center;
+            overflow: visible;
+        }
+
+        .module2-bg {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 686px;
+            height: 500px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .module2-bg-full {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: right top;
+        }
+
+        .module2-header {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .module2-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .module2-link {
+            width: 136px;
+            height: 31px;
+            position: relative;
+        }
+
+        .module2-link img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .module2-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            background: linear-gradient(to right, #0096ff, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: normal;
+            white-space: nowrap;
+        }
+
+        .module2-subtitle {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: #949494;
+            line-height: 28px;
+            text-align: center;
+        }
+
+        .module2-card {
+            position: relative;
+            width: 100%;
+            height: 360px;
+        }
+
+        .module2-card-connect {
+            position: absolute;
+            inset: 0;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            padding: 0 60px 0 510px;
+            gap: 24px;
+            overflow: visible;
+        }
+
+        .module2-card-connect::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 837px;
+            height: 350px;
+            background-image: url('模块2/Vector2.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: right top;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .module2-card-image {
+            position: absolute;
+            left: 45px;
+            bottom: 0;
+            width: 460px;
+            height: 420px;
+            overflow: visible;
+            z-index: 1;
+        }
+
+        .module2-card-phone {
+            position: absolute;
+            left: calc(50% - 20px);
+            top: 0;
+            transform: translateX(-50%);
+            width: 370px;
+            height: 421px;
+            object-fit: cover;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .module2-card-screen {
+            position: absolute;
+            left: calc(50% - 20px);
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 338px;
+            height: 421px;
+            overflow: hidden;
+            z-index: 2;
+            border-radius: 52px 52px 0 0 / 52px 52px 0 0;
+        }
+
+        .module2-card-page-image {
+            width: 100%;
+            height: 100%;
+            display: block;
+            transition: transform 0.5s ease;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        /* 小卡片浮动元素 */
+        .module2-card-floats {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        .module2-float-card {
+            position: absolute;
+            /* 移除active类时直接消失，没有过渡动画 */
+            transition: none;
+            opacity: 0;
+            transform: translateY(20px);
+            backdrop-filter: blur(23.32px);
+            -webkit-backdrop-filter: blur(23.32px);
+            border-radius: 20px 20px 20px 20px / 20px 20px 20px 20px;
+            overflow: hidden;
+        }
+
+        .module2-float-card.active {
+            opacity: 1;
+            transform: translateY(0);
+            /* 添加active类时显示动画，时长1秒（card2-7） */
+            transition: all 1s ease;
+        }
+
+        .module2-float-card img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+        }
+
+        /* Card1 交易小卡片 - 根据设计稿布局 */
+        /* 初始状态：三个小卡片在button上方位置(约260px)，自下而上移动 */
+        .float-card1-1 { 
+            top: 260px !important; 
+            left: 210px !important; 
+            transform: translateX(-50%) translateY(30px) scale(0.3) !important;
+            width: 400px !important; 
+            height: auto !important; 
+            z-index: 3 !important;
+            opacity: 0 !important;
+            /* 只有添加active类时才有过渡动画，移除时直接消失 */
+            transition: none !important;
+        }  /* Joel Kenley - 最长，最上层 */
+        .float-card1-2 { 
+            top: 260px !important; 
+            left: 210px !important; 
+            transform: translateX(-50%) translateY(30px) scale(0.3) !important;
+            width: 344px !important; 
+            height: auto !important; 
+            z-index: 2 !important;
+            opacity: 0 !important;
+            /* 只有添加active类时才有过渡动画，移除时直接消失 */
+            transition: none !important;
+        }  /* Mark Smith - 中间，延迟0.2s */
+        .float-card1-3 { 
+            top: 260px !important; 
+            left: 210px !important; 
+            transform: translateX(-50%) translateY(30px) scale(0.3) !important;
+            width: 296px !important; 
+            height: auto !important; 
+            z-index: 1 !important;
+            opacity: 0 !important;
+            /* 只有添加active类时才有过渡动画，移除时直接消失 */
+            transition: none !important;
+        }  /* Lenen Roy - 最短，最下层，延迟0.4s */
+        
+        /* Card1 active状态：从手机水平中心线(210px)自下而上展开到各自位置 */
+        .float-card1-1.active { 
+            top: 122px !important; 
+            left: 10px !important; 
+            width: 400px !important;
+            transform: translateX(0) translateY(0) scale(1) !important;
+            opacity: 1 !important;
+            /* 进入时有过渡动画 */
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        .float-card1-2.active { 
+            top: 190px !important; 
+            left: 38px !important; 
+            width: 344px !important;
+            transform: translateX(0) translateY(0) scale(1) !important;
+            opacity: 1 !important;
+            /* 进入时有过渡动画，带延迟 */
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.3s !important;
+        }
+        .float-card1-3.active { 
+            top: 251px !important; 
+            left: 62px !important; 
+            width: 296px !important;
+            transform: translateX(0) translateY(0) scale(1) !important;
+            opacity: 1 !important;
+            /* 进入时有过渡动画，带延迟 */
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.6s !important;
+        }
+        
+        /* Card1 Button - 固定位置，透明度缓入 + 从小变大缩放 */
+        .float-card1-4 {
+            top: 346px !important;
+            left: 58px !important;
+            width: 305px !important;
+            height: auto !important;
+            opacity: 0 !important;
+            transform: scale(0.5) !important;
+            transform-origin: center center !important;
+            /* 移除active类时直接消失，没有过渡动画 */
+            transition: none !important;
+        }
+        .float-card1-4.active {
+            opacity: 1 !important;
+            transform: scale(1) !important;
+            /* 添加active类时淡入+缩放的组合动画，时长1.5秒 */
+            transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
+
+        /* Card2 风险控制小卡片 - 根据设计稿布局 */
+        /* 初始状态：所有卡片在底部起始位置，向下偏移30px，scale(0.3) */
+        .float-card2-1 { 
+            top: 221px; left: 0; z-index: 3; border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            opacity: 0;
+            transform: translateY(30px) scale(0.3);
+            transform-origin: center center;
+            transition: none;
+        }      /* 1137:12155 - Risk Control卡片 242x74，初始位置向下30px */
+        .float-card2-2 { 
+            top: 351px; right: 40px; z-index: 2; border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            opacity: 0;
+            transform: translateY(30px) scale(0.3);
+            transform-origin: center center;
+            transition: none;
+        }  /* 1137:12164 - Protection卡片 242x74，初始位置向下30px */
+        .float-card2-3 { 
+            top: 179px; right: 40px; z-index: 1; border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            opacity: 0;
+            transform: translateY(30px) scale(0.3);
+            transform-origin: center center;
+            transition: none;
+        }  /* 1137:12177 - 锁图标 79x79，初始位置向下30px */
+
+        /* Card2 小卡片动画 - 由小变大同时开始，由下而上保留时间差 */
+        .float-card2-1.active { 
+            top: 191px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            /* scale立即开始，top/opacity立即开始 */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important; 
+        }
+        .float-card2-2.active { 
+            top: 321px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            /* 所有动效同步，无延迟 */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important; 
+        }
+        .float-card2-3.active { 
+            top: 149px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            /* 所有动效同步，无延迟 */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important; 
+        }
+
+        /* Card3 资产管理小卡片 - 根据设计稿布局，在460px容器内排列 */
+        /* 初始状态：所有卡片在底部起始位置，向下偏移30px，scale(0.3) */
+        .float-card3-1 {
+            top: 140px;
+            left: 0;
+            z-index: 3;
+            width: 245px;
+            height: 174px;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            opacity: 0;
+            transform: translateY(30px) scale(0.3);
+            transform-origin: center center;
+            transition: none;
+        }      /* Link1 - 大卡片 245x174，初始位置向下30px */
+        .float-card3-2 {
+            top: 140px;
+            left: 257px;
+            z-index: 2;
+            width: 78px;
+            height: 174px;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            opacity: 0;
+            transform: translateY(30px) scale(0.3);
+            transform-origin: center center;
+            transition: none;
+        }  /* Link2 - 小卡片 78x174, 间距12px，初始位置向下30px */
+        .float-card3-3 {
+            top: 140px;
+            left: 347px;
+            z-index: 1;
+            width: 78px;
+            height: 174px;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            opacity: 0;
+            transform: translateY(30px) scale(0.3);
+            transform-origin: center center;
+            transition: none;
+        }  /* Link3 - 小卡片 78x174, 间距12px，初始位置向下30px */
+
+        /* Card3 小卡片动画 - 由小变大同时开始，由下而上保留时间差 */
+        .float-card3-1.active { 
+            top: 110px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            /* scale立即开始，top/opacity立即开始 */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important; 
+        }
+        .float-card3-2.active { 
+            top: 110px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            /* 所有动效同步，无延迟 */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important; 
+        }
+        .float-card3-3.active { 
+            top: 110px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            /* 所有动效同步，无延迟 */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important; 
+        }
+
+        /* Card4 账户管理小卡片 - 根据设计稿布局 */
+        /* 初始状态：所有卡片在底部起始位置，向下偏移30px，scale(0.3) */
+        .float-card4-1 { 
+            top: 150px; left: 20px; z-index: 2;
+            opacity: 0;
+            transform: translateY(30px) scale(0.3);
+            transform-origin: center center;
+            transition: none;
+        }   /* Frame 48，初始位置向下30px */
+        .float-card4-2 { 
+            top: 310px; right: 30px; z-index: 1;
+            opacity: 0;
+            transform: translateY(30px) scale(0.3);
+            transform-origin: center center;
+            transition: none;
+        }  /* Frame 67，初始位置向下30px */
+
+        /* Card4 小卡片动画 - 由小变大同时开始，由下而上保留时间差 */
+        .float-card4-1.active { 
+            top: 120px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            /* scale立即开始，top/opacity立即开始 */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important; 
+        }
+        .float-card4-2.active { 
+            top: 280px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            /* 所有动效同步，无延迟 */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important; 
+        }
+
+        /* Card5 CRM小卡片 - 根据设计稿布局，相对于手机水平居中 */
+        /* 初始状态：卡片在底部起始位置，向下偏移30px，scale(0.3) */
+        .float-card5-1 {
+            top: 150px;        /* 初始位置向下30px */
+            left: 0;           /* 设计稿位置 x: 0，相对于手机水平居中 */
+            z-index: 1;
+            width: 420px;
+            height: 194px;
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            opacity: 0;
+            transform: translateY(30px) scale(0.3);
+            transform-origin: center center;
+            transition: none;
+        }   /* div.framer-1ac2535 420x194, 初始位置向下30px */
+
+        /* Card5 小卡片动画 - 由小变大同时开始（只有一个元素） */
+        .float-card5-1.active {
+            top: 120px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important;
+        }
+
+        /* Card6 数据 Analytics小卡片 - 根据设计稿布局 */
+        /* 初始状态：卡片在底部起始位置，向下偏移30px，scale(0.3) */
+        .float-card6-1 {
+            top: 180px !important;        /* 初始位置向下30px，整体下移40px */
+            left: 0 !important;
+            z-index: 1 !important;
+            width: 420px !important;      /* 等比缩小至420px */
+            height: 119px !important;     /* 等比缩小后的高度: 420 * (119/420) = 119px */
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            background: transparent !important;
+            overflow: hidden !important;  /* 隐藏溢出的SVG内容 */
+            opacity: 0 !important;
+            transform: translateY(30px) scale(0.3) !important;
+            transform-origin: center center !important;
+            /* 移除active类时直接消失，没有过渡动画 */
+            transition: none !important;
+        }   /* sv.svg 420x119, 初始位置向下30px，整体下移40px */
+
+        /* Card6 active状态的样式 - 由小变大同时开始，由下而上保留时间差 */
+        .float-card6-1.active {
+            top: 150px !important;        /* 最终位置，整体下移40px */
+            transform: translateY(0) scale(1) !important;
+            opacity: 1 !important;
+            backdrop-filter: blur(23.32px) !important;
+            -webkit-backdrop-filter: blur(23.32px) !important;
+            /* scale立即开始，top/opacity立即开始（第一个元素） */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important;
+        }
+
+        /* Card6 图片等比缩小 */
+        .float-card6-1 img {
+            width: 420px !important;
+            height: 119px !important;
+            object-fit: fill !important;  /* 填满容器 */
+            display: block !important;
+        }
+
+        /* Card6 Crypto小卡片 */
+        /* 初始状态：卡片在红框位置，scale(0.3) */
+        .float-card6-2 {
+            top: 200px !important;        /* 初始位置 - 红框所示位置 */
+            left: 115px !important;       /* 水平位置 */
+            z-index: 2 !important;
+            width: 88px !important;       /* 缩小至88x88 */
+            height: 88px !important;
+            border-radius: 12px 12px 12px 12px / 12px 12px 12px 12px !important;
+            overflow: hidden !important;
+            opacity: 0 !important;
+            transform: translateY(0) scale(0.3) !important;  /* 从红框位置开始 */
+            transform-origin: center center !important;
+            /* 移除active类时直接消失，没有过渡动画 */
+            transition: none !important;
+        }
+
+        /* Card6 Crypto小卡片 - 由小变大同时开始，由下而上 */
+        .float-card6-2.active {
+            top: 110px !important;        /* 最终位置 - 红框所示的Receive按钮位置 */
+            opacity: 1 !important;
+            transform: translateY(0) scale(1) !important;
+            /* 所有动效同步，无延迟 */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important;
+        }
+
+        .float-card6-2 img {
+            width: 88px !important;
+            height: 88px !important;
+            object-fit: contain !important;
+            display: block !important;
+        }
+
+        /* Card7 API Integration小卡片 - 根据设计稿布局 node-id: 1137:12439 */
+        /* 初始状态：所有卡片在底部起始位置，向下偏移30px，scale(0.3) */
+        .float-card7-1 { 
+            top: 302px !important; 
+            left: 8px !important; 
+            z-index: 3 !important;
+            width: 137px !important;
+            height: 98px !important;
+            opacity: 0;
+            transform: translateY(30px) scale(0.3);
+            transform-origin: center center;
+            transition: none;
+        }   /* Group 1707481134 - API Integration，初始位置向下30px */
+        .float-card7-2 { 
+            top: 249px !important; 
+            left: 176px !important; 
+            z-index: 2 !important;
+            width: 244px !important;
+            height: 106px !important;
+            opacity: 0;
+            transform: translateY(30px) scale(0.3);
+            transform-origin: center center;
+            transition: none;
+        }   /* API文档卡片，初始位置向下30px */
+        .float-card7-3 { 
+            top: 153px !important; 
+            left: 0px !important; 
+            z-index: 1 !important;
+            width: 247px !important;
+            height: 74px !important;
+            opacity: 0;
+            transform: translateY(30px) scale(0.3);
+            transform-origin: center center;
+            transition: none;
+        }  /* 技术支持卡片，初始位置向下30px */
+
+        /* Card7 小卡片动画 - 由小变大同时开始，由下而上保留时间差 */
+        .float-card7-1.active { 
+            top: 272px !important;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            /* scale立即开始，top/opacity立即开始 */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important; 
+        }
+        .float-card7-2.active { 
+            top: 219px !important;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            /* 所有动效同步，无延迟 */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important; 
+        }
+        .float-card7-3.active { 
+            top: 123px !important;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            /* 所有动效同步，无延迟 */
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease !important; 
+        }
+
+        .module2-card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: flex-start;
+            position: relative;
+            z-index: 2;
+            min-width: 0;
+        }
+
+        /* Card标题 - 淡入动画，时长1秒，最多2行 */
+        .module2-card-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 36px;
+            color: #333;
+            line-height: 1.3;
+            /* 最多2行，超出显示省略号 */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /* 初始状态：透明，用于淡入动画 */
+            opacity: 0;
+            transform: translateY(10px);
+            /* 移除active类时直接消失 */
+            transition: none;
+        }
+
+        .module2-card-content.active .module2-card-title {
+            opacity: 1;
+            transform: translateY(0);
+            /* 添加active类时淡入动画，时长1秒 */
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        /* Card描述 - 淡入动画，时长1秒，延迟0.5秒，最多5行 */
+        .module2-card-desc {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: rgba(51, 51, 51, 0.6);
+            line-height: 28px;
+            /* 最多5行，超出显示省略号 */
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /* 初始状态：透明，用于淡入动画 */
+            opacity: 0;
+            transform: translateY(10px);
+            /* 移除active类时直接消失 */
+            transition: none;
+        }
+
+        .module2-card-content.active .module2-card-desc {
+            opacity: 1;
+            transform: translateY(0);
+            /* 添加active类时淡入动画，时长1秒，延迟0.3秒 */
+            transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
+        }
+
+        /* Card Button - 固定位置，透明度缓入 + 从小变大缩放，时长1秒 */
+        .module2-card-button-img {
+            height: 44px;
+            width: auto;
+            cursor: pointer;
+            /* 初始状态：透明+缩小，用于动画 */
+            opacity: 0;
+            transform: scale(0.5);
+            transform-origin: center center;
+            /* 移除active类时直接消失 */
+            transition: none;
+        }
+
+        .module2-card-content.active .module2-card-button-img {
+            opacity: 1;
+            transform: scale(1);
+            /* 添加active类时淡入+缩放的组合动画，时长1秒，延迟0.3秒 */
+            transition: opacity 1s ease 0.3s, transform 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+        }
+
+        .module2-card-button-img:hover {
+            opacity: 0.8;
+        }
+
+        /* New Learn More Button - Gradient Border Design */
+        .module2-learn-more-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            color: #0096ff;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Onest', sans-serif;
+            text-transform: capitalize;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.5);
+            transform-origin: center center;
+            transition: none;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        /* Gradient border using pseudo-element */
+        .module2-learn-more-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            padding: 1px;
+            background: linear-gradient(90deg, #0096FF 0%, #AE67FF 100%);
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .module2-card-content.active .module2-learn-more-btn {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 1s ease 0.3s, transform 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+        }
+
+        .module2-learn-more-btn:hover {
+            color: #0096ff;
+        }
+
+        .module2-learn-more-btn:hover::before {
+            background: linear-gradient(90deg, #0096FF 0%, #AE67FF 100%);
+        }
+
+        .module2-learn-more-btn:active {
+            transform: scale(0.98);
+        }
+
+        .module2-btn-arrow {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            filter: invert(47%) sepia(92%) saturate(2348%) hue-rotate(178deg) brightness(102%) contrast(101%);
+        }
+
+        .module2-card-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+
+        .module2-card-arrow {
+            width: 64px;
+            height: 64px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s ease;
+        }
+
+        .module2-card-arrow:hover {
+            opacity: 0.8;
+        }
+
+        .module2-card-arrow img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .module2-card-page {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: #333;
+            white-space: nowrap;
+        }
+
+        .module2-card-page span {
+            color: #999;
+        }
+
+        /* Card 背景图片 */
+        .card1-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .card2-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: left top;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .card3-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: left top;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* 确保卡片内容在背景之上 */
+        .glass-card .module1-card-title,
+        .glass-card .module1-icon-group,
+        .glass-card .module1-card2-content,
+        .glass-card .module1-card3-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ==================== 模块3 - Solutions ==================== */
+        .module3-section {
+            position: relative;
+            width: 100%;
+            padding: 60px 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            background-color: #0E0F10;
+        }
+
+        /* 背景装饰 */
+        .module3-bg {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 1440px;
+            height: auto;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .module3-bg-img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            object-position: top center;
+            display: block;
+        }
+
+        /* 容器 */
+        .module3-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1440px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            align-items: center;
+        }
+
+        /* 标题区域 */
+        .module3-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            position: relative;
+            flex-shrink: 0;
+            z-index: 2;
+        }
+
+        .module3-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .module3-title-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            line-height: normal;
+            background: linear-gradient(90deg, #0096ff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .module3-title-icon {
+            width: 136px;
+            height: 31px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .module3-title-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .module3-subtitle {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* Tab 导航栏 */
+        .module3-tabs {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .module3-tab {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 72px;
+            padding: 0 12px;
+            cursor: pointer;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .module3-tab span {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: capitalize;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .module3-tab.active {
+            border-bottom: 2px solid white;
+        }
+
+        .module3-tab.active span {
+            font-weight: 600;
+            color: white;
+        }
+
+        .module3-tab:hover span {
+            color: white;
+        }
+
+        .module3-tab-line {
+            width: 1px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .module3-tab-line img {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Cards 区域 */
+        .module3-cards {
+            display: flex;
+            gap: 24px;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .module3-cards-row2 {
+            margin-top: 0;
+        }
+
+        /* Card 样式 */
+        .module3-card {
+            flex: 1;
+            min-width: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            overflow: hidden;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            cursor: pointer;
+            transition: background 0.3s ease, border 0.3s ease;
+            align-self: stretch;
+            min-height: 200px;
+            isolation: isolate;
+        }
+
+        /* Card 默认状态 */
+        .module3-card-default {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            width: 100%;
+            height: 152px;
+        }
+
+        /* Card 悬停状态 */
+        .module3-card-hover {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            height: 152px;
+        }
+
+        /* 悬停时切换状态 */
+        .module3-card:hover .module3-card-default {
+            display: none;
+        }
+
+        .module3-card:hover .module3-card-hover {
+            display: flex;
+        }
+
+        /* 悬停时卡片保持高度一致 */
+        .module3-card:hover {
+            align-self: stretch;
+            z-index: 10;
+        }
+
+        .module3-card-vector {
+            position: absolute;
+            top: -1px;
+            right: -1px;
+            width: 475px;
+            height: 199px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .module3-vector-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleY(-1);
+        }
+
+        .module3-card-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            background: linear-gradient(180deg, #0096ff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: capitalize;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            height: 31px;
+        }
+
+        .module3-card-title-simple {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            color: white;
+            text-transform: capitalize;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            width: 100%;
+        }
+
+        .module3-card-divider {
+            width: 100%;
+            height: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .module3-card-divider img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            vertical-align: top;
+        }
+
+        .module3-card-icon-container {
+            display: flex;
+            padding: 12px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            border-radius: 999px 999px 999px 999px / 999px 999px 999px 999px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .module3-card-icon {
+            display: flex;
+            padding: 10px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 999px 999px 999px 999px / 999px 999px 999px 999px;
+        }
+
+        .module3-card-icon img {
+            width: 28px;
+            height: 28px;
+        }
+
+        .module3-card-tags {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .module3-tag-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* 悬停状态下标签横向滚动 */
+        .module3-card:hover .module3-tag-row {
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            width: max-content;
+            animation: scrollTags 12s linear infinite;
+        }
+        
+        .module3-card:hover .module3-tag-row:nth-child(2) {
+            animation-direction: reverse;
+            animation-duration: 18s;
+        }
+        
+        @keyframes scrollTags {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .module3-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 999px 999px 999px 999px / 999px 999px 999px 999px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .module3-tag span {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .module3-tag img {
+            width: 16px;
+            height: 16px;
+            transform: scaleY(-1);
+        }
+
+        /* ==================== 模块4 - Reliable Partner ==================== */
+        .module4-section {
+            position: relative;
+            width: 100%;
+            padding: 60px 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            background-color: #0E0F10;
+        }
+
+        /* 背景 */
+        .module4-bg {
+            position: absolute;
+            left: 50%;
+            top: 200px;
+            transform: translateX(-50%);
+            width: 1440px;
+            height: 460px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .module4-bg-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.1;
+        }
+
+        /* 容器 */
+        .module4-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1440px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            align-items: center;
+        }
+
+        /* 标题区域 */
+        .module4-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            position: relative;
+        }
+
+        .module4-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .module4-title-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            line-height: normal;
+            background: linear-gradient(90deg, #0096ff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .module4-title-icon {
+            width: 136px;
+            height: 31px;
+            position: relative;
+        }
+
+        .module4-title-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .module4-subtitle {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* Logo展示区域 */
+        .module4-logos {
+            position: relative;
+            width: 100%;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px 24px 24px 24px / 24px 24px 24px 24px;
+            padding: 60px 0;
+            overflow: hidden;
+        }
+
+        .module4-logos-row {
+            display: flex;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            width: fit-content;
+        }
+
+        .module4-logos-row-1 {
+            margin-bottom: 48px;
+            animation: scrollLeft 30s linear infinite;
+        }
+
+        .module4-logos-row-2 {
+            animation: scrollRight 30s linear infinite;
+        }
+
+        @keyframes scrollLeft {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes scrollRight {
+            0% {
+                transform: translateX(-50%);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .module4-logo-item {
+            width: 220px;
+            height: 86px;
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .module4-logo-mask {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .module4-logo-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 左右渐变遮罩 */
+        .module4-gradient-left {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 200px;
+            height: 100%;
+            background: linear-gradient(to right, #0E0F10, rgba(14, 15, 16, 0));
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .module4-gradient-right {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 200px;
+            height: 100%;
+            background: linear-gradient(to left, #0E0F10, rgba(14, 15, 16, 0));
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* ==================== 模块5 - Contact Us ==================== */
+        .module5-section {
+            position: relative;
+            width: 100%;
+            padding: 60px 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            background-color: #0E0F10;
+            min-height: 806px;
+        }
+
+        /* 背景 */
+        .module5-bg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .module5-bg-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 容器 */
+        .module5-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1440px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            align-items: center;
+        }
+
+        /* 标题区域 */
+        .module5-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            position: relative;
+        }
+
+        .module5-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .module5-title-text {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            line-height: normal;
+            background: linear-gradient(90deg, #0096ff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .module5-title-icon {
+            width: 136px;
+            height: 31px;
+            position: relative;
+        }
+
+        .module5-title-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .module5-subtitle {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* 内容区域 */
+        .module5-content {
+            display: flex;
+            gap: 48px;
+            align-items: flex-start;
+            width: 100%;
+            position: relative;
+        }
+
+        /* 左侧联系信息 */
+        .module5-contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            flex: 1;
+            min-width: 0;
+            padding-top: 72px;
+        }
+
+        .module5-contact-item {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .module5-icon-container {
+            flex-shrink: 0;
+        }
+
+        .module5-icon {
+            width: 68px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .module5-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .module5-contact-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .module5-contact-label {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 36px;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .module5-contact-value {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 28px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+        }
+
+        /* 右侧表单 */
+        .module5-form {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            width: 690px;
+            flex-shrink: 0;
+        }
+
+        .module5-form-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 36px;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .module5-form-row {
+            display: flex;
+            gap: 24px;
+            width: 100%;
+        }
+
+        .module5-form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .module5-form-field-full {
+            width: 100%;
+        }
+
+        .module5-field-label {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: normal;
+            color: #ffffff;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .module5-input {
+            position: relative;
+            width: 100%;
+        }
+
+        .module5-input-field {
+            width: 100%;
+            height: 48px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: normal;
+            color: #ffffff;
+            outline: none;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .module5-input-field:hover,
+        .module5-input-field:focus {
+            border-color: #0096ff;
+        }
+
+        .module5-input-field::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module5-textarea-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .module5-textarea {
+            width: 100%;
+            height: 98px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: normal;
+            color: #ffffff;
+            outline: none;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .module5-textarea:hover,
+        .module5-textarea:focus {
+            border-color: #0096ff;
+        }
+
+        .module5-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module5-textarea-footer {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .module5-char-count {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 26px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module5-resize-icon {
+            width: 8.354px;
+            height: 8.354px;
+            object-fit: contain;
+        }
+
+        .module5-submit-btn {
+            width: 200px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid #58baff;
+            border-radius: 8px 8px 8px 8px / 8px 8px 8px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            align-self: center;
+            margin-top: 10px;
+            padding: 12px 16px;
+        }
+
+        .module5-submit-btn span {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: normal;
+            color: #0096ff;
+            text-transform: capitalize;
+        }
+
+        .module5-submit-btn svg {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .module5-submit-btn:hover {
+            background: rgba(0, 150, 255, 0.1);
+            border-color: #0096ff;
+        }
+
+        .module5-submit-btn:hover svg {
+            transform: translateX(4px);
+        }
+
+        .module5-submit-btn:active {
+            background: rgba(0, 150, 255, 0.2);
+            transform: scale(0.98);
+        }
+
+        /* 模块6 - Footer */
+        .module6 {
+            width: 100%;
+            background: #0E0F10;
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 60px 120px;
+            box-sizing: border-box;
+        }
+
+        .module6-content {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 0 60px 0;
+        }
+
+        .module6-logo {
+            width: 207px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+        }
+
+        .module6-logo img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .module6-links {
+            display: flex;
+            gap: 120px;
+        }
+
+        .module6-link-group {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .module6-link-group-small {
+            gap: 24px;
+        }
+
+        .module6-link-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            line-height: 26px;
+            color: #FFFFFF;
+            margin: 0;
+        }
+
+        .module6-link-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .module6-link-list li a {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .module6-link-list li a:hover {
+            color: #0096FF;
+        }
+
+        .module6-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .module6-footer-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Onest', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module6-footer-left span {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .module6-footer-left span:hover {
+            color: #FFFFFF;
+        }
+
+        .module6-divider {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .module6-footer-right {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module6-cookie {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .module6-cookie:hover {
+            color: #FFFFFF;
+        }
+
+        /* Services Dropdown Styles */
+
+
+        #servicesChevron {
+            transition: transform 0.2s ease;
+        }
+
+
+
+        /* Text transition for language switch */
+        [data-i18n] {
+            transition: opacity 0.2s ease;
+        }
+
+        .language-switching [data-i18n] {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar 占位符 - 由 navbar-footer.js 动态生成 -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- Banner Section -->
+    <section class="banner">
+        <video class="banner-video" autoplay muted playsinline id="bannerVideo">
+            <source src="web-home/head/banner/首页.mp4" type="video/mp4">
+        </video>
+        <!-- Banner Title -->
+        <div class="banner-content">
+            <div class="banner-title-wrapper">
+                <!-- Title Section -->
+                <div class="banner-title-section">
+                    <div class="banner-title-left">
+                        <div class="banner-accent-line"></div>
+                        <h1 class="banner-main-title" data-i18n="banner_main_title">MC Connects-Financial Infrastructure Solution Provider</h1>
+                    </div>
+                    <p class="banner-subtitle" data-i18n="banner_subtitle">A suite of modular financial solutions including web3 payments risk control,asset management,CRM and more to empower your fintech innovation</p>
+                </div>
+                <!-- CTA Button Container -->
+                <div class="banner-cta-container">
+                    <button class="banner-cta-button">
+                        <span class="cta-text" data-i18n="cta_learn_more">learn more</span>
+                        <div class="cta-icon-wrapper">
+                            <img src="web-home/head/icon/icon-arrow.svg" alt="arrow" class="cta-arrow">
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="menu-section">
+        <div class="menu-container">
+            <!-- Left Arrow -->
+            <div class="menu-arrow menu-arrow-left">
+                <img src="web-home/menu/icon/arrow-L.svg" alt="Left Arrow" width="64" height="64">
+            </div>
+            
+            <!-- Menu Bar -->
+            <div class="menu-bar">
+                <!-- Tab 1: Customer Service -->
+                <div class="menu-tab-wrapper">
+                    <div class="menu-tab">
+                        <div class="menu-tab-hover-border"></div>
+                        <img src="web-home/menu/icon/music-play.svg" alt="Customer Service" class="menu-tab-icon">
+                        <span class="menu-tab-text" data-i18n="menu_customer">Customer Service</span>
+                    </div>
+                    <div class="menu-tab-shadow-outer"></div>
+                </div>
+
+                <!-- Tab 2: Payment Settlement -->
+                <div class="menu-tab-wrapper">
+                    <div class="menu-tab">
+                        <div class="menu-tab-hover-border"></div>
+                        <img src="web-home/menu/icon/money-send.svg" alt="Payment Settlement" class="menu-tab-icon">
+                        <span class="menu-tab-text" data-i18n="menu_payment">Payment Settlement</span>
+                    </div>
+                    <div class="menu-tab-shadow-outer"></div>
+                </div>
+
+                <!-- Tab 3: Trade Execution -->
+                <div class="menu-tab-wrapper">
+                    <div class="menu-tab">
+                        <div class="menu-tab-hover-border"></div>
+                        <img src="web-home/menu/icon/bitcoin-convert.svg" alt="Trade Execution" class="menu-tab-icon">
+                        <span class="menu-tab-text" data-i18n="menu_trade">Trade Execution</span>
+                    </div>
+                    <div class="menu-tab-shadow-outer"></div>
+                </div>
+
+                <!-- Tab 4: Liquidity -->
+                <div class="menu-tab-wrapper">
+                    <div class="menu-tab">
+                        <div class="menu-tab-hover-border"></div>
+                        <img src="web-home/menu/icon/bitcoin-refresh.svg" alt="Liquidity" class="menu-tab-icon">
+                        <span class="menu-tab-text" data-i18n="menu_liquidity">Liquidity</span>
+                    </div>
+                    <div class="menu-tab-shadow-outer"></div>
+                </div>
+            </div>
+            
+            <!-- Right Arrow -->
+            <div class="menu-arrow menu-arrow-right">
+                <img src="web-home/menu/icon/arrow-R.svg" alt="Right Arrow" width="64" height="64">
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块1: Our Advantages -->
+    <section class="section-module1">
+        <!-- Background -->
+        <div class="module1-bg scroll-animate-bg">
+            <img src="web-home/模块1/bg-1.svg" alt="Background" class="module1-bg-full">
+        </div>
+
+        <!-- Header -->
+        <div class="module1-header scroll-animate-content">
+            <div class="module1-title-group scroll-animate">
+                <h2 class="module1-title" data-i18n="module1_title">Our Advantages</h2>
+                <div class="module1-link">
+                    <img src="web-home/模块1/link1.svg" alt="Link" style="width: 100%; height: 100%;">
+                </div>
+            </div>
+            <p class="module1-subtitle scroll-animate" data-i18n="module1_subtitle">Safe, stable, reliable and trustworthy</p>
+        </div>
+
+        <!-- Card Group 1 -->
+        <div class="module1-card-group">
+            <!-- Card 1: Asset richness -->
+            <div class="glass-card module1-card1">
+                <img src="web-home/模块1/Vector.svg" alt="Background" class="card1-bg">
+                <h3 class="module1-card-title" data-i18n="module1_card1_title">Asset richness</h3>
+                <div class="module1-icon-group">
+                    <div class="module1-icon-container">
+                        <div class="module1-icon-inner">
+                            <img src="web-home/模块1/Icon-1.svg" alt="Icon 1" class="module1-icon">
+                        </div>
+                    </div>
+                    <div class="module1-icon-container">
+                        <div class="module1-icon-inner">
+                            <img src="web-home/模块1/Icon-2.svg" alt="Icon 2" class="module1-icon">
+                        </div>
+                    </div>
+                    <div class="module1-icon-container">
+                        <div class="module1-icon-inner">
+                            <img src="web-home/模块1/Icon-3.svg" alt="Icon 3" class="module1-icon">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Adequate liquidity pool -->
+            <div class="glass-card module1-card2">
+                <img src="web-home/模块1/Vector.svg" alt="Background" class="card2-bg">
+                <div class="module1-card2-content">
+                    <h3 class="module1-card-title" data-i18n="module1_card2_title">Adequate liquidity pool</h3>
+                    <p class="module1-card-desc" data-i18n="module1_card2_desc">A liquidity network built on years of industry experience, with ample liquidity pools for any asset, featuring customisable liquidity to provide you with competitive pricing and strong, efficient order execution across a wide range of markets.</p>
+                </div>
+                <div class="module1-card2-image">
+                    <img src="web-home/模块1/image-phone.png" alt="Phone" class="phone-content">
+                    <img src="web-home/模块1/iPhone样机.png" alt="iPhone Frame" class="iphone-frame">
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Group 2 -->
+        <div class="module1-card-group">
+            <!-- Card 3: Reliable white labelling solutions -->
+            <div class="glass-card module1-card3">
+                <img src="web-home/模块1/Vector.svg" alt="Background" class="card3-bg">
+                <div class="module1-card3-content">
+                    <h3 class="module1-card-title" data-i18n="module1_card3_title">Reliable white labelling solutions</h3>
+                    <p class="module1-card-desc" data-i18n="module1_card3_desc">Quickly and cost-effectively provide clients with industry-leading CFD trading platforms that are simple, reliable and efficient to deploy, providing you with the technical support to stay ahead of your competitors.</p>
+                </div>
+                <div class="module1-card3-image">
+                    <img src="web-home/模块1/白标.gif" alt="White Label" class="module1-card4-image">
+                </div>
+            </div>
+
+            <!-- Card 4: Image -->
+            <div class="module1-card module1-card4">
+                <img src="web-home/模块1/image-1.png" alt="Image" class="module1-card4-image">
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块2: Our Products -->
+    <section class="section-module2">
+        <!-- Background -->
+        <div class="module2-bg scroll-animate-bg">
+            <img src="web-home/模块2/bg-2.svg" alt="Background" class="module2-bg-full">
+        </div>
+
+        <!-- Header -->
+        <div class="module2-header scroll-animate-content">
+            <div class="module2-title-group scroll-animate">
+                <h2 class="module2-title" data-i18n="module2_title">Our Products</h2>
+                <div class="module2-link">
+                    <img src="web-home/模块2/link2.svg" alt="Link">
+                </div>
+            </div>
+            <p class="module2-subtitle scroll-animate" data-i18n="module2_subtitle">Modular customised solutions</p>
+        </div>
+
+        <!-- Card -->
+        <div class="module2-card">
+            <!-- Card Connect (内容和背景) -->
+            <div class="module2-card-connect">
+                <!-- Content -->
+                <div class="module2-card-content">
+                    <h3 class="module2-card-title" id="cardTitle" data-i18n="module2_card_title">Payment Solutions</h3>
+                    <p class="module2-card-desc" id="cardDesc" data-i18n="module2_card_desc">MCPayment offers embedded payment capabilities that allow you to process payments directly within your website or app. Users can complete payments without leaving your platform, providing a more convenient payment experience.</p>
+                    <button class="module2-learn-more-btn">
+                        <span data-i18n="module2_learn_more">Learn More</span>
+                        <img src="web-home/head/icon/icon-arrow.svg" alt="arrow" class="module2-btn-arrow">
+                    </button>
+                </div>
+
+                <!-- Navigation -->
+                <div class="module2-card-nav">
+                    <div class="module2-card-arrow" id="arrowUp"><img src="web-home/模块2/arrow-up.svg" alt="Previous"></div>
+                    <p class="module2-card-page"><span id="currentPage">1</span><span>/7</span></p>
+                    <div class="module2-card-arrow" id="arrowDown"><img src="web-home/模块2/arrow-down.svg" alt="Next"></div>
+                </div>
+            </div>
+
+            <!-- Image (手机图片) -->
+            <div class="module2-card-image">
+                <div class="module2-card-screen" id="cardScreen">
+                    <img src="web-home/模块2/card1/image1.png" alt="Page Content" class="module2-card-page-image" id="pageImage">
+                </div>
+                <img src="web-home/模块2/image.png" alt="Product Image" class="module2-card-phone">
+                
+                <!-- 浮动小卡片容器 -->
+                <div class="module2-card-floats" id="cardFloats">
+                    <!-- Card1 交易小卡片 -->
+                    <div class="module2-float-card float-card1-1" data-card="1">
+                        <img src="web-home/模块2/card1/Sub Container1.svg" alt="Transaction Card">
+                    </div>
+                    <div class="module2-float-card float-card1-2" data-card="1">
+                        <img src="web-home/模块2/card1/Sub Container2.svg" alt="Transaction Card">
+                    </div>
+                    <div class="module2-float-card float-card1-3" data-card="1">
+                        <img src="web-home/模块2/card1/Sub Container3.svg" alt="Transaction Card">
+                    </div>
+                    <div class="module2-float-card float-card1-4" data-card="1">
+                        <img src="web-home/模块2/card1/button.svg" alt="Buy Bitcoin Button">
+                    </div>
+                    
+                    <!-- Card2 风险控制小卡片 -->
+                    <div class="module2-float-card float-card2-1" data-card="2">
+                        <img src="web-home/模块2/card2/Frame 48.svg" alt="Risk Control Card">
+                    </div>
+                    <div class="module2-float-card float-card2-2" data-card="2">
+                        <img src="web-home/模块2/card2/Frame 52.svg" alt="Risk Control Card">
+                    </div>
+                    <div class="module2-float-card float-card2-3" data-card="2">
+                        <img src="web-home/模块2/card2/Frame 54.svg" alt="Risk Control Card">
+                    </div>
+                    
+                    <!-- Card3 资产管理小卡片 -->
+                    <div class="module2-float-card float-card3-1" data-card="3">
+                        <img src="web-home/模块2/card3/Link1.svg" alt="Asset Management Card">
+                    </div>
+                    <div class="module2-float-card float-card3-2" data-card="3">
+                        <img src="web-home/模块2/card3/Link2.svg" alt="Asset Management Card">
+                    </div>
+                    <div class="module2-float-card float-card3-3" data-card="3">
+                        <img src="web-home/模块2/card3/Link3.svg" alt="Asset Management Card">
+                    </div>
+                    
+                    <!-- Card4 账户管理小卡片 -->
+                    <div class="module2-float-card float-card4-1" data-card="4">
+                        <img src="web-home/模块2/card4/Frame 48.svg" alt="Account Card">
+                    </div>
+                    <div class="module2-float-card float-card4-2" data-card="4">
+                        <img src="web-home/模块2/card4/Frame 67.svg" alt="Account Card">
+                    </div>
+                    
+                    <!-- Card5 CRM小卡片 -->
+                    <div class="module2-float-card float-card5-1" data-card="5">
+                        <img src="web-home/模块2/card5/div.framer-1ac2535.svg" alt="CRM Card">
+                    </div>
+                    
+                    <!-- Card6 数据Analytics小卡片 -->
+                    <div class="module2-float-card float-card6-1" data-card="6">
+                        <img src="web-home/模块2/card6/sv.svg" alt="Analytics Card">
+                    </div>
+                    <div class="module2-float-card float-card6-2" data-card="6">
+                        <img src="web-home/模块2/card6/Crypto.svg" alt="Crypto Card">
+                    </div>
+                    
+                    <!-- Card7 API Integration小卡片 -->
+                    <div class="module2-float-card float-card7-1" data-card="7">
+                        <img src="web-home/模块2/card7/Group 1707481134.svg" alt="API Card">
+                    </div>
+                    <div class="module2-float-card float-card7-2" data-card="7">
+                        <img src="web-home/模块2/card7/Frame 1707482132.svg" alt="API Card">
+                    </div>
+                    <div class="module2-float-card float-card7-3" data-card="7">
+                        <img src="web-home/模块2/card7/Frame 1707482135.svg" alt="API Card">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Banner视频全屏动画逻辑
+        (function() {
+            const bannerVideo = document.getElementById('bannerVideo');
+            const navbar = document.querySelector('.navbar');
+            const menuSection = document.querySelector('.menu-section');
+            const body = document.body;
+            let animationCompleted = false;
+
+            if (!bannerVideo) return;
+
+            // 页面加载时禁止滚动并全屏播放视频
+            function initBannerAnimation() {
+                // 禁止页面滚动
+                body.classList.add('no-scroll');
+                // 视频全屏
+                bannerVideo.classList.add('fullscreen');
+                // 确保视频从头开始播放
+                bannerVideo.currentTime = 0;
+                bannerVideo.play();
+            }
+
+            // 监听视频播放进度
+            bannerVideo.addEventListener('timeupdate', function() {
+                if (animationCompleted) return;
+
+                const currentTime = bannerVideo.currentTime;
+
+                // 播放4秒后退出全屏
+                if (currentTime >= 4) {
+                    animationCompleted = true;
+                    completeBannerAnimation();
+                }
+            });
+
+            // 完成动画，恢复布局
+            function completeBannerAnimation() {
+                // 视频恢复正常大小
+                bannerVideo.classList.remove('fullscreen');
+                // 允许页面滚动
+                body.classList.remove('no-scroll');
+                // 显示导航栏
+                if (navbar) navbar.classList.add('visible');
+                // 显示menu区域
+                if (menuSection) menuSection.classList.add('visible');
+                // 显示banner内容
+                const bannerContent = document.querySelector('.banner-content');
+                if (bannerContent) bannerContent.classList.add('visible');
+            }
+
+            // 视频播放完成后的处理
+            bannerVideo.addEventListener('ended', function() {
+                // 如果动画还没完成（视频太短），强制完成
+                if (!animationCompleted) {
+                    animationCompleted = true;
+                    completeBannerAnimation();
+                }
+                // 暂停在最后一帧
+                bannerVideo.pause();
+                bannerVideo.currentTime = bannerVideo.duration;
+            });
+
+            // 页面加载完成后初始化
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initBannerAnimation);
+            } else {
+                initBannerAnimation();
+            }
+        })();
+
+        // 回到顶部
+        function goToTopAndRefresh() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // 模块2卡片内容切换功能
+        (function() {
+            const arrowUp = document.getElementById('arrowUp');
+            const arrowDown = document.getElementById('arrowDown');
+            const cardTitle = document.getElementById('cardTitle');
+            const cardDesc = document.getElementById('cardDesc');
+            const currentPageEl = document.getElementById('currentPage');
+            const pageImage = document.getElementById('pageImage');
+            
+            if (!arrowUp || !arrowDown || !cardTitle || !cardDesc) return;
+            
+            // 7个卡片的内容数据（支持多语言）
+            const cardData = {
+                'en': [
+                    {
+                        title: "Payment Solutions",
+                        desc: "MCPayment offers embedded payment capabilities that allow you to process payments directly within your website or app. Users can complete payments without leaving your platform, providing a more convenient payment experience.",
+                        image: "模块2/card1/image1.png"
+                    },
+                    {
+                        title: "Risk Control",
+                        desc: "Provides real-time monitoring, risk assessment, trading restrictions and compliance checks to protect financial institutions from trading risk, market risk and operational risk.",
+                        image: "模块2/card2/image2.png"
+                    },
+                    {
+                        title: "Asset Management",
+                        desc: "Provides portfolio management, asset allocation, performance analysis and reporting functions to optimise asset appreciation and risk management.",
+                        image: "模块2/card3/image3.png"
+                    },
+                    {
+                        title: "Account Management",
+                        desc: "Provides account opening, account information management, transaction history enquiry and account security settings to help users manage their accounts efficiently.",
+                        image: "模块2/card4/image4.png"
+                    },
+                    {
+                        title: "Transaction Management",
+                        desc: "Supports multiple transaction types, transaction status tracking, transaction history management and automated transaction processing to improve transaction efficiency.",
+                        image: "模块2/card5/image5.png"
+                    },
+                    {
+                        title: "Data Analytics",
+                        desc: "Provides real-time data monitoring, transaction data analysis, user behaviour analysis and custom reporting to help you make data-driven decisions.",
+                        image: "模块2/card6/image6.png"
+                    },
+                    {
+                        title: "API Integration",
+                        desc: "Provides standardised API interfaces, detailed documentation, sandbox testing environment and technical support for quick and easy system integration.",
+                        image: "模块2/card7/image7.png"
+                    }
+                ],
+                'zh': [
+                    {
+                        title: "支付解决方案",
+                        desc: "MCPayment提供嵌入式支付功能，允许您直接在网站或应用内处理支付。用户无需离开您的平台即可完成支付，提供更便捷的支付体验。",
+                        image: "模块2/card1/image1.png"
+                    },
+                    {
+                        title: "风险控制",
+                        desc: "提供实时监控、风险评估、交易限制和合规检查，保护金融机构免受交易风险、市场风险和操作风险的影响。",
+                        image: "模块2/card2/image2.png"
+                    },
+                    {
+                        title: "资产管理",
+                        desc: "提供投资组合管理、资产配置、绩效分析和报告功能，优化资产增值和风险管理。",
+                        image: "模块2/card3/image3.png"
+                    },
+                    {
+                        title: "账户管理",
+                        desc: "提供账户开立、账户信息管理、交易历史查询和账户安全设置，帮助用户高效管理账户。",
+                        image: "模块2/card4/image4.png"
+                    },
+                    {
+                        title: "交易管理",
+                        desc: "支持多种交易类型、交易状态跟踪、交易历史管理和自动化交易处理，提高交易效率。",
+                        image: "模块2/card5/image5.png"
+                    },
+                    {
+                        title: "数据分析",
+                        desc: "提供实时数据监控、交易数据分析、用户行为分析和自定义报告，帮助您做出数据驱动的决策。",
+                        image: "模块2/card6/image6.png"
+                    },
+                    {
+                        title: "API集成",
+                        desc: "提供标准化API接口、详细文档、沙盒测试环境和技术支持，实现快速便捷的系统集成。",
+                        image: "模块2/card7/image7.png"
+                    }
+                ]
+            };
+            
+            let currentPage = 1;
+            const totalPages = 7;
+            
+            function updateCardContent() {
+                const lang = localStorage.getItem('selectedLanguage') || 'en';
+                const data = cardData[lang][currentPage - 1];
+                const cardContent = document.querySelector('.module2-card-content');
+                
+                // 先移除content的active类，让内容直接消失
+                if (cardContent) {
+                    cardContent.classList.remove('active');
+                }
+                
+                // 更新内容
+                cardTitle.textContent = data.title;
+                cardDesc.textContent = data.desc;
+                currentPageEl.textContent = currentPage;
+                if (pageImage) {
+                    pageImage.src = 'web-home/' + data.image;
+                }
+                
+                // 使用requestAnimationFrame确保DOM更新后再添加active类，触发淡入动画
+                requestAnimationFrame(() => {
+                    if (cardContent) {
+                        cardContent.classList.add('active');
+                    }
+                });
+                
+                // 更新浮动小卡片显示
+                updateFloatCards(currentPage);
+            }
+            
+            function updateFloatCards(cardIndex) {
+                const floatCards = document.querySelectorAll('.module2-float-card');
+                
+                // 先移除所有卡片的active类，让非当前卡片直接消失（无动画）
+                floatCards.forEach(card => {
+                    const cardNum = parseInt(card.getAttribute('data-card'));
+                    // 只有当前卡片需要动画，其他卡片直接移除active类
+                    if (cardNum !== cardIndex) {
+                        card.classList.remove('active');
+                    }
+                });
+                
+                // 使用requestAnimationFrame确保DOM更新后再添加active类
+                requestAnimationFrame(() => {
+                    // 为当前卡片的元素添加active类，触发重新动画
+                    floatCards.forEach(card => {
+                        const cardNum = parseInt(card.getAttribute('data-card'));
+                        if (cardNum === cardIndex) {
+                            card.classList.add('active');
+                        }
+                    });
+                });
+            }
+            
+            // 初始化显示第一个card的小卡片
+            updateFloatCards(1);
+            
+            // 初始化时给内容区域添加active类，触发淡入动画
+            const cardContent = document.querySelector('.module2-card-content');
+            if (cardContent) {
+                requestAnimationFrame(() => {
+                    cardContent.classList.add('active');
+                });
+            }
+            
+            arrowUp.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                } else {
+                    // 倒序切换：到达第一个时回到最后一个
+                    currentPage = totalPages;
+                }
+                updateCardContent();
+            });
+            
+            arrowDown.addEventListener('click', function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                } else {
+                    // 正序切换：到达最后一个时回到第一个
+                    currentPage = 1;
+                }
+                updateCardContent();
+            });
+            
+            // 滚动监听：当模块2滚动到页面中间部分时自动播放image内小元素动画
+            const module2Section = document.querySelector('.section-module2');
+            let hasAnimated = false; // 标记是否已经播放过动画
+
+            function checkModule2InView() {
+                if (!module2Section || hasAnimated) return;
+
+                const rect = module2Section.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                const windowMiddle = windowHeight / 2;
+
+                // 当模块2的中间部分进入视口中间区域时触发动画
+                // 检查模块2的中间部分是否在视口中间区域（上下各25%范围）
+                const sectionTopQuarter = rect.top + rect.height * 0.25;
+                const sectionBottomQuarter = rect.top + rect.height * 0.75;
+
+                if (sectionTopQuarter <= windowMiddle && sectionBottomQuarter >= windowMiddle) {
+                    hasAnimated = true;
+                    // 触发当前显示卡片的浮动小卡片动画
+                    playFloatCardsAnimation(currentPage);
+                }
+            }
+
+            // 播放指定卡片的浮动小卡片动画和内容区域动画
+            function playFloatCardsAnimation(cardIndex) {
+                const floatCards = document.querySelectorAll('.module2-float-card');
+                const cardContent = document.querySelector('.module2-card-content');
+
+                // 先移除当前卡片的所有active类，强制重绘以确保动画可以重新触发
+                floatCards.forEach(card => {
+                    const cardNum = parseInt(card.getAttribute('data-card'));
+                    if (cardNum === cardIndex) {
+                        card.classList.remove('active');
+                    }
+                });
+
+                // 移除内容区域的active类
+                if (cardContent) {
+                    cardContent.classList.remove('active');
+                }
+
+                // 强制浏览器重绘
+                void document.body.offsetHeight;
+
+                // 添加active类触发动画
+                floatCards.forEach(card => {
+                    const cardNum = parseInt(card.getAttribute('data-card'));
+                    if (cardNum === cardIndex) {
+                        card.classList.add('active');
+                    }
+                });
+
+                // 添加内容区域的active类触发动画
+                if (cardContent) {
+                    cardContent.classList.add('active');
+                }
+            }
+
+            // 监听滚动事件
+            window.addEventListener('scroll', checkModule2InView, { passive: true });
+            // 初始检查
+            checkModule2InView();
+        })();
+    </script>
+
+    <!-- ==================== 模块3 - Solutions ==================== -->
+    <section class="module3-section">
+        <!-- 背景装饰 -->
+        <div class="module3-bg scroll-animate-bg">
+            <img src="web-home/模块3/BG.png" alt="Background" class="module3-bg-img">
+        </div>
+        
+        <div class="module3-container scroll-animate-content">
+            <!-- 标题区域 -->
+            <div class="module3-title scroll-animate">
+                <div class="module3-title-wrapper">
+                    <h2 class="module3-title-text" data-i18n="module3_title">Solutions</h2>
+                    <div class="module3-title-icon">
+                        <img src="web-home/模块3/Vector 524 (Stroke).svg" alt="Link">
+                    </div>
+                </div>
+                <p class="module3-subtitle" data-i18n="module3_subtitle">Industry Leading Solutions</p>
+            </div>
+            
+            <!-- Tab 导航栏 -->
+            <div class="module3-tabs">
+                <div class="module3-tab active" data-tab="0">
+                    <span data-i18n="module3_financial">financial institution</span>
+                </div>
+                <div class="module3-tab-line">
+                    <img src="web-home/模块3/Vector 524 (Stroke).svg" alt="Line">
+                </div>
+                <div class="module3-tab" data-tab="1">
+                    <span data-i18n="module3_brokerage">Brokerage</span>
+                </div>
+                <div class="module3-tab-line">
+                    <img src="web-home/模块3/Vector 524 (Stroke).svg" alt="Line">
+                </div>
+                <div class="module3-tab" data-tab="2">
+                    <span data-i18n="module3_quantify">Quantify the team</span>
+                </div>
+                <div class="module3-tab-line">
+                    <img src="web-home/模块3/Vector 524 (Stroke).svg" alt="Line">
+                </div>
+                <div class="module3-tab" data-tab="3">
+                    <span data-i18n="module3_hedge">hedge fund</span>
+                </div>
+                <div class="module3-tab-line">
+                    <img src="web-home/模块3/Vector 524 (Stroke).svg" alt="Line">
+                </div>
+                <div class="module3-tab" data-tab="4">
+                    <span data-i18n="module3_exchange">exchange</span>
+                </div>
+                <div class="module3-tab-line">
+                    <img src="web-home/模块3/Vector 524 (Stroke).svg" alt="Line">
+                </div>
+                <div class="module3-tab" data-tab="5">
+                    <span data-i18n="module3_market_makers">Market makers</span>
+                </div>
+            </div>
+            
+            <!-- Cards 区域 -->
+            <div class="module3-cards">
+                <!-- Card 1: Payment Solutions -->
+                <div class="module3-card" data-card="payment">
+                    <div class="module3-card-vector">
+                        <img src="web-home/模块3/card-vector.svg" alt="Vector" class="module3-vector-img">
+                    </div>
+                    <!-- 默认状态：图标 + 白色标题 -->
+                    <div class="module3-card-default">
+                        <div class="module3-card-icon-container">
+                            <div class="module3-card-icon">
+                                <img src="web-home/模块3/icon-payment-solutions.svg" alt="Payment">
+                            </div>
+                        </div>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-default.svg" alt="Divider">
+                        </div>
+                        <h3 class="module3-card-title-simple" data-i18n="module3_payment_title">payment solutions</h3>
+                    </div>
+                    <!-- 悬停状态：渐变标题 + 标签 -->
+                    <div class="module3-card-hover">
+                        <h3 class="module3-card-title" data-i18n="module3_payment_title">Payment Solutions</h3>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-hover.svg" alt="Divider">
+                        </div>
+                        <div class="module3-card-tags">
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                            </div>
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Risk Control -->
+                <div class="module3-card" data-card="risk">
+                    <div class="module3-card-vector">
+                        <img src="web-home/模块3/card-vector.svg" alt="Vector" class="module3-vector-img">
+                    </div>
+                    <!-- 默认状态 -->
+                    <div class="module3-card-default">
+                        <div class="module3-card-icon-container">
+                            <div class="module3-card-icon">
+                                <img src="web-home/模块3/icon-risk-control.svg" alt="Risk">
+                            </div>
+                        </div>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-default.svg" alt="Divider">
+                        </div>
+                        <h3 class="module3-card-title-simple" data-i18n="module3_risk_title">Risk Control</h3>
+                    </div>
+                    <!-- 悬停状态 -->
+                    <div class="module3-card-hover">
+                        <h3 class="module3-card-title" data-i18n="module3_risk_title">Risk Control</h3>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-hover.svg" alt="Divider">
+                        </div>
+                        <div class="module3-card-tags">
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                            </div>
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Asset Management -->
+                <div class="module3-card" data-card="asset">
+                    <div class="module3-card-vector">
+                        <img src="web-home/模块3/card-vector.svg" alt="Vector" class="module3-vector-img">
+                    </div>
+                    <!-- 默认状态 -->
+                    <div class="module3-card-default">
+                        <div class="module3-card-icon-container">
+                            <div class="module3-card-icon">
+                                <img src="web-home/模块3/icon-asset-management.svg" alt="Asset">
+                            </div>
+                        </div>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-default.svg" alt="Divider">
+                        </div>
+                        <h3 class="module3-card-title-simple" data-i18n="module3_asset_title">Asset Management</h3>
+                    </div>
+                    <!-- 悬停状态 -->
+                    <div class="module3-card-hover">
+                        <h3 class="module3-card-title" data-i18n="module3_asset_title">Asset Management</h3>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-hover.svg" alt="Divider">
+                        </div>
+                        <div class="module3-card-tags">
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                            </div>
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第二行 Cards -->
+            <div class="module3-cards module3-cards-row2">
+                <!-- Card 4: Data Provider -->
+                <div class="module3-card" data-card="data">
+                    <div class="module3-card-vector">
+                        <img src="web-home/模块3/card-vector.svg" alt="Vector" class="module3-vector-img">
+                    </div>
+                    <!-- 默认状态 -->
+                    <div class="module3-card-default">
+                        <div class="module3-card-icon-container">
+                            <div class="module3-card-icon">
+                                <img src="web-home/模块3/icon-data-provider.svg" alt="Data">
+                            </div>
+                        </div>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-default.svg" alt="Divider">
+                        </div>
+                        <h3 class="module3-card-title-simple" data-i18n="module3_data_title">Data Provider</h3>
+                    </div>
+                    <!-- 悬停状态 -->
+                    <div class="module3-card-hover">
+                        <h3 class="module3-card-title" data-i18n="module3_data_title">Data Provider</h3>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-hover.svg" alt="Divider">
+                        </div>
+                        <div class="module3-card-tags">
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                            </div>
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: CRM -->
+                <div class="module3-card" data-card="crm">
+                    <div class="module3-card-vector">
+                        <img src="web-home/模块3/card-vector.svg" alt="Vector" class="module3-vector-img">
+                    </div>
+                    <!-- 默认状态 -->
+                    <div class="module3-card-default">
+                        <div class="module3-card-icon-container">
+                            <div class="module3-card-icon">
+                                <img src="web-home/模块3/icon-crm.svg" alt="CRM">
+                            </div>
+                        </div>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-default.svg" alt="Divider">
+                        </div>
+                        <h3 class="module3-card-title-simple" data-i18n="module3_crm_title">CRM</h3>
+                    </div>
+                    <!-- 悬停状态 -->
+                    <div class="module3-card-hover">
+                        <h3 class="module3-card-title" data-i18n="module3_crm_title">CRM</h3>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-hover.svg" alt="Divider">
+                        </div>
+                        <div class="module3-card-tags">
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                            </div>
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Trading System -->
+                <div class="module3-card" data-card="trading">
+                    <div class="module3-card-vector">
+                        <img src="web-home/模块3/card-vector.svg" alt="Vector" class="module3-vector-img">
+                    </div>
+                    <!-- 默认状态 -->
+                    <div class="module3-card-default">
+                        <div class="module3-card-icon-container">
+                            <div class="module3-card-icon">
+                                <img src="web-home/模块3/monitor-mobbile.svg" alt="Trading">
+                            </div>
+                        </div>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-default.svg" alt="Divider">
+                        </div>
+                        <h3 class="module3-card-title-simple" data-i18n="module3_trading_title">Trading System</h3>
+                    </div>
+                    <!-- 悬停状态 -->
+                    <div class="module3-card-hover">
+                        <h3 class="module3-card-title" data-i18n="module3_trading_title">Trading System</h3>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-hover.svg" alt="Divider">
+                        </div>
+                        <div class="module3-card-tags">
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                            </div>
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7: Liquidity -->
+                <div class="module3-card" data-card="liquidity">
+                    <div class="module3-card-vector">
+                        <img src="web-home/模块3/card-vector.svg" alt="Vector" class="module3-vector-img">
+                    </div>
+                    <!-- 默认状态 -->
+                    <div class="module3-card-default">
+                        <div class="module3-card-icon-container">
+                            <div class="module3-card-icon">
+                                <img src="web-home/模块3/icon-liquidity-provider.svg" alt="Liquidity">
+                            </div>
+                        </div>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-default.svg" alt="Divider">
+                        </div>
+                        <h3 class="module3-card-title-simple" data-i18n="module3_liquidity_provider_title">Liquidity Provider</h3>
+                    </div>
+                    <!-- 悬停状态 -->
+                    <div class="module3-card-hover">
+                        <h3 class="module3-card-title" data-i18n="module3_liquidity_provider_title">Liquidity Provider</h3>
+                        <div class="module3-card-divider">
+                            <img src="web-home/模块3/divider-hover.svg" alt="Divider">
+                        </div>
+                        <div class="module3-card-tags">
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_payment_methods">Multiple Payment Methods</span>
+                                    <img src="web-home/模块3/tick1.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_kyc">KYC/AML</span>
+                                    <img src="web-home/模块3/tick2.svg" alt="Tick">
+                                </div>
+                            </div>
+                            <div class="module3-tag-row">
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_account">Account Management</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_api">API Integration</span>
+                                    <img src="web-home/模块3/tick4.svg" alt="Tick">
+                                </div>
+                                <div class="module3-tag">
+                                    <span data-i18n="module3_third_party">Third Party Integration</span>
+                                    <img src="web-home/模块3/tick3.svg" alt="Tick">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 模块4 - Reliable Partner ==================== -->
+    <section class="module4-section">
+        <!-- 背景 -->
+        <div class="module4-bg scroll-animate-bg">
+            <img src="web-home/模块4/BG1.png" alt="Background" class="module4-bg-img">
+        </div>
+
+        <div class="module4-container scroll-animate-content">
+            <!-- 标题区域 -->
+            <div class="module4-title scroll-animate">
+                <div class="module4-title-wrapper">
+                    <h2 class="module4-title-text">Reliable Partner</h2>
+                    <div class="module4-title-icon">
+                        <img src="web-home/模块4/Vector 524 (Stroke).svg" alt="Link">
+                    </div>
+                </div>
+                <p class="module4-subtitle" data-i18n="module1_subtitle">Safe, stable, reliable and trustworthy</p>
+            </div>
+            
+            <!-- Logo展示区域 -->
+            <div class="module4-logos">
+                <!-- 第一行Logo -->
+                <div class="module4-logos-row module4-logos-row-1">
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Mask group.png" alt="Partner 1" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Mask group-1.png" alt="Partner 2" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Mask group-2.png" alt="Partner 3" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Mask group-3.png" alt="Partner 4" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Mask group-4.png" alt="Partner 5" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <!-- 复制一份实现无缝循环 -->
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Mask group.png" alt="Partner 1" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Mask group-1.png" alt="Partner 2" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Mask group-2.png" alt="Partner 3" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Mask group-3.png" alt="Partner 4" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Mask group-4.png" alt="Partner 5" class="module4-logo-img">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 第二行Logo -->
+                <div class="module4-logos-row module4-logos-row-2">
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Mask group-5.png" alt="Partner 6" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Frame 3467937.png" alt="Partner 7" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Frame 3467938.png" alt="Partner 8" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Frame 3467939.png" alt="Partner 9" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Frame 3467940.png" alt="Partner 10" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <!-- 复制一份实现无缝循环 -->
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Mask group-5.png" alt="Partner 6" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Frame 3467937.png" alt="Partner 7" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Frame 3467938.png" alt="Partner 8" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Frame 3467939.png" alt="Partner 9" class="module4-logo-img">
+                        </div>
+                    </div>
+                    <div class="module4-logo-item">
+                        <div class="module4-logo-mask">
+                            <img src="web-home/模块4/Frame 3467940.png" alt="Partner 10" class="module4-logo-img">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 左右渐变遮罩 -->
+                <div class="module4-gradient-left"></div>
+                <div class="module4-gradient-right"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 模块5 - Contact Us ==================== -->
+    <section class="module5-section">
+        <!-- 背景 -->
+        <div class="module5-bg scroll-animate-bg">
+            <img src="web-home/模块5/BG2.png" alt="Background" class="module5-bg-img">
+        </div>
+
+        <div class="module5-container scroll-animate-content">
+            <!-- 标题区域 -->
+            <div class="module5-title scroll-animate">
+                <div class="module5-title-wrapper">
+                    <h2 class="module5-title-text">Contact Us</h2>
+                    <div class="module5-title-icon">
+                        <img src="web-home/模块5/Vector 524 (Stroke).svg" alt="Link">
+                    </div>
+                </div>
+                <p class="module5-subtitle" data-i18n="module5_subtitle">If you would like to set up your own business and learn more about what each solution offers, please feel free to contact us!</p>
+            </div>
+            
+            <!-- 内容区域 -->
+            <div class="module5-content">
+                <!-- 左侧联系信息 -->
+                <div class="module5-contact-info">
+                    <!-- 地址 -->
+                    <div class="module5-contact-item">
+                        <div class="module5-icon-container">
+                            <div class="module5-icon">
+                                <img src="web-home/模块5/Icon Container1.svg" alt="Location">
+                            </div>
+                        </div>
+                        <div class="module5-contact-text">
+                            <h3 class="module5-contact-label" data-i18n="module5_address_label">Address</h3>
+                            <p class="module5-contact-value" data-i18n="module5_address_value">Room 905, 9/F, Central Plaza, 18 Harbour Road, Wanchai, Hong Kong.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 电话 -->
+                    <div class="module5-contact-item">
+                        <div class="module5-icon-container">
+                            <div class="module5-icon">
+                                <img src="web-home/模块5/Icon Container2.svg" alt="Phone">
+                            </div>
+                        </div>
+                        <div class="module5-contact-text">
+                            <h3 class="module5-contact-label" data-i18n="module5_phone_label">Phone Number</h3>
+                            <p class="module5-contact-value">+852 3575-8870</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 邮箱 -->
+                    <div class="module5-contact-item">
+                        <div class="module5-icon-container">
+                            <div class="module5-icon">
+                                <img src="web-home/模块5/Icon Container3.svg" alt="Email">
+                            </div>
+                        </div>
+                        <div class="module5-contact-text">
+                            <h3 class="module5-contact-label" data-i18n="module5_email_label">Email</h3>
+                            <p class="module5-contact-value">mcpayment@mcgrp.com</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧表单 -->
+                <div class="module5-form">
+                    <h3 class="module5-form-title" data-i18n="module5_form_title">Please fill in the contact form</h3>
+                    
+                    <div class="module5-form-row">
+                        <div class="module5-form-field">
+                            <label class="module5-field-label" data-i18n="module5_username_label">*Username</label>
+                            <div class="module5-input">
+                                <input type="text" data-i18n-placeholder="module5_username_placeholder" placeholder="Please enter your name" class="module5-input-field">
+                            </div>
+                        </div>
+                        <div class="module5-form-field">
+                            <label class="module5-field-label" data-i18n="module5_email_label2">*Mailbox</label>
+                            <div class="module5-input">
+                                <input type="email" data-i18n-placeholder="module5_email_placeholder" placeholder="Please enter your email" class="module5-input-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module5-form-row">
+                        <div class="module5-form-field">
+                            <label class="module5-field-label" data-i18n="module5_phone_label2">*Phone number</label>
+                            <div class="module5-input">
+                                <input type="tel" data-i18n-placeholder="module5_phone_placeholder" placeholder="Please enter your phone number" class="module5-input-field">
+                            </div>
+                        </div>
+                        <div class="module5-form-field">
+                            <label class="module5-field-label" data-i18n="module5_address_label2">Address</label>
+                            <div class="module5-input">
+                                <input type="text" data-i18n-placeholder="module5_address_placeholder" placeholder="Please enter your address" class="module5-input-field">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module5-form-field module5-form-field-full">
+                        <label class="module5-field-label" data-i18n="module5_inquiry_label">*Inquiry content</label>
+                        <div class="module5-textarea-wrapper">
+                            <textarea class="module5-textarea" data-i18n-placeholder="module5_inquiry_placeholder" placeholder="Please enter your inquiry content"></textarea>
+                            <div class="module5-textarea-footer">
+                                <span class="module5-char-count">0 / 100</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="module5-submit-btn">
+                        <span data-i18n="module5_submit">submit</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.0254 4.94141L17.0837 9.99974L12.0254 15.0581" stroke="#0096ff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2.91602 10H16.941" stroke="#0096ff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 模块6 - Footer ==================== -->
+    <section class="module6">
+        <div class="module6-content scroll-animate-content">
+            <div class="module6-logo">
+                <img src="web-home/footer/logo.svg" alt="MC Connects Logo">
+            </div>
+            <div class="module6-links">
+                <div class="module6-link-group">
+                    <h4 class="module6-link-title" data-i18n="module6_services">Services</h4>
+                    <ul class="module6-link-list">
+                        <li><a href="#">MC Trader</a></li>
+                        <li><a href="#">MC CRM</a></li>
+                        <li><a href="#">MC Payment</a></li>
+                        <li><a href="#">MC Wallets</a></li>
+                        <li><a href="#">MC Aggregator</a></li>
+                        <li><a href="#">MC AM</a></li>
+                    </ul>
+                </div>
+                <div class="module6-link-group">
+                    <h4 class="module6-link-title" data-i18n="module6_solutions">Solutions</h4>
+                    <ul class="module6-link-list">
+                        <li><a href="#" data-i18n="footer_market_makers">Market makers</a></li>
+                        <li><a href="#" data-i18n="module3_exchange">exchange</a></li>
+                        <li><a href="#" data-i18n="module3_hedge">hedge fund</a></li>
+                        <li><a href="#" data-i18n="footer_quantify">Quantify the team</a></li>
+                        <li><a href="#" data-i18n="footer_brokerage">Brokerage</a></li>
+                        <li><a href="#" data-i18n="module3_financial">financial institution</a></li>
+                    </ul>
+                </div>
+                <div class="module6-link-group module6-link-group-small">
+                    <h4 class="module6-link-title" data-i18n="module6_liquidity">liquidity</h4>
+                    <ul class="module6-link-list">
+                        <li><a href="#">MC LP</a></li>
+                        <li><a href="#">MC Data</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="module6-footer">
+            <div class="module6-footer-left">
+                <span data-i18n="module6_guide">指南</span>
+                <span class="module6-divider">|</span>
+                <span data-i18n="module6_api">API</span>
+                <span class="module6-divider">|</span>
+                <span data-i18n="module6_privacy">隐私政策</span>
+                <span class="module6-divider">|</span>
+                <span data-i18n="module6_terms">用户协议</span>
+                <span class="module6-divider">|</span>
+                <span data-i18n="module6_disclaimer">免责声明</span>
+            </div>
+            <div class="module6-footer-right">
+                <span data-i18n="module6_copyright">MC Connects @ 2024Cookie Preferences</span>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 模块3 Tab 切换逻辑
+        const module3Tabs = document.querySelectorAll('.module3-tab');
+
+        module3Tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // 移除所有 tab 的 active 状态
+                module3Tabs.forEach(t => {
+                    t.classList.remove('active');
+                });
+
+                // 添加当前 tab 的 active 状态
+                this.classList.add('active');
+            });
+        });
+
+        // 滚动动画 - Intersection Observer
+        const scrollAnimateElements = document.querySelectorAll('.scroll-animate, .scroll-animate-content');
+        const scrollAnimateBgElements = document.querySelectorAll('.scroll-animate-bg');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.05
+        };
+
+        const observerOptionsBg = {
+            root: null,
+            rootMargin: '-50% 0px -50% 0px',
+            threshold: 0
+        };
+
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        const scrollObserverBg = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptionsBg);
+
+        scrollAnimateElements.forEach(el => {
+            scrollObserver.observe(el);
+        });
+
+        scrollAnimateBgElements.forEach(el => {
+            scrollObserverBg.observe(el);
+        });
+    </script>
+
+    <!-- Language Switching Functionality -->
+    <script>
+        (function() {
+            // Translation dictionary
+            // Translation dictionary
+            const translations = {
+                'en': {
+                    'nav_home': 'Home',
+                    'nav_services': 'Services',
+                    'nav_solutions': 'Solutions',
+                    'nav_liquidity': 'Liquidity',
+                    'nav_intelligence': 'intelligence',
+                    'nav_about': 'About Us',
+                    'nav_contact': 'Contact Us',
+                    'menu_customer': 'Customer Service',
+                    'menu_payment': 'Payment Settlement',
+                    'menu_trade': 'Trade Execution',
+                    'menu_liquidity': 'Liquidity',
+                    'module1_title': 'Our Advantages',
+                    'module1_subtitle': 'Safe, stable, reliable and trustworthy',
+                    'module1_card1_title': 'Asset richness',
+                    'module1_card2_title': 'Adequate liquidity pool',
+                    'module1_card2_desc': 'A liquidity network built on years of industry experience, with ample liquidity pools for any asset, featuring customisable liquidity to provide you with competitive pricing and strong, efficient order execution across a wide range of markets.',
+                    'module1_card3_title': 'Reliable white labelling solutions',
+                    'module1_card3_desc': 'Quickly and cost-effectively provide clients with industry-leading CFD trading platforms that are simple, reliable and efficient to deploy, providing you with the technical support to stay ahead of your competitors.',
+                    'footer_market_makers': 'Market makers',
+                    'footer_quantify': 'Quantify the team',
+                    'footer_brokerage': 'Brokerage',
+                    'module2_title': 'Our Products',
+                    'module2_subtitle': 'Modular customised solutions',
+                    'module2_card_title': 'Payment Solutions',
+                    'module2_card_desc': 'MCPayment offers embedded payment capabilities that allow you to process payments directly within your website or app. Users can complete payments without leaving your platform, providing a more convenient payment experience.',
+                    'module2_learn_more': 'Learn More',
+                    'module3_title': 'Solutions',
+                    'module3_subtitle': 'Industry Leading Solutions',
+                    'module3_financial': 'financial institution',
+                    'module3_brokerage': 'Brokerage',
+                    'module3_quantify': 'Quantify the team',
+                    'module3_hedge': 'hedge fund',
+                    'module3_exchange': 'exchange',
+                    'module3_market_makers': 'Market makers',
+                    'module3_payment_title': 'Payment Solutions',
+                    'module3_payment_methods': 'Multiple Payment Methods',
+                    'module3_kyc': 'KYC/AML',
+                    'module3_account': 'Account Management',
+                    'module3_api': 'API Integration',
+                    'module3_third_party': 'Third Party Integration',
+                    'module3_risk_title': 'Risk Control',
+                    'module3_asset_title': 'Asset Management',
+                    'module3_data_title': 'Data Provider',
+                    'module3_crm_title': 'CRM',
+                    'module3_trading_title': 'Trading System',
+                    'module3_liquidity_provider_title': 'Liquidity Provider',
+                    'cta_learn_more': 'learn more',
+                    'banner_main_title': 'MC Connects-Financial Infrastructure Solution Provider',
+                    'banner_subtitle': 'A suite of modular financial solutions including web3 payments risk control,asset management,CRM and more to empower your fintech innovation',
+                    'module5_title': 'Contact Us',
+                    'module5_subtitle': 'If you would like to set up your own business and learn more about what each solution offers, please feel free to contact us!',
+                    'module5_address_label': 'Address',
+                    'module5_address_label2': 'Address',
+                    'module5_address_value': 'Room 905, 9/F, Central Plaza, 18 Harbour Road, Wanchai, Hong Kong.',
+                    'module5_phone_label': 'Phone Number',
+                    'module5_email_label': 'Email',
+                    'module5_email_label2': '*Mailbox',
+                    'module5_phone_label2': '*Phone number',
+                    'module5_form_title': 'Please fill in the contact form',
+                    'module5_username_label': '*Username',
+                    'module5_username_placeholder': 'Please enter your name',
+                    'module5_email_placeholder': 'Please enter your email',
+                    'module5_phone_placeholder': 'Please enter your phone number',
+                    'module5_address_placeholder': 'Please enter your address',
+                    'module5_inquiry_label': '*Inquiry content',
+                    'module5_inquiry_placeholder': 'Please enter your inquiry content',
+                    'module5_submit': 'submit',
+                    'module6_services': 'Services',
+                    'module6_solutions': 'Solutions',
+                    'module6_liquidity': 'liquidity',
+                    'module6_guide': '指南',
+                    'module6_api': 'API',
+                    'module6_privacy': '隐私政策',
+                    'module6_terms': '用户协议',
+                    'module6_disclaimer': '免责声明',
+                    'module6_copyright': 'MC Connects @ 2024Cookie Preferences'
+                },
+                'zh': {
+                    'nav_home': '首页',
+                    'nav_services': '服务',
+                    'nav_solutions': '解决方案',
+                    'nav_liquidity': '流动性',
+                    'nav_intelligence': '智能',
+                    'nav_about': '关于我们',
+                    'nav_contact': '联系我们',
+                    'menu_customer': '客户服务',
+                    'menu_payment': '支付结算',
+                    'menu_trade': '交易执行',
+                    'menu_liquidity': '流动性',
+                    'module1_title': '我们的优势',
+                    'module1_subtitle': '安全、稳定、可靠、值得信赖',
+                    'module1_card1_title': '资产丰富性',
+                    'module1_card2_title': '充足的流动性池',
+                    'module1_card2_desc': '基于多年行业经验建立的流动性网络，为任何资产提供充足的流动性池，具有可定制的流动性，为您提供有竞争力的价格和强大、高效的跨市场订单执行。',
+                    'module1_card3_title': '可靠的白标解决方案',
+                    'module1_card3_desc': '快速且经济高效地为客户提供行业领先的CFD交易平台，这些平台简单、可靠且易于部署，为您提供保持竞争优势的技术支持。',
+                    'footer_market_makers': '做市商',
+                    'footer_quantify': '量化团队',
+                    'footer_brokerage': '经纪商',
+                    'module2_title': '我们的产品',
+                    'module2_subtitle': '模块化定制解决方案',
+                    'module2_card_title': '支付解决方案',
+                    'module2_card_desc': 'MCPayment提供嵌入式支付功能，允许您直接在网站或应用内处理支付。用户无需离开您的平台即可完成支付，提供更便捷的支付体验。',
+                    'module2_learn_more': '了解更多',
+                    'module3_title': '解决方案',
+                    'module3_subtitle': '行业领先解决方案',
+                    'module3_financial': '金融机构',
+                    'module3_brokerage': '经纪商',
+                    'module3_quantify': '量化团队',
+                    'module3_hedge': '对冲基金',
+                    'module3_exchange': '交易所',
+                    'module3_market_makers': '做市商',
+                    'module3_payment_title': '支付解决方案',
+                    'module3_payment_methods': '多种支付方式',
+                    'module3_kyc': 'KYC/AML',
+                    'module3_account': '账户管理',
+                    'module3_api': 'API集成',
+                    'module3_third_party': '第三方集成',
+                    'module3_risk_title': '风险控制',
+                    'module3_asset_title': '资产管理',
+                    'module3_data_title': '数据提供商',
+                    'module3_crm_title': '客户关系管理',
+                    'module3_trading_title': '交易系统',
+                    'module3_liquidity_provider_title': '流动性提供商',
+                    'cta_learn_more': '了解更多',
+                    'banner_main_title': 'MC Connects-金融基础设施解决方案提供商',
+                    'banner_subtitle': '一套模块化的金融解决方案，包括web3支付风险控制、资产管理、CRM等，助力您的金融科技创新',
+                    'module5_title': '联系我们',
+                    'module5_subtitle': '如果您想建立自己的业务并了解更多关于每个解决方案提供的内容，请随时联系我们！',
+                    'module5_address_label': '地址',
+                    'module5_address_label2': '地址',
+                    'module5_address_value': '香港湾仔港湾道18号中环广场9楼905室',
+                    'module5_phone_label': '电话号码',
+                    'module5_email_label': '电子邮件',
+                    'module5_email_label2': '*邮箱',
+                    'module5_phone_label2': '*电话号码',
+                    'module5_form_title': '请填写联系表格',
+                    'module5_username_label': '*用户名',
+                    'module5_username_placeholder': '请输入您的姓名',
+                    'module5_email_placeholder': '请输入您的电子邮件',
+                    'module5_phone_placeholder': '请输入您的电话号码',
+                    'module5_address_placeholder': '请输入您的地址',
+                    'module5_inquiry_label': '*咨询内容',
+                    'module5_inquiry_placeholder': '请输入您的咨询内容',
+                    'module5_submit': '提交',
+                    'module6_services': '服务',
+                    'module6_solutions': '解决方案',
+                    'module6_liquidity': '流动性',
+                    'module6_guide': '指南',
+                    'module6_api': 'API',
+                    'module6_privacy': '隐私政策',
+                    'module6_terms': '用户协议',
+                    'module6_disclaimer': '免责声明',
+                    'module6_copyright': 'MC Connects @ 2024Cookie Preferences'
+                }
+            };
+
+            // Current language (default: English)
+            // If no language is saved, default to English and clear any old settings
+            let currentLang = localStorage.getItem('selectedLanguage');
+            if (!currentLang) {
+                currentLang = 'en';
+                localStorage.setItem('selectedLanguage', 'en');
+            }
+
+            // Switch language function - 由 navbar-footer.js 调用
+            function switchLanguage(lang) {
+                if (!translations[lang]) return;
+
+                // Add transitioning class for fade effect
+                document.body.classList.add('language-switching');
+
+                setTimeout(() => {
+                    // Update all elements with data-i18n attribute
+                    const elements = document.querySelectorAll('[data-i18n]');
+                    elements.forEach(el => {
+                        const key = el.getAttribute('data-i18n');
+                        if (translations[lang][key]) {
+                            el.textContent = translations[lang][key];
+                        }
+                    });
+
+                    // Update all elements with data-i18n-placeholder attribute
+                    const placeholderElements = document.querySelectorAll('[data-i18n-placeholder]');
+                    placeholderElements.forEach(el => {
+                        const key = el.getAttribute('data-i18n-placeholder');
+                        if (translations[lang][key]) {
+                            el.placeholder = translations[lang][key];
+                        }
+                    });
+
+                    // Update selected state in dropdown
+                    const options = document.querySelectorAll('.language-option');
+                    options.forEach(opt => {
+                        if (opt.getAttribute('data-lang') === lang) {
+                            opt.classList.add('selected');
+                        } else {
+                            opt.classList.remove('selected');
+                        }
+                    });
+
+                    // Save preference
+                    localStorage.setItem('selectedLanguage', lang);
+                    currentLang = lang;
+
+                    // Remove transitioning class
+                    setTimeout(() => {
+                        document.body.classList.remove('language-switching');
+                    }, 50);
+                }, 200);
+            }
+
+        })();
+    </script>
+
+    <!-- 统一 Navbar 和 Footer 组件 -->
+    <!-- 统一 Navbar 和 Footer 组件 -->
+    <script src="./components/navbar.js?v=17"></script>
+    <script src="./components/navbar-footer.js?v=44"></script>
+</body>
+</html>
