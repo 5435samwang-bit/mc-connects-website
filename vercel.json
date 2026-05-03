@@ -101,5 +101,16 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "**/*.png": {
+      "maxDuration": 10
+    },
+    "**/*.jpg": {
+      "maxDuration": 10
+    },
+    "**/*.jpeg": {
+      "maxDuration": 10
+    }
+  }
 }
