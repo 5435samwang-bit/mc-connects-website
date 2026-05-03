@@ -9,6 +9,30 @@
   ],
   "routes": [
     {
+      "src": "/saas-solutions/(.*)",
+      "dest": "/saas-solutions/$1"
+    },
+    {
+      "src": "/turnkey-solutions/(.*)",
+      "dest": "/turnkey-solutions/$1"
+    },
+    {
+      "src": "/web-home/(.*)",
+      "dest": "/web-home/$1"
+    },
+    {
+      "src": "/liquidity/(.*)",
+      "dest": "/liquidity/$1"
+    },
+    {
+      "src": "/intelligence/(.*)",
+      "dest": "/intelligence/$1"
+    },
+    {
+      "src": "/components/(.*)",
+      "dest": "/components/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
@@ -24,7 +48,7 @@
       ]
     },
     {
-      "source": "/saas解决方案/(.*)",
+      "source": "/saas-solutions/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -33,7 +57,7 @@
       ]
     },
     {
-      "source": "/turnkey解决方案/(.*)",
+      "source": "/turnkey-solutions/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -43,6 +67,24 @@
     },
     {
       "source": "/web-home/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/liquidity/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/intelligence/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
