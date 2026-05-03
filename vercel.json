@@ -3,7 +3,7 @@
   "name": "mc-connects-website",
   "builds": [
     {
-      "src": "**/*.html",
+      "src": "**/*",
       "use": "@vercel/static"
     }
   ],
