@@ -53,6 +53,20 @@
             object-fit: cover;
             object-position: center;
             transition: all 2s cubic-bezier(0.22, 1, 0.36, 1);
+            background-color: #0E0F10;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .banner-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            z-index: 0;
         }
 
         /* Banner全屏动画状态 */
@@ -64,6 +78,9 @@
             height: 100vh;
             z-index: 9999;
             object-fit: cover;
+            opacity: 1 !important;
+            visibility: visible !important;
+            background-color: #0E0F10;
         }
 
         /* 页面禁止滚动 */
@@ -94,7 +111,6 @@
             display: flex;
             align-items: center;
             padding-left: 120px;
-            background: linear-gradient(to right, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
             opacity: 0;
             transform: translateY(80px);
             transition: opacity 2.2s cubic-bezier(0.22, 1, 0.36, 1),
@@ -781,14 +797,17 @@
 
         .module1-card2-image {
             width: 276px;
-            height: 240px;
+            height: 316px;
             background: transparent;
             border-radius: 45px 45px 0 0 / 45px 45px 0 0;
             box-shadow: -13px 3px 25px rgba(0, 0, 0, 0.25);
-            margin: 36px 36px auto 0;
+            margin: 36px 36px 0 0;
+            padding: 4px 4px 0 4px;
             overflow: hidden;
             flex-shrink: 0;
             position: relative;
+            align-self: flex-end;
+            box-sizing: border-box;
         }
 
         .phone-content {
@@ -967,7 +986,7 @@
             top: 0;
             width: 837px;
             height: 350px;
-            background-image: url('module2/Vector2.svg');
+            background-image: url('web-home/module2/Vector2.svg');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: right top;
@@ -2740,9 +2759,10 @@
 
     <!-- Banner Section -->
     <section class="banner">
-        <video class="banner-video" autoplay muted playsinline id="bannerVideo">
+        <video class="banner-video" muted playsinline id="bannerVideo">
             <source src="web-home/head/banner/homepage.mp4" type="video/mp4">
         </video>
+        <img class="banner-image" src="web-home/head/banner/keji.png" alt="Banner Background" id="bannerImage" style="display: none;">
         <!-- Banner Title -->
         <div class="banner-content">
             <div class="banner-title-wrapper">
@@ -2778,7 +2798,7 @@
             <!-- Menu Bar -->
             <div class="menu-bar">
                 <!-- Tab 1: Customer Service -->
-                <div class="menu-tab-wrapper">
+                <div class="menu-tab-wrapper" onclick="navigateToPage('trading-system')">
                     <div class="menu-tab">
                         <div class="menu-tab-hover-border"></div>
                         <img src="web-home/menu/icon/music-play.svg" alt="Customer Service" class="menu-tab-icon">
@@ -2788,7 +2808,7 @@
                 </div>
 
                 <!-- Tab 2: Payment Settlement -->
-                <div class="menu-tab-wrapper">
+                <div class="menu-tab-wrapper" onclick="navigateToPage('payment-solutions')">
                     <div class="menu-tab">
                         <div class="menu-tab-hover-border"></div>
                         <img src="web-home/menu/icon/money-send.svg" alt="Payment Settlement" class="menu-tab-icon">
@@ -2798,7 +2818,7 @@
                 </div>
 
                 <!-- Tab 3: Trade Execution -->
-                <div class="menu-tab-wrapper">
+                <div class="menu-tab-wrapper" onclick="navigateToPage('market-maker-turnkey')">
                     <div class="menu-tab">
                         <div class="menu-tab-hover-border"></div>
                         <img src="web-home/menu/icon/bitcoin-convert.svg" alt="Trade Execution" class="menu-tab-icon">
@@ -2808,7 +2828,7 @@
                 </div>
 
                 <!-- Tab 4: Liquidity -->
-                <div class="menu-tab-wrapper">
+                <div class="menu-tab-wrapper" onclick="navigateToPage('liquidity-provider')">
                     <div class="menu-tab">
                         <div class="menu-tab-hover-border"></div>
                         <img src="web-home/menu/icon/bitcoin-refresh.svg" alt="Liquidity" class="menu-tab-icon">
@@ -3035,15 +3055,86 @@
 
             if (!bannerVideo) return;
 
+            // 检查是否应该播放视频（首次访问、刷新页面或点击logo返回首页）
+            function shouldPlayVideo() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const playVideo = urlParams.get('playVideo');
+                
+                // 如果有playVideo=true参数，播放视频
+                if (playVideo === 'true') {
+                    // 清除URL参数，避免刷新时再次播放
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    // 设置标记表示这次应该播放视频
+                    sessionStorage.setItem('mcconnects_play_video', 'true');
+                    return true;
+                }
+                
+                // 检查是否是直接访问首页（不是从其他页面导航过来的）
+                const navigationType = performance.navigation.type;
+                // 0 = 正常导航, 1 = 刷新页面, 2 = 从历史记录前进/后退
+                if (navigationType === 1) {
+                    // 刷新页面，播放视频
+                    return true;
+                }
+                
+                // 检查是否是首次访问
+                const hasVisited = sessionStorage.getItem('mcconnects_visited');
+                if (!hasVisited) {
+                    sessionStorage.setItem('mcconnects_visited', 'true');
+                    return true;
+                }
+                
+                return false;
+            }
+
             // 页面加载时禁止滚动并全屏播放视频
             function initBannerAnimation() {
+                const bannerImage = document.getElementById('bannerImage');
+                
+                // 检查是否应该播放视频
+                if (!shouldPlayVideo()) {
+                    // 不播放视频，显示图片
+                    animationCompleted = true;
+                    // 隐藏视频，显示图片
+                    if (bannerVideo) bannerVideo.style.display = 'none';
+                    if (bannerImage) bannerImage.style.display = 'block';
+                    // 显示导航栏和内容
+                    completeBannerAnimation(true);
+                    return;
+                }
+                
                 // 禁止页面滚动
                 body.classList.add('no-scroll');
                 // 视频全屏
                 bannerVideo.classList.add('fullscreen');
-                // 确保视频从头开始播放
-                bannerVideo.currentTime = 0;
-                bannerVideo.play();
+                // 确保视频可见，图片隐藏
+                bannerVideo.style.display = 'block';
+                bannerVideo.style.opacity = '1';
+                bannerVideo.style.visibility = 'visible';
+                if (bannerImage) bannerImage.style.display = 'none';
+                
+                // 等待视频可以播放后再开始
+                if (bannerVideo.readyState >= 3) {
+                    // 视频已准备好，直接播放
+                    bannerVideo.currentTime = 0;
+                    bannerVideo.play().catch(e => {
+                        console.log('视频播放失败:', e);
+                        // 如果播放失败，直接完成动画
+                        animationCompleted = true;
+                        completeBannerAnimation();
+                    });
+                } else {
+                    // 等待视频加载完成
+                    bannerVideo.addEventListener('canplay', function onCanPlay() {
+                        bannerVideo.removeEventListener('canplay', onCanPlay);
+                        bannerVideo.currentTime = 0;
+                        bannerVideo.play().catch(e => {
+                            console.log('视频播放失败:', e);
+                            animationCompleted = true;
+                            completeBannerAnimation();
+                        });
+                    }, { once: true });
+                }
             }
 
             // 监听视频播放进度
@@ -3060,7 +3151,9 @@
             });
 
             // 完成动画，恢复布局
-            function completeBannerAnimation() {
+            function completeBannerAnimation(skipVideo = false) {
+                const bannerImage = document.getElementById('bannerImage');
+                
                 // 视频恢复正常大小
                 bannerVideo.classList.remove('fullscreen');
                 // 允许页面滚动
@@ -3072,6 +3165,27 @@
                 // 显示banner内容
                 const bannerContent = document.querySelector('.banner-content');
                 if (bannerContent) bannerContent.classList.add('visible');
+                
+                // 根据是否跳过视频来决定显示视频还是图片
+                if (skipVideo) {
+                    // 显示图片，隐藏视频
+                    if (bannerVideo) {
+                        bannerVideo.style.display = 'none';
+                    }
+                    if (bannerImage) {
+                        bannerImage.style.display = 'block';
+                    }
+                } else {
+                    // 显示视频，隐藏图片
+                    if (bannerVideo) {
+                        bannerVideo.style.display = 'block';
+                        bannerVideo.style.opacity = '1';
+                        bannerVideo.style.visibility = 'visible';
+                    }
+                    if (bannerImage) {
+                        bannerImage.style.display = 'none';
+                    }
+                }
             }
 
             // 视频播放完成后的处理
@@ -3100,6 +3214,11 @@
                 top: 0,
                 behavior: 'smooth'
             });
+        }
+
+        // 页面导航函数
+        function navigateToPage(pageName) {
+            window.location.href = pageName + '.html';
         }
 
         // module2卡片内容切换功能

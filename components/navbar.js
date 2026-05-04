@@ -46,13 +46,14 @@ function getCurrentProject() {
 }
 
 // 导航功能函数
-function goToHome() {
+function goToHome(playVideo = false) {
     const prefix = getRelativePrefix();
-    window.location.href = prefix + 'index.html';
+    const url = playVideo ? prefix + 'index.html?playVideo=true' : prefix + 'index.html';
+    window.location.href = url;
 }
 
 function goHome() {
-    goToHome();
+    goToHome(false);
 }
 
 function goToTopAndRefresh() {
@@ -839,7 +840,7 @@ function generateNavbar() {
     <nav class="navbar">
         <div class="navbar-container">
             <!-- Logo - Node: 1171:5405 -->
-            <div class="logo-section" onclick="${isHome ? 'goToTopAndRefresh()' : 'goHome()'}">
+            <div class="logo-section" onclick="${isHome ? 'goToTopAndRefresh()' : 'goToHome(true)'}">
                 <img src="${prefix}web-home/head/logo/logo.svg" alt="MC Connects" class="logo-image">
             </div>
 
